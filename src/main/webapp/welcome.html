@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Welcome</title>
+</head>
+    <h1> Hello admin !!</h1>
+    <h2>Find user by id or login</h2>
+    <form action="customers" method="get">
+        <table>
+            <tr>
+                <td>Id: </td><td><input type="text" name="id"></td>
+            </tr>
+            <tr>
+                <td>Login: </td><td><input type="text" name="login"></td>
+            <tr>
+                <td><input type="submit" value="FindBy"></td>
+            </tr>
+        </table>
+    </form>
+    <form action="customers" method="get">
+        <h2>Print users</h2>
+        <input type="submit" value="Print All users">
+    </form>
+    <form action="logout" method="get">
+        <h2>Logout</h2>
+        <input type="submit" value="Logout">
+    </form>
+</body>
+</html>
