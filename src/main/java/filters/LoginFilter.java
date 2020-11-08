@@ -2,20 +2,17 @@ package filters;
 
 import database.CustomerDAO;
 import database.CustomerDAOImpl;
-import database.entity.Customer;
 import service.Authentication;
 import service.AuthenticationImpl;
-import servlet.ContextListenerServlet;
+import utils.JsonHandler;
 
 import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
-import static java.util.Objects.nonNull;
 
 @WebFilter(urlPatterns = "/*")
 public class LoginFilter implements Filter {

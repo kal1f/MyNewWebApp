@@ -31,7 +31,7 @@ public class RegisterServlet extends HttpServlet {
         String name = request.getParameter("name");
         String password = request.getParameter("password1");
         String submitType = request.getParameter("submit");
-        //Customer c = cd.getCustomer(login, password);
+
         Customer newCustomer;
 
         if(submitType.equals("register"))

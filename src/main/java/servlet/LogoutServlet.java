@@ -1,7 +1,5 @@
 package servlet;
 
-import database.CustomerDAOImpl;
-import database.entity.Customer;
 import service.Authentication;
 import service.AuthenticationImpl;
 

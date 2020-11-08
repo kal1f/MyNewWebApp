@@ -1,7 +1,5 @@
 package servlet;
 
-import database.CustomerDAOImpl;
-import database.entity.Customer;
 import service.Authentication;
 import service.AuthenticationImpl;
 
@@ -24,16 +22,13 @@ public class WelcomeServlet extends HttpServlet {
 
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
-        /*String sessionId = request.getSession().getId();
-        String login = (String) request.getAttribute("login");
-        String password = (String) request.getAttribute("password1");
-        authenticationImpl.getCustomer(sessionId);
-        if()*/
         response.sendRedirect("/welcome.html");
+
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.getRequestDispatcher("welcome.html").forward(request,response);
+        request.getRequestDispatcher("welcome.html").forward(request, response);
     }
+
+
 }

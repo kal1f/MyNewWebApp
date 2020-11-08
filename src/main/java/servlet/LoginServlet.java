@@ -2,26 +2,16 @@ package servlet;
 
 import database.CustomerDAO;
 import database.CustomerDAOImpl;
-import database.connection.ConnectionProvider;
 import database.entity.Customer;
 
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
-import java.beans.XMLEncoder;
 import java.io.IOException;
-import java.io.ByteArrayOutputStream;
-import java.io.OutputStream;
-import com.google.gson.*;
 import service.Authentication;
 import service.AuthenticationImpl;
+import utils.JsonHandler;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-
-import static java.util.Objects.nonNull;
 
 @WebServlet(name = "/login")
 public class LoginServlet extends HttpServlet {
@@ -29,6 +19,7 @@ public class LoginServlet extends HttpServlet {
     private CustomerDAO cd;
     private Authentication authenticationImpl;
     private Customer customer;
+    String msg;
 
     @Override
     public void init(){
@@ -64,13 +55,9 @@ public class LoginServlet extends HttpServlet {
         else{
             response.setCharacterEncoding("UTF-8");
             response.setContentType("application/json");
-
-            /*String msg  = "{\"statusCode\": 401, error\": \"Unauthorized\", \"message\": \"check your login and password\"}";
-
-            sendResponse(response, msg);*/
-
-            response.setStatus(401);
-            response.getWriter().write("check your login and password");
+            response.setHeader("cache-control", "no-cache");
+            response.setStatus(404);
+            JsonHandler.sendResponse(response, msg);
         }
 
     }
