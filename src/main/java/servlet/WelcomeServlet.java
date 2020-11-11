@@ -13,22 +13,16 @@ import java.io.IOException;
 @WebServlet(name = "/welcome")
 public class WelcomeServlet extends HttpServlet {
 
-    private Authentication authenticationImpl;
+    private Authentication authentication;
 
     @Override
     public void init(){
-        this.authenticationImpl = (AuthenticationImpl) getServletContext().getAttribute("authenticationImpl");
+        this.authentication = (AuthenticationImpl) getServletContext().getAttribute("authenticationImpl");
     }
-
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.sendRedirect("/welcome.html");
 
     }
-
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.getRequestDispatcher("welcome.html").forward(request, response);
-    }
-
 
 }

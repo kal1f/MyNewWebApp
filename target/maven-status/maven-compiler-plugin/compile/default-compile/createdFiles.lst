@@ -1,6 +1,15 @@
-database/entity/Customer.class
+servlet/LogoutServlet.class
 database/CustomerDAO.class
-database/connection/ConnectionProvider.class
+servlet/ContextListenerServlet.class
 database/connection/ProviderConstants.class
 database/CustomerDAOImpl.class
+utils/JsonHandler.class
+filters/LoginFilter.class
+servlet/RegisterServlet.class
+servlet/LoginServlet.class
+database/entity/Customer.class
+database/connection/ConnectionProvider.class
+servlet/WelcomeServlet.class
 servlet/CustomerServlet.class
+service/Authentication.class
+service/AuthenticationImpl.class

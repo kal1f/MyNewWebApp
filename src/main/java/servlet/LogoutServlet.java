@@ -11,11 +11,22 @@ import java.io.IOException;
 @WebServlet(name = "/logout")
 public class LogoutServlet extends HttpServlet {
 
-    Authentication authenticationImpl;
+    private Authentication authentication;
+
+    public LogoutServlet() {
+        super();
+    }
+
+    public LogoutServlet(Authentication authentication) {
+        super();
+        this.authentication = authentication;
+    }
 
     @Override
     public void init(){
-        this.authenticationImpl = (AuthenticationImpl) getServletContext().getAttribute("authenticationImpl");
+        if(authentication == null) {
+            this.authentication = (AuthenticationImpl) getServletContext().getAttribute("authenticationImpl");
+        }
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -24,7 +35,7 @@ public class LogoutServlet extends HttpServlet {
 
         HttpSession session = request.getSession();
 
-        authenticationImpl.removeCustomer(session.getId());
+        authentication.removeCustomer(session.getId());
         session.invalidate();
 
         response.setStatus(200);

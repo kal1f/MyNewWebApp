@@ -10,22 +10,41 @@ import javax.servlet.http.*;
 import java.io.IOException;
 import service.Authentication;
 import service.AuthenticationImpl;
-import utils.JsonHandler;
+import utils.ResponseHandlerToJson;
 
 
 @WebServlet(name = "/login")
 public class LoginServlet extends HttpServlet {
 
     private CustomerDAO cd;
-    private Authentication authenticationImpl;
-    private Customer customer;
-    String msg;
+    private Authentication authentication;
+    private ResponseHandlerToJson responseHandlerToJson;
+
+    public LoginServlet() {
+        super();
+    }
+
+    public LoginServlet(CustomerDAO cd, Authentication authentication) {
+        super();
+        this.cd = cd;
+        this.authentication = authentication;
+    }
+
+    public LoginServlet(CustomerDAO cd, Authentication authentication, ResponseHandlerToJson responseHandlerToJson) {
+        super();
+        this.cd = cd;
+        this.authentication = authentication;
+        this.responseHandlerToJson = responseHandlerToJson;
+    }
 
     @Override
     public void init(){
-        this.authenticationImpl = (AuthenticationImpl) getServletContext().getAttribute("authenticationImpl");
-        cd = new CustomerDAOImpl();
-        customer = new Customer();
+        if(cd == null) {
+            cd = new CustomerDAOImpl();
+        }
+        if(authentication == null) {
+            this.authentication = (AuthenticationImpl) getServletContext().getAttribute("authenticationImpl");
+        }
     }
 
 
@@ -40,24 +59,27 @@ public class LoginServlet extends HttpServlet {
 
         String login = request.getParameter("login");
         String password = request.getParameter("password1");
-
+        Customer customer = new Customer();
         customer.setLogin(login);
         customer.setPassword(password);
 
-        if(cd.isCustomerExist(login, password) ){
+        if(cd.isCustomerExist(login, password)){
 
-            String session_id = request.getSession().getId();
-            authenticationImpl.setCustomer(session_id, customer);
+            HttpSession session = request.getSession();
+            authentication.setCustomer(session.getId(), customer);
 
             response.setStatus(200);
             response.sendRedirect("/welcome");
         }
         else{
+            if(responseHandlerToJson == null){
+                responseHandlerToJson = new ResponseHandlerToJson(response);
+            }
             response.setCharacterEncoding("UTF-8");
             response.setContentType("application/json");
             response.setHeader("cache-control", "no-cache");
-            response.setStatus(404);
-            JsonHandler.sendResponse(response, msg);
+
+            responseHandlerToJson.processResponse(404, null);
         }
 
     }

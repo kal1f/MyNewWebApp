@@ -11,6 +11,7 @@ public class AuthenticationImpl implements Authentication {
 
     @Override
     public boolean isSessionPresent(String session_id) {
+
         return customerProfileData.containsKey(session_id);
     }
 
@@ -27,6 +28,7 @@ public class AuthenticationImpl implements Authentication {
 
     @Override
     public Customer getCustomer(String session_id) {
+
         return customerProfileData.get(session_id);
     }
 
@@ -37,6 +39,8 @@ public class AuthenticationImpl implements Authentication {
 
     @Override
     public void removeCustomer(String session_id) {
-        customerProfileData.remove(session_id);
+        if(isSessionPresent(session_id)) {
+            customerProfileData.remove(session_id);
+        }
     }
 }

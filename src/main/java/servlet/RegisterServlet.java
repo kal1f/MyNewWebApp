@@ -16,9 +16,20 @@ public class RegisterServlet extends HttpServlet {
 
     private CustomerDAO cd;
 
+    public RegisterServlet() {
+        super();
+    }
+
+    public RegisterServlet(CustomerDAO cd) {
+        super();
+        this.cd = cd;
+    }
+
     @Override
     public void init(){
-        cd = new CustomerDAOImpl();
+        if(cd == null) {
+            cd = new CustomerDAOImpl();
+        }
     }
 
     @Override
@@ -30,21 +41,19 @@ public class RegisterServlet extends HttpServlet {
         String login = request.getParameter("login");
         String name = request.getParameter("name");
         String password = request.getParameter("password1");
-        String submitType = request.getParameter("submit");
+        //String submitType = request.getParameter("submit");
 
         Customer newCustomer;
+        //if(submitType.equals("register"))
+        newCustomer = new Customer();
+        newCustomer.setName(name);
+        newCustomer.setLogin(login);
+        newCustomer.setPassword(password);
+        cd.insertCustomer(newCustomer);
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        response.setStatus(201);
+        response.sendRedirect("login.html");
 
-        if(submitType.equals("register"))
-        {
-            newCustomer = new Customer();
-            newCustomer.setName(name);
-            newCustomer.setLogin(login);
-            newCustomer.setPassword(password);
-            cd.insertCustomer(newCustomer);
-            response.setContentType("application/json");
-            response.setContentType("UTF-8");
-            response.setStatus(201);
-            response.sendRedirect("login.html");
-        }
     }
 }

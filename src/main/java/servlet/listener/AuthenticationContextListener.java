@@ -1,4 +1,4 @@
-package servlet;
+package servlet.listener;
 
 import service.Authentication;
 import service.AuthenticationImpl;
@@ -9,7 +9,7 @@ import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 
 @WebListener
-public class ContextListenerServlet implements ServletContextListener {
+public class AuthenticationContextListener implements ServletContextListener {
 
     public Authentication authenticationImpl;
 

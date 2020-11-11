@@ -1,20 +1,12 @@
 package database.connection;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
 
-public class ConnectionProvider
-{
-    static Connection conn = null;
-    public static Connection getCon(){
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            conn= DriverManager.getConnection(ProviderConstants.connection,
-                    ProviderConstants.username,ProviderConstants.pwd);
-        }
-        catch (Exception e) {
-            System.out.println(e);
-        }
-        return conn;
-    }
+public interface ConnectionProvider {
+     Connection getCon();
+     boolean closeStatement(Statement statement);
+     boolean closeRS(ResultSet rs);
+     boolean closeCon(Connection con);
 }

@@ -1,10 +1,9 @@
-package filters;
+package servlet.filters;
 
 import database.CustomerDAO;
 import database.CustomerDAOImpl;
 import service.Authentication;
 import service.AuthenticationImpl;
-import utils.JsonHandler;
 
 import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
@@ -36,6 +35,7 @@ public class LoginFilter implements Filter {
         final HttpSession session = req.getSession();
 
         String path = req.getRequestURI().substring(req.getContextPath().length());
+
 
         if(path.startsWith("/login") || path.startsWith("/register")){
             filterChain.doFilter(request, response);

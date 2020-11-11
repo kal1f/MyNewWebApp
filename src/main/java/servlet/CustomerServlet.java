@@ -1,10 +1,9 @@
 package servlet;
 
-import com.google.gson.Gson;
 import database.CustomerDAO;
 import database.CustomerDAOImpl;
 import database.entity.Customer;
-import utils.JsonHandler;
+import utils.ResponseHandlerToJson;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -18,9 +17,19 @@ import java.util.ArrayList;
 @WebServlet(name = "/customers")
 public class CustomerServlet extends HttpServlet {
 
-    private static final long serialVersionUID = 1L;
+    //private static final long serialVersionUID = 1L;
     private CustomerDAO cd;
-    String jsonString;
+    private ResponseHandlerToJson responseHandlerToJson;
+
+    public CustomerServlet() {
+        super();
+    }
+
+    public CustomerServlet(CustomerDAO cd, ResponseHandlerToJson responseHandlerToJson) {
+        super();
+        this.cd = cd;
+        this.responseHandlerToJson = responseHandlerToJson;
+    }
 
     @Override
     public void init(){
@@ -49,11 +58,14 @@ public class CustomerServlet extends HttpServlet {
 
         }
 
-        jsonString = new Gson().toJson(c);
-        response.setStatus(200);
-
-        JsonHandler.sendResponse(response, jsonString);
-
+        if(responseHandlerToJson == null) {
+            ResponseHandlerToJson responseHandlerToJson = new ResponseHandlerToJson(response);
+            responseHandlerToJson.processResponse( 200, c);
+        }
+        else {
+            //ResponseHandler.sendResponse(response, jsonString);
+            responseHandlerToJson.processResponse(200, c);
+        }
     }
 
 }
