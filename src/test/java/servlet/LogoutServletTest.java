@@ -2,6 +2,9 @@ package servlet;
 
 import database.entity.Customer;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 import service.Authentication;
 
 import javax.servlet.ServletException;
@@ -14,17 +17,22 @@ import java.io.IOException;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
+@RunWith(MockitoJUnitRunner.class)
 public class LogoutServletTest {
+    @Mock
+    HttpSession session;
+    @Mock
+    HttpServletRequest request;
+    @Mock
+    HttpServletResponse response;
+    @Mock
+    Authentication authentication;
+
 
     @Test
     public void whenCallDoGetThenCustomerAuthenticationIsDeletedAndReturnLoginPage() throws IOException, ServletException {
 
-        final HttpServletResponse response = mock(HttpServletResponse.class);
-        final HttpServletRequest request = mock(HttpServletRequest.class);
-        final HttpSession session = mock(HttpSession.class);
-        final Authentication authentication = mock(Authentication.class);
-
-        final LogoutServlet logoutServlet = new LogoutServlet(authentication);
+        LogoutServlet logoutServlet = new LogoutServlet(authentication);
 
         doNothing().when(response).setContentType("application/json");
         when(request.getSession()).thenReturn(session);

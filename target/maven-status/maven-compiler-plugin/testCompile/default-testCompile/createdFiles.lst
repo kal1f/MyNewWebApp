@@ -1,0 +1,7 @@
+servlet/RegisterServletTest.class
+servlet/CustomerServletTest.class
+servlet/LoginServletTest.class
+database/CustomerDAOImplTest.class
+servlet/WelcomeServletTest.class
+servlet/LogoutServletTest.class
+database/connection/ProviderConstantsTest.class

@@ -55,7 +55,7 @@ public class LoginServlet extends HttpServlet {
 
     }
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws  ServletException, IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
         String login = request.getParameter("login");
         String password = request.getParameter("password1");
@@ -72,14 +72,20 @@ public class LoginServlet extends HttpServlet {
             response.sendRedirect("/welcome");
         }
         else{
-            if(responseHandlerToJson == null){
-                responseHandlerToJson = new ResponseHandlerToJson(response);
-            }
-            response.setCharacterEncoding("UTF-8");
-            response.setContentType("application/json");
-            response.setHeader("cache-control", "no-cache");
+            if(responseHandlerToJson == null) {
+                ResponseHandlerToJson responseHandlerToJson = new ResponseHandlerToJson(response);
+                response.setCharacterEncoding("UTF-8");
+                response.setContentType("application/json");
+                response.setHeader("cache-control", "no-cache");
+                responseHandlerToJson.processResponse(404, null);
 
-            responseHandlerToJson.processResponse(404, null);
+            }
+            else {
+                response.setCharacterEncoding("UTF-8");
+                response.setContentType("application/json");
+                response.setHeader("cache-control", "no-cache");
+                responseHandlerToJson.processResponse(404, null);
+            }
         }
 
     }

@@ -4,7 +4,12 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import database.CustomerDAO;
 import database.entity.Customer;
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.mockito.runners.MockitoJUnitRunner;
 import service.Authentication;
 import service.AuthenticationImpl;
 import utils.ResponseHandlerToJson;
@@ -21,17 +26,30 @@ import java.io.PrintWriter;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
+@RunWith(MockitoJUnitRunner.class)
 public class LoginServletTest {
-
+    @Mock
+    HttpServletResponse response;
+    @Mock
+    HttpServletRequest request;
+    @Mock
+    RequestDispatcher dispatcher;
+    @Mock
+    Customer customer;
+    @Mock
+    CustomerDAO cd;
+    @Mock
+    Authentication authentication;
+    @Mock
+    HttpSession session;
+    @Mock
+    ResponseHandlerToJson responseHandlerToJson;
 
     @Test
     public void whenDoGetThenServletReturnLogPage() throws ServletException, IOException {
 
         LoginServlet servlet = new LoginServlet();
 
-        final HttpServletRequest request = mock(HttpServletRequest.class);
-        final HttpServletResponse response = mock(HttpServletResponse.class);
-        final RequestDispatcher dispatcher = mock(RequestDispatcher.class);
 
         when(request.getRequestDispatcher("login.html")).thenReturn(dispatcher);
 
@@ -43,13 +61,6 @@ public class LoginServletTest {
 
     @Test
     public void whenCustomerExistsThenDoPostSetSessionAndReturnPage() throws IOException, ServletException {
-
-        final HttpServletResponse response = mock(HttpServletResponse.class);
-        final HttpServletRequest request = mock(HttpServletRequest.class);
-        final Customer customer = mock(Customer.class);
-        final CustomerDAO cd = mock(CustomerDAO.class);
-        final Authentication authentication = mock(Authentication.class);
-        final HttpSession session = mock(HttpSession.class);
 
         LoginServlet loginServlet = new LoginServlet(cd, authentication);
 
@@ -79,13 +90,6 @@ public class LoginServletTest {
 
     @Test
     public void whenCustomerNotExistsThanDoPostReturnJsonPage() throws ServletException, IOException {
-        final HttpServletResponse response = mock(HttpServletResponse.class);
-        final HttpServletRequest request = mock(HttpServletRequest.class);
-        final Customer customer = mock(Customer.class);
-        final CustomerDAO cd = mock(CustomerDAO.class);
-        final Authentication authentication = mock(Authentication.class);
-        final ResponseHandlerToJson responseHandlerToJson = mock(ResponseHandlerToJson.class);
-        final PrintWriter writer  = mock(PrintWriter.class);
 
         LoginServlet loginServlet = new LoginServlet(cd, authentication, responseHandlerToJson);
 
@@ -97,7 +101,7 @@ public class LoginServletTest {
         doCallRealMethod().when(customer).setPassword(anyString());
 
         when(cd.isCustomerExist(anyString(),anyString())).thenReturn(false);
-        when(response.getWriter()).thenReturn(writer);
+        //when(response.getWriter()).thenReturn(writer);
 
         doNothing().when(response).setCharacterEncoding("UTF-8");
         doNothing().when(response).setContentType("application/json");

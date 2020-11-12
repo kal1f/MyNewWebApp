@@ -4,10 +4,7 @@ import database.connection.ConnectionProvider;
 import database.connection.ConnectionProviderImpl;
 import database.entity.Customer;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 
 public class CustomerDAOImpl implements CustomerDAO {
@@ -16,36 +13,48 @@ public class CustomerDAOImpl implements CustomerDAO {
      private ConnectionProvider connectionProvider;
 
     public CustomerDAOImpl(){
+
         this.connectionProvider = new ConnectionProviderImpl();
     }
 
     public CustomerDAOImpl(ConnectionProvider connectionProvider) {
+
         this.connectionProvider = connectionProvider;
     }
 
-
     @Override
     public int insertCustomer(Customer c) {
-        int status = 0;
+        int id = 0;
         Connection con = null;
         PreparedStatement ps = null;
+        ResultSet rs = null;
         try {
+
             con = connectionProvider.getCon();
-            ps = con.prepareStatement("insert into customer (customer, pass_, name_)" + "values(?,?,?)");
-//            Statement statement = con.createStatement();
-//            statement.execute("insert into customer (customer, pass_, name_) values(" + c.getLogin() + ",?,?)");
+            ps = con.prepareStatement("insert into customer (customer, pass_, name_)" + "values(?,?,?)", Statement.RETURN_GENERATED_KEYS);
+
+
             ps.setString(1, c.getLogin());
             ps.setString(2, c.getPassword());
             ps.setString(3, c.getName());
-            status = ps.executeUpdate();
+            ps.executeUpdate();
+
+            rs = ps.getGeneratedKeys();
+            while (rs.next())
+            {
+                id = rs.getInt(1);
+            }
+
         } catch (Exception e) {
             System.out.println(e);
         }
         finally {
+            connectionProvider.closeRS(rs);
             connectionProvider.closeStatement(ps);
+            //connectionProvider.closeStatement(getIdStatement);
             connectionProvider.closeCon(con);
         }
-        return status;
+        return id;
     }
 
     @Override
@@ -67,7 +76,7 @@ public class CustomerDAOImpl implements CustomerDAO {
                 c.setLogin(rs.getString(1));
                 c.setPassword(rs.getString(2));
                 c.setName(rs.getString(3));
-                c.setId(rs.getString(4));
+                c.setId(rs.getInt(4));
             }
 
         }
@@ -101,11 +110,10 @@ public class CustomerDAOImpl implements CustomerDAO {
             while(rs.next()){
                 Customer customer = new Customer(rs.getString("customer"),
                         rs.getString("pass_"), rs.getString("name_"),
-                        rs.getString("id"));
+                        rs.getInt("id"));
                 c.add(customer);
             }
 
-            con.close();
         }
         catch (Exception e){
             System.out.println(e);
@@ -134,10 +142,9 @@ public class CustomerDAOImpl implements CustomerDAO {
             while(rs.next()){
                 Customer customer = new Customer(rs.getString("customer"),
                         rs.getString("pass_"), rs.getString("name_"),
-                        rs.getString("id"));
+                        rs.getInt("id"));
                 c.add(customer);
             }
-            con.close();
         }
         catch (Exception e){
             System.out.println(e);
@@ -152,28 +159,15 @@ public class CustomerDAOImpl implements CustomerDAO {
 
     @Override
     public boolean isCustomerExist(String login, String password) {
-        try{
-            Connection con = connectionProvider.getCon();
-            PreparedStatement ps = con.prepareStatement("select * from customer where customer=? and pass_=?");
-            ps.setString(1,login);
-            ps.setString(2, password);
 
-            ResultSet rs = ps.executeQuery();
-            if(!rs.next()) return false;
-
-            while(rs.next()){
-                Customer customer = new Customer(rs.getString("customer"),
-                        rs.getString("pass_"), rs.getString("name_"),
-                        rs.getString("id"));
-                return customer.getPassword().equals(password) && customer.getLogin().equals(login);
-            }
-
-            con.close();
+        Customer c = getCustomer(login, password);
+        if(c.getLogin() != null && c.getPassword() != null ){
+            return true;
         }
-        catch (Exception e){
-            System.out.println(e);
+        else {
+            return false;
         }
-        return true;
-        //return getCustomer(login, password) != null;
+
     }
+
 }
