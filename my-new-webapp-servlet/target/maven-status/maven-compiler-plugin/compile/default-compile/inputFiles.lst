@@ -1,9 +1,0 @@
-/Users/ashcherbak/IdeaProjects/MyNewWebApp/my-new-webapp-servlet/src/main/java/util/ErrorConstants.java
-/Users/ashcherbak/IdeaProjects/MyNewWebApp/my-new-webapp-servlet/src/main/java/servlet/LoginServlet.java
-/Users/ashcherbak/IdeaProjects/MyNewWebApp/my-new-webapp-servlet/src/main/java/servlet/CustomerServlet.java
-/Users/ashcherbak/IdeaProjects/MyNewWebApp/my-new-webapp-servlet/src/main/java/servlet/filter/LoginFilter.java
-/Users/ashcherbak/IdeaProjects/MyNewWebApp/my-new-webapp-servlet/src/main/java/util/ResponseHandlerToJson.java
-/Users/ashcherbak/IdeaProjects/MyNewWebApp/my-new-webapp-servlet/src/main/java/servlet/RegisterServlet.java
-/Users/ashcherbak/IdeaProjects/MyNewWebApp/my-new-webapp-servlet/src/main/java/servlet/listener/AuthenticationContextListener.java
-/Users/ashcherbak/IdeaProjects/MyNewWebApp/my-new-webapp-servlet/src/main/java/servlet/LogoutServlet.java
-/Users/ashcherbak/IdeaProjects/MyNewWebApp/my-new-webapp-servlet/src/main/java/servlet/WelcomeServlet.java
