@@ -8,34 +8,34 @@ import java.io.IOException;
 
 
 import service.authentication.AuthenticationImpl;
-import service.LoginService;
-import utils.ResponseHandlerToJson;
+import service.impl.LoginServiceImpl;
+import util.ResponseHandlerToJson;
 
 
 @WebServlet(name = "/login")
 public class LoginServlet extends HttpServlet {
 
     private ResponseHandlerToJson responseHandlerToJson;
-    private LoginService loginService;
+    private LoginServiceImpl loginService;
 
     public LoginServlet() {
         super();
     }
 
-    public LoginServlet(LoginService loginService) {
+    public LoginServlet(LoginServiceImpl loginServiceImpl) {
         super();
-        this.loginService = loginService;
+        this.loginService = loginServiceImpl;
     }
 
-    public LoginServlet(LoginService loginService, ResponseHandlerToJson responseHandlerToJson) {
+    public LoginServlet(LoginServiceImpl loginServiceImpl, ResponseHandlerToJson responseHandlerToJson) {
         super();
-        this.loginService = loginService;
+        this.loginService = loginServiceImpl;
         this.responseHandlerToJson = responseHandlerToJson;
     }
 
     @Override
     public void init() {
-        this.loginService = new LoginService((AuthenticationImpl) getServletContext().getAttribute("authenticationImpl"));
+        this.loginService = new LoginServiceImpl((AuthenticationImpl) getServletContext().getAttribute("authenticationImpl"));
         this.responseHandlerToJson = new ResponseHandlerToJson();
     }
 
@@ -54,9 +54,9 @@ public class LoginServlet extends HttpServlet {
         String password = request.getParameter("password1");
         HttpSession session = request.getSession();
 
-        int status = loginService.toService(session.getId(), login, password);
+        String customer = loginService.returnExistedUserInJson(session.getId(), login, password);
 
-        if (status == 0) {
+        if (customer != null) {
             response.setStatus(200);
             response.sendRedirect("/welcome");
         }

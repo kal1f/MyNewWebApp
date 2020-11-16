@@ -2,7 +2,7 @@ package servlet;
 
 
 import service.authentication.AuthenticationImpl;
-import service.LogoutService;
+import service.impl.LogoutServiceImpl;
 
 
 import javax.servlet.annotation.WebServlet;
@@ -12,29 +12,29 @@ import java.io.IOException;
 @WebServlet(name = "/logout")
 public class LogoutServlet extends HttpServlet {
 
-    private LogoutService logoutService;
+    private LogoutServiceImpl logoutService;
 
     public LogoutServlet() {
         super();
-        logoutService = new LogoutService();
+        logoutService = new LogoutServiceImpl();
     }
 
-    public LogoutServlet(LogoutService logoutService) {
+    public LogoutServlet(LogoutServiceImpl logoutServiceImpl) {
         super();
-        this.logoutService = logoutService;
+        this.logoutService = logoutServiceImpl;
     }
 
     @Override
     public void init(){
 
-       this.logoutService = new LogoutService((AuthenticationImpl) getServletContext().getAttribute("authenticationImpl"));
+       this.logoutService = new LogoutServiceImpl((AuthenticationImpl) getServletContext().getAttribute("authenticationImpl"));
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
         response.setContentType("application/json");
         HttpSession session = request.getSession();
-        logoutService.toService(session.getId());
+        logoutService.removeCustomerBySessionId(session.getId());
         session.invalidate();
         response.setStatus(200);
         response.sendRedirect("/login");

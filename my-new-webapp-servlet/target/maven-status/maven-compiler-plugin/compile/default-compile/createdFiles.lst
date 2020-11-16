@@ -1,9 +1,9 @@
 servlet/LogoutServlet.class
-servlet/filters/LoginFilter.class
 servlet/WelcomeServlet.class
+util/ErrorConstants.class
 servlet/CustomerServlet.class
-utils/ResponseHandlerToJson.class
-utils/ErrorConstants.class
+servlet/filter/LoginFilter.class
+util/ResponseHandlerToJson.class
 servlet/listener/AuthenticationContextListener.class
 servlet/RegisterServlet.class
 servlet/LoginServlet.class

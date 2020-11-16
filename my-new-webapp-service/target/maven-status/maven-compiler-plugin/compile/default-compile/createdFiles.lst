@@ -1,7 +1,6 @@
 service/CustomerService.class
 service/authentication/AuthenticationImpl.class
+service/authentication/Authentication.class
 service/LoginService.class
 service/LogoutService.class
 service/RegisterService.class
-service/authentication/Authentication.class
-service/WelcomeService.class

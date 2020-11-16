@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: database.CustomerDAOImplTest
 -------------------------------------------------------------------------------
-Tests run: 12, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.254 sec - in database.CustomerDAOImplTest
+Tests run: 12, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.266 sec - in database.CustomerDAOImplTest

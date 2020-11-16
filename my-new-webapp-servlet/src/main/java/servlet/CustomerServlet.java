@@ -1,7 +1,8 @@
 package servlet;
 
 import service.CustomerService;
-import utils.ResponseHandlerToJson;
+import service.impl.CustomerServiceImpl;
+import util.ResponseHandlerToJson;
 
 
 import javax.servlet.annotation.WebServlet;
@@ -22,15 +23,15 @@ public class CustomerServlet extends HttpServlet {
         super();
     }
 
-    public CustomerServlet(CustomerService customerService, ResponseHandlerToJson responseHandlerToJson) {
+    public CustomerServlet(CustomerServiceImpl customerServiceImpl, ResponseHandlerToJson responseHandlerToJson) {
         super();
-        this.customerService = customerService;
+        this.customerService = customerServiceImpl;
         this.responseHandlerToJson = responseHandlerToJson;
     }
 
     @Override
     public void init(){
-        this.customerService = new CustomerService();
+        this.customerService = new CustomerServiceImpl();
         this.responseHandlerToJson = new ResponseHandlerToJson();
     }
 
@@ -40,7 +41,7 @@ public class CustomerServlet extends HttpServlet {
         String login = request.getParameter("login");
         String id = request.getParameter("id");
 
-        this.responseHandlerToJson.processResponse(response, 200, customerService.toService(id, login));
+        this.responseHandlerToJson.processResponse(response, 200, customerService.returnCustomers(id, login));
     }
 
 }

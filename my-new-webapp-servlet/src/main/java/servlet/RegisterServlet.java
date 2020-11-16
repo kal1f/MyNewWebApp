@@ -1,6 +1,6 @@
 package servlet;
 
-import service.RegisterService;
+import service.impl.RegisterServiceImpl;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -12,22 +12,21 @@ import java.io.IOException;
 @WebServlet(name = "/register")
 public class RegisterServlet extends HttpServlet {
 
-    private RegisterService registerService;
+    private RegisterServiceImpl registerService;
 
     public RegisterServlet() {
         super();
-        this.registerService = new RegisterService();
     }
 
-    public RegisterServlet(RegisterService registerService) {
+    public RegisterServlet(RegisterServiceImpl registerServiceImpl) {
         super();
-        this.registerService = registerService;
+        this.registerService = registerServiceImpl;
     }
 
     @Override
     public void init(){
 
-        registerService = new RegisterService();
+        registerService = new RegisterServiceImpl();
     }
 
     @Override
@@ -40,7 +39,7 @@ public class RegisterServlet extends HttpServlet {
         String name = request.getParameter("name");
         String password = request.getParameter("password1");
 
-        registerService.toService(login, name, password);
+        registerService.createNewCustomerInDb(login, name, password);
 
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
