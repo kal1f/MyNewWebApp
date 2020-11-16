@@ -1,0 +1,14 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="my-new-webapp-servlet:war">
+    <output-path>$PROJECT_DIR$/my-new-webapp-servlet/target</output-path>
+    <properties id="maven-jee-properties">
+      <options>
+        <module>my-new-webapp-servlet</module>
+        <packaging>war</packaging>
+      </options>
+    </properties>
+    <root id="archive" name="ServletWebApp.war">
+      <element id="artifact" artifact-name="my-new-webapp-servlet:war exploded" />
+    </root>
+  </artifact>
+</component>

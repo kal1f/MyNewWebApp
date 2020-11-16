@@ -6,10 +6,15 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="MyNewWebApp" />
+        <module name="my-new-webapp-servlet" />
+        <module name="my-new-webapp-service" />
+        <module name="my-new-webapp-dao" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="my-new-webapp-dao" target="1.8" />
+      <module name="my-new-webapp-service" target="1.8" />
+      <module name="my-new-webapp-servlet" target="1.8" />
       <module name="MyNewWebApp" target="1.8" />
     </bytecodeTargetLevel>
   </component>
