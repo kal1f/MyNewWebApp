@@ -41,7 +41,6 @@ public class CustomerServlet extends HttpServlet {
         String login = request.getParameter("login");
         String id = request.getParameter("id");
 
-
         this.responseHandlerToJson.processResponse(response, 200, customerService.returnCustomers(convertStringToInteger(id), login));
     }
 

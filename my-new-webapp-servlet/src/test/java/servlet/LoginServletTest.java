@@ -7,6 +7,8 @@ import org.mockito.runners.MockitoJUnitRunner;
 import service.LoginService;
 import util.ResponseHandlerToJson;
 
+
+
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -19,6 +21,7 @@ import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class LoginServletTest {
+
     @Mock
     HttpServletResponse response;
     @Mock
@@ -31,6 +34,7 @@ public class LoginServletTest {
     ResponseHandlerToJson responseHandlerToJson;
     @Mock
     LoginService loginService;
+
 
     @Test
     public void whenDoGetThenServletReturnLogPage() throws ServletException, IOException {
@@ -47,12 +51,12 @@ public class LoginServletTest {
     }
 
     @Test
-    public void whenCustomerExistsThenDoPostReturnPage() throws IOException, ServletException {
+    public void whenParamsAreValidAndCustomerExistsThenDoPostReturnWelcomePage() throws IOException {
 
         LoginServlet loginServlet = new LoginServlet(loginService, responseHandlerToJson);
 
-        when(request.getParameter("login")).thenReturn("ahmed");
-        when(request.getParameter("password1")).thenReturn("1234");
+        when(request.getParameter("login")).thenReturn("markR12w");
+        when(request.getParameter("password1")).thenReturn("!12*Alex&");
 
 
         when(loginService.returnExistedUserInJson(anyString(),anyString(),anyString())).thenReturn("json");
@@ -69,12 +73,13 @@ public class LoginServletTest {
     }
 
     @Test
-    public void whenCustomerNotExistsThanDoPostReturnJsonPage() throws ServletException, IOException {
+    public void whenParamsAreValidCustomerNotExistsThanDoPostReturnJsonPage() throws IOException {
 
         LoginServlet loginServlet = new LoginServlet(loginService, responseHandlerToJson);
 
-        when(request.getParameter("login")).thenReturn("ahmed");
-        when(request.getParameter("password1")).thenReturn("1234");
+        when(request.getParameter("login")).thenReturn("markR12w");
+        when(request.getParameter("password1")).thenReturn("!12*Alex&");
+
 
         when(loginService.returnExistedUserInJson(anyString(),anyString(),anyString())).thenReturn(null);
 
@@ -85,6 +90,19 @@ public class LoginServletTest {
 
         verify(responseHandlerToJson, times(1)).processResponse(response,404, null);
 
+    }
+
+    @Test
+    public void whenOneOfParamsIsNotValidThenReturnLoginPage() throws IOException {
+
+        LoginServlet loginServlet = new LoginServlet(loginService, responseHandlerToJson);
+
+        when(request.getParameter("login")).thenReturn("12");
+        when(request.getParameter("password1")).thenReturn("!12*Alex&");
+
+        loginServlet.doPost(request, response);
+
+        verify(response).sendRedirect("/login");
     }
 
 

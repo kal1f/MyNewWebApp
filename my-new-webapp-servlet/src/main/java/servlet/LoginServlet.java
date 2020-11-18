@@ -11,6 +11,7 @@ import service.LoginService;
 import service.authentication.AuthenticationImpl;
 import service.impl.LoginServiceImpl;
 import util.ResponseHandlerToJson;
+import util.validator.DataValidator;
 
 
 @WebServlet(name = "/login")
@@ -54,15 +55,22 @@ public class LoginServlet extends HttpServlet {
         String login = request.getParameter("login");
         String password = request.getParameter("password1");
         HttpSession session = request.getSession();
+        DataValidator dataValidator = new DataValidator();
 
-        String customer = loginService.returnExistedUserInJson(session.getId(), login, password);
+        if(dataValidator.isLogInFormValid(login,password)){
+            String customer = loginService.returnExistedUserInJson(session.getId(), login, password);
 
-        if (customer != null) {
-            response.setStatus(200);
-            response.sendRedirect("/welcome");
-        }
-        else {
+            if (customer != null) {
+                response.setStatus(200);
+                response.sendRedirect("/welcome");
+            }
+            else {
                 this.responseHandlerToJson.processResponse(response, 404, null);
             }
         }
+        else {
+            System.out.println("Not correct data");
+            response.sendRedirect("/login");
+        }
     }
+}
