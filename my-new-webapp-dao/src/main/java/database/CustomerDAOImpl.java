@@ -93,7 +93,7 @@ public class CustomerDAOImpl implements CustomerDAO {
     }
 
     @Override
-    public ArrayList<Customer> getCustomerByIdOrLogin(String login, String id) {
+    public ArrayList<Customer> getCustomerByIdOrLogin(String login, Integer id) {
         ArrayList<Customer> c = new ArrayList<>();
         Connection con = null;
         PreparedStatement ps = null;
@@ -102,7 +102,7 @@ public class CustomerDAOImpl implements CustomerDAO {
         try{
             con = connectionProvider.getCon();
             ps = con.prepareStatement("select * from customer where id=? or customer=? ");
-            ps.setString(1,id);
+            ps.setInt(1,id);
             ps.setString(2,login);
 
 

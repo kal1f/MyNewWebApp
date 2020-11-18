@@ -1,14 +1,14 @@
-/*package servlet;
+package servlet;
 
-import database.CustomerDAO;
+
 import database.entity.Customer;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import utils.ResponseHandlerToJson;
+import service.CustomerService;
+import util.ResponseHandlerToJson;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -23,96 +23,93 @@ public class CustomerServletTest {
     @Mock
     ResponseHandlerToJson responseHandlerToJson;
     @Mock
-    CustomerDAO cd;
-    @Mock
     HttpServletRequest request;
     @Mock
     HttpServletResponse response;
+    @Mock
+    CustomerService customerService;
     @Mock
     ArrayList<Customer> c;
 
 
     @Test
-    public void whenLoginAndIdEqualsNullThanReturnJson() throws ServletException, IOException {
-
-        CustomerServlet servlet = new CustomerServlet(cd, responseHandlerToJson);
+    public void returnCustomersJson() throws IOException {
+        CustomerServlet servlet = new CustomerServlet(customerService, responseHandlerToJson);
 
         when(request.getParameter("login")).thenReturn(null);
         when(request.getParameter("id")).thenReturn(null);
 
-        doNothing().when(response).setContentType("application/json");
-        doNothing().when(response).setCharacterEncoding("UTF-8");
-
-        when(cd.getCustomers()).thenReturn(c);
-        doNothing().when(responseHandlerToJson).processResponse(200, c);
+        doNothing().when(responseHandlerToJson).processResponse(response, 200, c);
 
         servlet.doGet(request, response);
 
-        verify(cd, times(1)).getCustomers();
-        verify(responseHandlerToJson, times(1)).processResponse(200, c);
+        verify(responseHandlerToJson, times(1)).processResponse(response,200, customerService.returnCustomers(anyInt(), anyString()));
     }
 
     @Test
-    public void whenLoginIsNullAndIdIsStringReturnJson() throws ServletException, IOException {
+    public void whenLoginAndIdEqualsNullThanReturnAllCustomers() throws IOException {
 
-        CustomerServlet servlet = new CustomerServlet(cd, responseHandlerToJson);
+        CustomerServlet servlet = new CustomerServlet(customerService, responseHandlerToJson);
 
         when(request.getParameter("login")).thenReturn(null);
-        when(request.getParameter("id")).thenReturn("ahmed");
+        when(request.getParameter("id")).thenReturn(null);
 
-        doNothing().when(response).setContentType("application/json");
-        doNothing().when(response).setCharacterEncoding("UTF-8");
+        ArrayList<Customer> c = customerService.returnCustomers(null, request.getParameter("login"));
 
-        when(cd.getCustomerByIdOrLogin(request.getParameter("login"), request.getParameter("id"))).thenReturn(c);
-        doNothing().when(responseHandlerToJson).processResponse(200, c);
-
+        doNothing().when(responseHandlerToJson).processResponse(response, 200, c);
         servlet.doGet(request, response);
+        verify(responseHandlerToJson, times(1)).processResponse(response, 200, customerService.returnCustomers(null, null));
+    }
 
-        verify(cd, times(1)).getCustomerByIdOrLogin((String) isNull(), anyString());
-        verify(responseHandlerToJson, times(1)).processResponse(200,c);
+    @Test
+    public void whenLoginIsNullAndIdReturnCustomersWithIdEquals() throws IOException {
+
+        CustomerServlet servlet = new CustomerServlet( customerService, responseHandlerToJson);
+
+        when(request.getParameter("login")).thenReturn(null);
+        when(request.getParameter("id")).thenReturn("1");
+
+        ArrayList<Customer> c = customerService.returnCustomers(1, request.getParameter("login"));
+
+        doNothing().when(responseHandlerToJson).processResponse(response, 200, c);
+        servlet.doGet(request, response);
+        verify(responseHandlerToJson, times(1)).processResponse(response, 200, customerService.returnCustomers(1, null));
 
     }
 
     @Test
-    public void whenLoginIsStringAndIdIsNullReturnJson() throws ServletException, IOException{
+    public void whenLoginAndIdIsNullReturnCustomersWithLoginEquals() throws IOException{
 
-        CustomerServlet servlet = new CustomerServlet(cd, responseHandlerToJson);
+        CustomerServlet servlet = new CustomerServlet(customerService, responseHandlerToJson);
 
         when(request.getParameter("login")).thenReturn("ahmed");
         when(request.getParameter("id")).thenReturn(null);
 
-        doNothing().when(response).setContentType("application/json");
-        doNothing().when(response).setCharacterEncoding("UTF-8");
+        ArrayList<Customer> c = customerService.returnCustomers(0, request.getParameter("login"));
 
-        when(cd.getCustomerByIdOrLogin(request.getParameter("login"), request.getParameter("id"))).thenReturn(c);
-        doNothing().when(responseHandlerToJson).processResponse(200, c);
-
+        doNothing().when(responseHandlerToJson).processResponse(response, 200, c);
         servlet.doGet(request, response);
+        verify(responseHandlerToJson, times(1)).processResponse(response, 200, customerService.returnCustomers(0, "ahmed"));
 
-        verify(cd, times(1)).getCustomerByIdOrLogin(anyString(), (String) isNull());
-        verify(responseHandlerToJson, times(1)).processResponse(200,c);
 
     }
 
     @Test
-    public void whenLoginIsNotStringAndIdIsStringReturnJson() throws ServletException, IOException{
+    public void whenLoginAndIdReturnsCustomersWhomDataMatch() throws IOException{
 
-        CustomerServlet servlet = new CustomerServlet(cd, responseHandlerToJson);
+        CustomerServlet servlet = new CustomerServlet(customerService, responseHandlerToJson);
 
         when(request.getParameter("login")).thenReturn("ahmed");
         when(request.getParameter("id")).thenReturn("1");
 
-        doNothing().when(response).setContentType("application/json");
-        doNothing().when(response).setCharacterEncoding("UTF-8");
+        ArrayList<Customer> c = customerService.returnCustomers(Integer.parseInt(request.getParameter("id")), request.getParameter("login"));
 
-        when(cd.getCustomerByIdOrLogin(request.getParameter("login"), request.getParameter("id"))).thenReturn(c);
-        doNothing().when(responseHandlerToJson).processResponse(200, c);
-
+        doNothing().when(responseHandlerToJson).processResponse(response, 200, c);
         servlet.doGet(request, response);
+        verify(responseHandlerToJson, times(1)).processResponse(response, 200, customerService.returnCustomers(1, "ahmed"));
 
-        verify(cd, times(1)).getCustomerByIdOrLogin(anyString(), anyString());
-        verify(responseHandlerToJson, times(1)).processResponse(200,c);
+
 
     }
 
-}*/
+}

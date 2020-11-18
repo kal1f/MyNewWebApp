@@ -1,14 +1,11 @@
-/*
 package servlet;
 
-import database.CustomerDAO;
-import database.entity.Customer;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import service.authentication.Authentication;
-import utils.ResponseHandlerToJson;
+import service.LoginService;
+import util.ResponseHandlerToJson;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -29,15 +26,11 @@ public class LoginServletTest {
     @Mock
     RequestDispatcher dispatcher;
     @Mock
-    Customer customer;
-    @Mock
-    CustomerDAO cd;
-    @Mock
-    Authentication authentication;
-    @Mock
     HttpSession session;
     @Mock
     ResponseHandlerToJson responseHandlerToJson;
+    @Mock
+    LoginService loginService;
 
     @Test
     public void whenDoGetThenServletReturnLogPage() throws ServletException, IOException {
@@ -54,29 +47,22 @@ public class LoginServletTest {
     }
 
     @Test
-    public void whenCustomerExistsThenDoPostSetSessionAndReturnPage() throws IOException, ServletException {
+    public void whenCustomerExistsThenDoPostReturnPage() throws IOException, ServletException {
 
-        LoginServlet loginServlet = new LoginServlet(cd, authentication);
+        LoginServlet loginServlet = new LoginServlet(loginService, responseHandlerToJson);
 
         when(request.getParameter("login")).thenReturn("ahmed");
         when(request.getParameter("password1")).thenReturn("1234");
 
 
-        doCallRealMethod().when(customer).setLogin(anyString());
-        doCallRealMethod().when(customer).setPassword(anyString());
+        when(loginService.returnExistedUserInJson(anyString(),anyString(),anyString())).thenReturn("json");
 
-
-        when(cd.isCustomerExist(anyString(),anyString())).thenReturn(true);
         when(request.getSession()).thenReturn(session);
-
-        doNothing().when(authentication).setCustomer(anyString(), eq(customer));
-
         doNothing().when(response).setStatus(200);
         doNothing().when(response).sendRedirect("/welcome");
 
         loginServlet.doPost(request, response);
 
-        verify(cd, times(1)).isCustomerExist(anyString(), anyString());
         verify(response, times(1)).setStatus(200);
         verify(response, times(1)).sendRedirect("/welcome");
 
@@ -85,31 +71,21 @@ public class LoginServletTest {
     @Test
     public void whenCustomerNotExistsThanDoPostReturnJsonPage() throws ServletException, IOException {
 
-        LoginServlet loginServlet = new LoginServlet(cd, authentication, responseHandlerToJson);
+        LoginServlet loginServlet = new LoginServlet(loginService, responseHandlerToJson);
 
         when(request.getParameter("login")).thenReturn("ahmed");
         when(request.getParameter("password1")).thenReturn("1234");
 
+        when(loginService.returnExistedUserInJson(anyString(),anyString(),anyString())).thenReturn(null);
 
-        doCallRealMethod().when(customer).setLogin(anyString());
-        doCallRealMethod().when(customer).setPassword(anyString());
-
-        when(cd.isCustomerExist(anyString(),anyString())).thenReturn(false);
-        //when(response.getWriter()).thenReturn(writer);
-
-        doNothing().when(response).setCharacterEncoding("UTF-8");
-        doNothing().when(response).setContentType("application/json");
-        doNothing().when(response).setHeader("cache-control", "no-cache");
-
-        doNothing().when(responseHandlerToJson).processResponse(404 , null);
+        when(request.getSession()).thenReturn(session);
+        doNothing().when(responseHandlerToJson).processResponse(response,404 , null);
 
         loginServlet.doPost(request, response);
 
-        verify(cd, times(1)).isCustomerExist(anyString(), anyString());
-        verify(response, times(1)).setContentType("application/json");
-        verify(responseHandlerToJson, times(1)).processResponse(404, null);
+        verify(responseHandlerToJson, times(1)).processResponse(response,404, null);
 
     }
 
 
-}*/
+}

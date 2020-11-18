@@ -7,6 +7,7 @@ import javax.servlet.http.*;
 import java.io.IOException;
 
 
+import service.LoginService;
 import service.authentication.AuthenticationImpl;
 import service.impl.LoginServiceImpl;
 import util.ResponseHandlerToJson;
@@ -16,20 +17,20 @@ import util.ResponseHandlerToJson;
 public class LoginServlet extends HttpServlet {
 
     private ResponseHandlerToJson responseHandlerToJson;
-    private LoginServiceImpl loginService;
+    private LoginService loginService;
 
     public LoginServlet() {
         super();
     }
 
-    public LoginServlet(LoginServiceImpl loginServiceImpl) {
+    public LoginServlet(LoginServiceImpl loginService) {
         super();
-        this.loginService = loginServiceImpl;
+        this.loginService = loginService;
     }
 
-    public LoginServlet(LoginServiceImpl loginServiceImpl, ResponseHandlerToJson responseHandlerToJson) {
+    public LoginServlet(LoginService loginService, ResponseHandlerToJson responseHandlerToJson) {
         super();
-        this.loginService = loginServiceImpl;
+        this.loginService = loginService;
         this.responseHandlerToJson = responseHandlerToJson;
     }
 

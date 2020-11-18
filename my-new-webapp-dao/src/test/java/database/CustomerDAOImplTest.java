@@ -79,7 +79,7 @@ public class CustomerDAOImplTest {
     @Test
     public void getCustomerByNotExistingIdAndLoginReturnEmptyArray() {
 
-        ArrayList<Customer> customers = customerDAO.getCustomerByIdOrLogin("fs", "efsdfsd");
+        ArrayList<Customer> customers = customerDAO.getCustomerByIdOrLogin("fs", 31213);
         assertEquals(0, customers.size());
     }
 
@@ -87,7 +87,7 @@ public class CustomerDAOImplTest {
     @Test
     public void getCustomerByExistingIdReturnArray() {
 
-        ArrayList<Customer> customers = customerDAO.getCustomerByIdOrLogin("fs", "1");
+        ArrayList<Customer> customers = customerDAO.getCustomerByIdOrLogin("fs", 1);
         assertEquals(1, customers.size());
 
     }
@@ -95,7 +95,7 @@ public class CustomerDAOImplTest {
     @Test
     public void getCustomerByExistingLoginReturnArray() {
 
-        ArrayList<Customer> customers = customerDAO.getCustomerByIdOrLogin("das21", "54");
+        ArrayList<Customer> customers = customerDAO.getCustomerByIdOrLogin("das21", 54);
         assertEquals(1, customers.size());
 
     }

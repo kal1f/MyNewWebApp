@@ -13,17 +13,24 @@ public class RegisterServiceImpl implements RegisterService {
         this.cd = new CustomerDAOImpl();
     }
 
+    public RegisterServiceImpl(CustomerDAO customerDAO){
+        this.cd = customerDAO;
+    }
+
     @Override
     public int createNewCustomerInDb(String login, String name, String password){
 
-        Customer newCustomer;
-
-        newCustomer = new Customer();
-        newCustomer.setName(name);
-        newCustomer.setLogin(login);
-        newCustomer.setPassword(password);
-        cd.insertCustomer(newCustomer);
-        return 0;
-
+        if(login != null && name!=null && password!=null) {
+            Customer newCustomer;
+            newCustomer = new Customer();
+            newCustomer.setName(name);
+            newCustomer.setLogin(login);
+            newCustomer.setPassword(password);
+            cd.insertCustomer(newCustomer);
+            return 0;
+        }
+        else {
+            return -1;
+        }
     }
 }

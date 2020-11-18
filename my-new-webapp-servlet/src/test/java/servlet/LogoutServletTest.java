@@ -1,4 +1,3 @@
-/*
 package servlet;
 
 import org.junit.Test;
@@ -6,7 +5,6 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import service.LogoutService;
-import service.authentication.Authentication;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -38,15 +36,14 @@ public class LogoutServletTest {
         when(request.getSession()).thenReturn(session);
 
 
-        doNothing().when(authentication).removeCustomer(anyString());
+        when(logoutService.removeCustomerBySessionId(anyString())).thenReturn(0);
         doNothing().when(session).invalidate();
         doNothing().when(response).setStatus(200);
         doNothing().when(response).sendRedirect("/login");
 
-        //logoutServlet.init();
         logoutServlet.doGet(request, response);
 
-        verify(authentication, times(1)).removeCustomer(anyString());
+        verify(logoutService, times(1)).removeCustomerBySessionId(anyString());
         verify(session, times(1)).invalidate();
         verify(response, times(1)).setStatus(200);
         verify(response, times(1)).sendRedirect("/login");
@@ -54,4 +51,4 @@ public class LogoutServletTest {
     }
 
 
-}*/
+}

@@ -24,6 +24,10 @@ public class LoginServiceImpl implements LoginService {
         this.cd = new CustomerDAOImpl();
         this.authentication = authentication;
     }
+    public LoginServiceImpl(Authentication authentication, CustomerDAO customerDAO){
+        this.cd = customerDAO;
+        this.authentication = authentication;
+    }
 
     @Override
     public String returnExistedUserInJson(String session_id, String login, String password) throws JsonProcessingException {
@@ -40,8 +44,11 @@ public class LoginServiceImpl implements LoginService {
             Customer existedCustomer = cd.getCustomer(login, password);
             existedCustomer.setPassword("");
 
-            return mapper.writeValueAsString(existedCustomer);
+            try {
+                return mapper.writeValueAsString(existedCustomer);
+            }catch (Exception e){
 
+            }
         }
 
         return null;

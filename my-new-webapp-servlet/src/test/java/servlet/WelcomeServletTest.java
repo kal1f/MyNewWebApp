@@ -1,4 +1,3 @@
-/*
 package servlet;
 
 import org.junit.Test;
@@ -30,4 +29,4 @@ public class WelcomeServletTest {
         verify(response).sendRedirect(path);
     }
 
-}*/
+}

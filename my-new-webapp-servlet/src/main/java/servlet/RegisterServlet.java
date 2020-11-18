@@ -1,5 +1,6 @@
 package servlet;
 
+import service.RegisterService;
 import service.impl.RegisterServiceImpl;
 
 import javax.servlet.ServletException;
@@ -12,15 +13,15 @@ import java.io.IOException;
 @WebServlet(name = "/register")
 public class RegisterServlet extends HttpServlet {
 
-    private RegisterServiceImpl registerService;
+    private RegisterService registerService;
 
     public RegisterServlet() {
         super();
     }
 
-    public RegisterServlet(RegisterServiceImpl registerServiceImpl) {
+    public RegisterServlet(RegisterService registerService) {
         super();
-        this.registerService = registerServiceImpl;
+        this.registerService = registerService;
     }
 
     @Override

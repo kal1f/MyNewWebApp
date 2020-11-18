@@ -1,6 +1,7 @@
 package servlet;
 
 
+import service.LogoutService;
 import service.authentication.AuthenticationImpl;
 import service.impl.LogoutServiceImpl;
 
@@ -12,16 +13,16 @@ import java.io.IOException;
 @WebServlet(name = "/logout")
 public class LogoutServlet extends HttpServlet {
 
-    private LogoutServiceImpl logoutService;
+    private LogoutService logoutService;
 
     public LogoutServlet() {
         super();
         logoutService = new LogoutServiceImpl();
     }
 
-    public LogoutServlet(LogoutServiceImpl logoutServiceImpl) {
+    public LogoutServlet(LogoutService logoutService) {
         super();
-        this.logoutService = logoutServiceImpl;
+        this.logoutService = logoutService;
     }
 
     @Override

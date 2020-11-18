@@ -1,13 +1,10 @@
-/*
 package servlet;
 
-import database.CustomerDAO;
-import database.CustomerDAOImpl;
-import database.entity.Customer;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import service.RegisterService;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -22,15 +19,13 @@ import static org.mockito.Mockito.*;
 public class RegisterServletTest {
 
     @Mock
-    Customer c;
-    @Mock
-    CustomerDAO cd;
-    @Mock
     HttpServletRequest request;
     @Mock
     HttpServletResponse response;
     @Mock
     RequestDispatcher dispatcher;
+    @Mock
+    RegisterService registerService;
 
     @Test
     public void whenCallDoGetThenServletReturnRegisterPage() throws ServletException, IOException {
@@ -46,38 +41,31 @@ public class RegisterServletTest {
     }
 
     @Test
-    public void whenCallDoPostNewCustomerCreatingAndReturnLoginPage() throws ServletException, IOException {
+    public void whenCallDoPostNewCustomerCreatingAndReturnLoginPage() throws IOException {
 
-        RegisterServlet servlet = new RegisterServlet();
+        RegisterServlet servlet = new RegisterServlet(registerService);
 
         when(request.getParameter("password1")).thenReturn("1");
         when(request.getParameter("name")).thenReturn("1");
         when(request.getParameter("login")).thenReturn("1");
 
-        doCallRealMethod().when(c).setLogin("1");
-        doCallRealMethod().when(c).setPassword("1");
-        doCallRealMethod().when(c).setName("1");
-
-        when(cd.insertCustomer(c)).thenReturn(anyInt());
-
-        cd.insertCustomer(c);
+        when(registerService.createNewCustomerInDb(anyString(), anyString(), anyString())).thenReturn(0);
 
         doNothing().when(response).setCharacterEncoding("UTF-8");
         doNothing().when(response).setStatus(201);
         doNothing().when(response).setContentType("application/json");
-        doNothing().when(response).sendRedirect("login.html");
+        doNothing().when(response).sendRedirect("/login");
 
-        servlet.init();
         servlet.doPost(request, response);
 
 
-        verify(cd, times(1)).insertCustomer(c);
+        verify(registerService, times(1)).createNewCustomerInDb(anyString(), anyString(), anyString());
         verify(request, times(1)).getParameter("name");
         verify(response).setStatus(201);
-        verify(response).sendRedirect("login.html" );
+        verify(response).setContentType("application/json");
+        verify(response).sendRedirect("/login" );
 
-        assertEquals(anyInt(),cd.insertCustomer(c));
 
     }
 
-}*/
+}

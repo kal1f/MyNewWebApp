@@ -5,7 +5,6 @@ import database.CustomerDAOImpl;
 import database.entity.Customer;
 import service.CustomerService;
 
-
 import java.util.ArrayList;
 
 public class CustomerServiceImpl implements CustomerService {
@@ -17,12 +16,17 @@ public class CustomerServiceImpl implements CustomerService {
         cd = new CustomerDAOImpl();
     }
 
+    public CustomerServiceImpl(CustomerDAO customerDAO){
+        this.cd = customerDAO;
+    }
+
+
     @Override
-    public ArrayList<Customer> returnCustomers(String id, String login) {
+    public ArrayList<Customer> returnCustomers(Integer id, String login) {
 
         ArrayList<Customer> c;
 
-        if (login != null || id != null) {
+        if (login != null || id != 0) {
 
             c = cd.getCustomerByIdOrLogin(login, id);
 

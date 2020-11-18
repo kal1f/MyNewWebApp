@@ -23,9 +23,9 @@ public class CustomerServlet extends HttpServlet {
         super();
     }
 
-    public CustomerServlet(CustomerServiceImpl customerServiceImpl, ResponseHandlerToJson responseHandlerToJson) {
+    public CustomerServlet(CustomerService customerService, ResponseHandlerToJson responseHandlerToJson) {
         super();
-        this.customerService = customerServiceImpl;
+        this.customerService = customerService;
         this.responseHandlerToJson = responseHandlerToJson;
     }
 
@@ -41,7 +41,16 @@ public class CustomerServlet extends HttpServlet {
         String login = request.getParameter("login");
         String id = request.getParameter("id");
 
-        this.responseHandlerToJson.processResponse(response, 200, customerService.returnCustomers(id, login));
+
+        this.responseHandlerToJson.processResponse(response, 200, customerService.returnCustomers(convertStringToInteger(id), login));
+    }
+
+    private Integer convertStringToInteger(String value){
+        try{
+            return Integer.parseInt(value);
+        }catch(Exception e){
+            return 0;
+        }
     }
 
 }
