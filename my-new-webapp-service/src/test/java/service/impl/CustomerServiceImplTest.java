@@ -21,13 +21,13 @@ public class CustomerServiceImplTest {
     ArrayList<Customer> c;
 
     @Test
-    public void returnArrayCustomersWhenIdIs0AndLoginIsNull() {
+    public void returnArrayCustomersWhenIdIsNullAndLoginIsNull() {
 
         CustomerService customerService = new CustomerServiceImpl(cd);
 
         when(cd.getCustomers()).thenReturn(c);
 
-        customerService.returnCustomers(0,null);
+        customerService.returnCustomers(null,null);
 
         verify(cd, times(1)).getCustomers();
     }

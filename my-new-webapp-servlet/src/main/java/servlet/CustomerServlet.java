@@ -3,6 +3,7 @@ package servlet;
 import service.CustomerService;
 import service.impl.CustomerServiceImpl;
 import util.ResponseHandlerToJson;
+import util.validator.DataValidator;
 
 
 import javax.servlet.annotation.WebServlet;
@@ -18,6 +19,7 @@ public class CustomerServlet extends HttpServlet {
 
     private CustomerService customerService;
     private ResponseHandlerToJson responseHandlerToJson;
+    private DataValidator dataValidator = new DataValidator();
 
     public CustomerServlet() {
         super();
@@ -41,14 +43,21 @@ public class CustomerServlet extends HttpServlet {
         String login = request.getParameter("login");
         String id = request.getParameter("id");
 
-        this.responseHandlerToJson.processResponse(response, 200, customerService.returnCustomers(convertStringToInteger(id), login));
+        if(dataValidator.isWelcomeFormValid(id, login)) {
+            this.responseHandlerToJson.processResponse(response, 200, customerService.returnCustomers(convertStringToInteger(id), login));
+        }
+        else{
+            this.responseHandlerToJson.processResponse(response, 400, null);
+        }
+
     }
 
     private Integer convertStringToInteger(String value){
         try{
             return Integer.parseInt(value);
-        }catch(Exception e){
-            return 0;
+        }catch(NumberFormatException e){
+            //log
+            return null;
         }
     }
 

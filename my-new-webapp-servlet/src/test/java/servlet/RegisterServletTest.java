@@ -5,12 +5,14 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import service.RegisterService;
+import util.ResponseHandlerToJson;
 import util.validator.DataValidator;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.ws.Response;
 
 import java.io.IOException;
 
@@ -29,6 +31,8 @@ public class RegisterServletTest {
     RegisterService registerService;
     @Mock
     DataValidator dataValidator;
+    @Mock
+    ResponseHandlerToJson responseHandlerToJson;
 
     @Test
     public void whenCallDoGetThenServletReturnRegisterPage() throws ServletException, IOException {
@@ -46,7 +50,7 @@ public class RegisterServletTest {
     @Test
     public void whenAllParamsAreValidThanNewCustomerCreatingAndReturnLoginPage() throws IOException {
 
-        RegisterServlet servlet = new RegisterServlet(registerService, dataValidator);
+        RegisterServlet servlet = new RegisterServlet(registerService, dataValidator, responseHandlerToJson);
 
         when(request.getParameter("password1")).thenReturn("!12*Alex&");
         when(request.getParameter("password2")).thenReturn("!12*Alex&");
@@ -73,9 +77,9 @@ public class RegisterServletTest {
     }
 
     @Test
-    public void whenOneOfParamsAreNotValidThanReturnRegisterPage() throws IOException {
+    public void whenOneOfParamsAreNotValidThanReturnStatus400() throws IOException {
 
-        RegisterServlet servlet = new RegisterServlet(registerService, dataValidator);
+        RegisterServlet servlet = new RegisterServlet(registerService, dataValidator, responseHandlerToJson);
 
         when(request.getParameter("password1")).thenReturn("123");
         when(request.getParameter("password2")).thenReturn("123");
@@ -86,7 +90,7 @@ public class RegisterServletTest {
 
         servlet.doPost(request, response);
 
-        verify(response).sendRedirect("/register" );
+        verify(responseHandlerToJson, times(1)).processResponse(response, 400, null);
 
 
     }

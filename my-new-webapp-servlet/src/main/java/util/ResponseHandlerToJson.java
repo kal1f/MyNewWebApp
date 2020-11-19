@@ -8,8 +8,7 @@ import com.google.gson.JsonParser;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-import static util.ErrorConstants.ERROR_200_MSG;
-import static util.ErrorConstants.ERROR_404_MSG;
+import static util.ErrorConstants.*;
 
 public class ResponseHandlerToJson {
 
@@ -59,6 +58,9 @@ public class ResponseHandlerToJson {
             if(response.getStatus() == 404 && jsonString.equals("")) {
 
                  msg  = ERROR_404_MSG;
+            }
+            else if(response.getStatus() == 400 && jsonString.equals("")){
+                msg = ERROR_400_MSG;
             }
             else if(response.getStatus() == 200){
                  msg = ERROR_200_MSG + jsonString + "}";

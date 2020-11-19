@@ -2,6 +2,7 @@ package servlet;
 
 import service.RegisterService;
 import service.impl.RegisterServiceImpl;
+import util.ResponseHandlerToJson;
 import util.validator.DataValidator;
 
 import javax.servlet.ServletException;
@@ -16,15 +17,18 @@ public class RegisterServlet extends HttpServlet {
 
     private RegisterService registerService;
     private DataValidator dataValidator;
+    private ResponseHandlerToJson responseHandlerToJson;
+
 
     public RegisterServlet() {
         super();
     }
 
-    public RegisterServlet(RegisterService registerService, DataValidator dataValidator) {
+    public RegisterServlet(RegisterService registerService, DataValidator dataValidator, ResponseHandlerToJson responseHandlerToJson) {
         super();
         this.registerService = registerService;
         this.dataValidator = dataValidator;
+        this.responseHandlerToJson = responseHandlerToJson;
     }
 
     @Override
@@ -32,6 +36,8 @@ public class RegisterServlet extends HttpServlet {
 
         registerService = new RegisterServiceImpl();
         dataValidator = new DataValidator();
+        responseHandlerToJson = new ResponseHandlerToJson();
+
     }
 
     @Override
@@ -54,7 +60,8 @@ public class RegisterServlet extends HttpServlet {
             response.sendRedirect("/login");
         }
         else{
-            response.sendRedirect("/register");
+            //log
+            this.responseHandlerToJson.processResponse(response, 400, null);
         }
 
     }

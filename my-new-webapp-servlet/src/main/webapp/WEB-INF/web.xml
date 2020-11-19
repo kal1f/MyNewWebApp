@@ -5,6 +5,7 @@
          version="4.0">
     <display-name>MyWebApp</display-name>
 
+
     <servlet>
         <servlet-name>welcomeServlet</servlet-name>
         <servlet-class>servlet.WelcomeServlet</servlet-class>

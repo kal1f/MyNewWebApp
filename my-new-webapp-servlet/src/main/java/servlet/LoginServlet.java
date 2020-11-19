@@ -69,8 +69,8 @@ public class LoginServlet extends HttpServlet {
             }
         }
         else {
-            System.out.println("Not correct data");
-            response.sendRedirect("/login");
+            //log System.out.println("Not correct data");
+            this.responseHandlerToJson.processResponse(response, 400, null);
         }
     }
 }

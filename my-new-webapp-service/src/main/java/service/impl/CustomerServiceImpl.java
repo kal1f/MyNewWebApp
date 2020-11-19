@@ -26,7 +26,7 @@ public class CustomerServiceImpl implements CustomerService {
 
         ArrayList<Customer> c;
 
-        if (login != null || id != 0) {
+        if (login != null || id != null) {
 
             c = cd.getCustomerByIdOrLogin(login, id);
 

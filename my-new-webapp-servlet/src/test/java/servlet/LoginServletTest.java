@@ -102,7 +102,7 @@ public class LoginServletTest {
 
         loginServlet.doPost(request, response);
 
-        verify(response).sendRedirect("/login");
+        verify(responseHandlerToJson).processResponse(response, 400, null);
     }
 
 
