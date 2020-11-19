@@ -1,0 +1,5 @@
+servlet/RegisterServletTest.class
+servlet/WelcomeServletTest.class
+servlet/CustomerServletTest.class
+servlet/LoginServletTest.class
+servlet/LogoutServletTest.class

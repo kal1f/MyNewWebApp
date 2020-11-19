@@ -1,0 +1,4 @@
+service/impl/RegisterServiceImplTest.class
+service/impl/LogoutServiceImplTest.class
+service/impl/CustomerServiceImplTest.class
+service/impl/LoginServiceImplTest.class
