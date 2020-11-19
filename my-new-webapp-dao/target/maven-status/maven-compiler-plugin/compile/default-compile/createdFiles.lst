@@ -1,6 +1,0 @@
-database/entity/Customer.class
-database/connection/ConnectionProviderImpl.class
-database/CustomerDAO.class
-database/connection/ConnectionProvider.class
-database/connection/ProviderConstants.class
-database/CustomerDAOImpl.class
