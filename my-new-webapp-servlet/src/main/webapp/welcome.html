@@ -26,5 +26,16 @@
         <h2>Logout</h2>
         <input type="submit" value="Logout">
     </form>
+    <script>
+        fetch("localhost:8080/logout", {method: 'GET'}).then(function(response) {
+            if(response.status === 200 && response.headers.get("Location") === "localhost:8080/login") {
+                window.replace("localhost:8080/login");
+            }
+            else {
+                alert(response.text());
+            }
+
+        });
+    </script>
 </body>
 </html>

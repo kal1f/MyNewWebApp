@@ -1,7 +1,9 @@
 package servlet;
 
+import org.apache.log4j.Logger;
 import service.RegisterService;
 import service.impl.RegisterServiceImpl;
+import util.HttpResponseModel;
 import util.ResponseHandlerToJson;
 import util.validator.DataValidator;
 
@@ -17,18 +19,23 @@ public class RegisterServlet extends HttpServlet {
 
     private RegisterService registerService;
     private DataValidator dataValidator;
+    private HttpResponseModel httpResponseModel;
     private ResponseHandlerToJson responseHandlerToJson;
+
+    static final Logger LOGGER = Logger.getLogger(RegisterServlet.class);
 
 
     public RegisterServlet() {
         super();
     }
 
-    public RegisterServlet(RegisterService registerService, DataValidator dataValidator, ResponseHandlerToJson responseHandlerToJson) {
+    public RegisterServlet(RegisterService registerService, ResponseHandlerToJson responseHandlerToJson,
+                           DataValidator dataValidator, HttpResponseModel httpResponseModel) {
         super();
         this.registerService = registerService;
         this.dataValidator = dataValidator;
         this.responseHandlerToJson = responseHandlerToJson;
+        this.httpResponseModel = httpResponseModel;
     }
 
     @Override
@@ -37,15 +44,21 @@ public class RegisterServlet extends HttpServlet {
         registerService = new RegisterServiceImpl();
         dataValidator = new DataValidator();
         responseHandlerToJson = new ResponseHandlerToJson();
+        httpResponseModel = new HttpResponseModel();
 
     }
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.getRequestDispatcher("register.html").forward(request, response);
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) {
+        try {
+            request.getRequestDispatcher("register.html").forward(request, response);
+        }catch (ServletException | IOException e){
+            LOGGER.error(e.getMessage(), e);
+        }
+
     }
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) {
         String login = request.getParameter("login");
         String name = request.getParameter("name");
         String password1 = request.getParameter("password1");
@@ -53,16 +66,22 @@ public class RegisterServlet extends HttpServlet {
 
         if(dataValidator.isRegisterFormValid(login, name, password1, password2)) {
             registerService.createNewCustomerInDb(login, name, password1);
-
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");
-            response.setStatus(201);
-            response.sendRedirect("/login");
+            response.setStatus(200);
+
+            httpResponseModel.setStatus(200);
+            httpResponseModel.setMessage("Ok");
+
         }
         else{
-            //log
-            this.responseHandlerToJson.processResponse(response, 400, null);
+            LOGGER.info("Customer with login:"+login+" name: "+name+" password1 "+password1+" password2 "+password2+" can not be registered.");
+
+            httpResponseModel.setStatus(400);
+            httpResponseModel.setMessage("Customer with this params can't be registered.");
+
         }
+        responseHandlerToJson.processResponse(response, httpResponseModel);
 
     }
 }

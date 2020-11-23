@@ -11,7 +11,6 @@ public class CustomerServiceImpl implements CustomerService {
 
     private CustomerDAO cd;
 
-
     public CustomerServiceImpl() {
         cd = new CustomerDAOImpl();
     }
@@ -22,7 +21,7 @@ public class CustomerServiceImpl implements CustomerService {
 
 
     @Override
-    public ArrayList<Customer> returnCustomers(Integer id, String login) {
+    public ArrayList<Customer> searchCustomers(Integer id, String login) {
 
         ArrayList<Customer> c;
 

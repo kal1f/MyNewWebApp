@@ -1,7 +1,7 @@
 package service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+import database.entity.Customer;
 
 public interface LoginService {
-    String returnExistedUserInJson(String session_id, String login, String password) throws JsonProcessingException;
+    Customer authenticate(String sessionId, String login, String password);
 }

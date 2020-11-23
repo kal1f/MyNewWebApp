@@ -1,47 +1,64 @@
 package service.authentication;
 
 import database.entity.Customer;
-import service.authentication.Authentication;
+import org.apache.commons.io.filefilter.FalseFileFilter;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class AuthenticationImpl implements Authentication {
 
-    private Map<String, Customer> customerProfileData = new ConcurrentHashMap<>();
+    private final Map<String, Customer> customerProfileData;
 
-    @Override
-    public boolean isSessionPresent(String session_id) {
+    public AuthenticationImpl(){
+        customerProfileData = new ConcurrentHashMap<>();
+    }
 
-        return customerProfileData.containsKey(session_id);
+    public AuthenticationImpl(Map<String, Customer> concurrentHashMap) {
+        customerProfileData = concurrentHashMap;
     }
 
     @Override
-    public boolean isUserAuthenticated(String session_id, Customer customer) {
+    public boolean isSessionPresent(String sessionId) {
 
-        if(!isSessionPresent(session_id)) return false;
+        if(sessionId == null){
+            return false;
+        }
 
-        Customer object = customerProfileData.get(session_id);
+        return customerProfileData.containsKey(sessionId);
+    }
+
+    @Override
+    public boolean isUserAuthenticated(String sessionId, Customer customer) {
+
+        if(customer == null || !isSessionPresent(sessionId)) {
+            return false;
+        }
+
+        Customer object = customerProfileData.get(sessionId);
 
         return (customer.getPassword().equals(object.getPassword()) && customer.getLogin().equals(object.getLogin()));
 
     }
 
     @Override
-    public Customer getCustomer(String session_id) {
+    public Customer getCustomer(String sessionId) {
 
-        return customerProfileData.get(session_id);
+        return customerProfileData.get(sessionId);
     }
 
     @Override
-    public void setCustomer(String session_id, Customer customer) {
-        customerProfileData.put(session_id, customer);
+    public void setCustomer(String sessionId, Customer customer) {
+        if(sessionId == null || customer == null){
+            return;
+        }
+        customerProfileData.put(sessionId, customer);
     }
 
     @Override
-    public void removeCustomer(String session_id) {
-        if(isSessionPresent(session_id)) {
-            customerProfileData.remove(session_id);
+    public void removeCustomer(String sessionId) {
+        if(isSessionPresent(sessionId)) {
+            customerProfileData.remove(sessionId);
         }
     }
 }

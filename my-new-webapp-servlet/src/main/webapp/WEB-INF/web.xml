@@ -5,6 +5,10 @@
          version="4.0">
     <display-name>MyWebApp</display-name>
 
+    <context-param>
+        <param-name>log4j-config-location</param-name>
+        <param-value>WEB-INF/log4j.properties</param-value>
+    </context-param>
 
     <servlet>
         <servlet-name>welcomeServlet</servlet-name>

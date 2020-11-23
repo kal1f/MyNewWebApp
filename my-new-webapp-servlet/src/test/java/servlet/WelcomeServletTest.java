@@ -1,32 +1,43 @@
 package servlet;
 
+import org.junit.Before;
 import org.junit.Test;
-
-import javax.servlet.ServletException;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
+import util.HttpResponseModel;
+import util.ResponseHandlerToJson;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import java.io.IOException;
-
 import static org.mockito.Mockito.*;
 
+@RunWith(MockitoJUnitRunner.class)
 public class WelcomeServletTest {
+    @Mock
+    HttpServletResponse response;
+    @Mock
+    HttpServletRequest request;
+    @Mock
+    ResponseHandlerToJson responseHandlerToJson;
+    @Mock
+    HttpResponseModel httpResponseModel;
 
+    WelcomeServlet servlet;
 
-    private final static String path = "/welcome.html";
+    @Before
+    public void setUp(){
+        servlet = new WelcomeServlet(httpResponseModel, responseHandlerToJson);
+
+        doNothing().when(responseHandlerToJson).processResponse(response, httpResponseModel);
+    }
 
     @Test
-    public void whenCallDoGetThenServletReturnWelcomePage() throws IOException, ServletException {
-        WelcomeServlet servlet = new WelcomeServlet();
-
-        final HttpServletResponse response = mock(HttpServletResponse.class);
-        final HttpServletRequest request = mock(HttpServletRequest.class);
-
-        doNothing().when(response).sendRedirect(path);
+    public void whenCallDoGetThenServletReturnWelcomePage() {
 
         servlet.doGet(request, response);
 
-        verify(response).sendRedirect(path);
+        verify(responseHandlerToJson).processResponse(response, httpResponseModel);
     }
 
 }

@@ -4,30 +4,27 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
+import org.apache.log4j.Logger;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
-import static util.ErrorConstants.*;
+import java.io.IOException;
 
 public class ResponseHandlerToJson {
 
-    private Gson gson;
-    private JsonParser jp;
+    private final Gson gson;
+    private final JsonParser jp;
+
+    static final Logger LOGGER = Logger.getLogger(ResponseHandlerToJson.class);
 
     public ResponseHandlerToJson() {
         this.gson = new GsonBuilder().setPrettyPrinting().create();
         this.jp = new JsonParser();
     }
 
-    public ResponseHandlerToJson( Gson gson, JsonParser  jp) throws IOException {
+    public ResponseHandlerToJson( Gson gson, JsonParser  jp) {
         this.gson = gson;
         this.jp = jp;
-    }
-
-    public void processResponse(HttpServletResponse response, int statusCode, Object o) {
-        response.setStatus(statusCode);
-        processResponse(response, o);
     }
 
     public void processResponse(HttpServletResponse response, Object o) {
@@ -45,42 +42,21 @@ public class ResponseHandlerToJson {
         }
     }
 
-
     public void sendPrettyJsonResponse(HttpServletResponse response, String jsonString) {
 
         try {
-            String msg;
-
-            if(jsonString == null)
-            {
-                jsonString = "";
-            }
-            if(response.getStatus() == 404 && jsonString.equals("")) {
-
-                 msg  = ERROR_404_MSG;
-            }
-            else if(response.getStatus() == 400 && jsonString.equals("")){
-                msg = ERROR_400_MSG;
-            }
-            else if(response.getStatus() == 200){
-                 msg = ERROR_200_MSG + jsonString + "}";
-            }
-            else{
-                msg = jsonString;
-            }
-
             response.setCharacterEncoding("UTF-8");
             response.setContentType("application/json");
             response.setHeader("cache-control", "no-cache");
 
-            JsonElement je = jp.parse(msg);
+            JsonElement je = jp.parse(jsonString);
 
             String prettyJsonString = gson.toJson(je);
 
             response.getWriter().write(prettyJsonString);
         }
-        catch(Exception e) {
-            throw new RuntimeException(Integer.toString(HttpServletResponse.SC_INTERNAL_SERVER_ERROR));
+        catch(IOException e) {
+            LOGGER.debug(e.getMessage(), e);
         }
     }
 

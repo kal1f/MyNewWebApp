@@ -19,9 +19,9 @@ public class LogoutServiceImpl implements LogoutService {
     }
 
     @Override
-    public int removeCustomerBySessionId(String session_id){
-        if(session_id != null){
-            authentication.removeCustomer(session_id);
+    public int unauthenticate(String sessionId){
+        if(sessionId != null){
+            authentication.removeCustomer(sessionId);
         }
         else {
             return -1;

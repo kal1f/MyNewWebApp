@@ -24,5 +24,16 @@
         </tr>
     </table>
 </form>
+<script>
+    fetch("localhost:8080/register", {method: 'POST'}).then(function(response) {
+        if(response.status === 200 && response.headers.get("Location") === "localhost:8080/login") {
+            window.replace("localhost:8080/login");
+        }
+        else {
+            alert(response.text());
+        }
+
+    });
+</script>
 </body>
 </html>

@@ -1,7 +1,5 @@
 package service.impl;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import database.CustomerDAO;
 import database.CustomerDAOImpl;
 import database.entity.Customer;
@@ -30,27 +28,22 @@ public class LoginServiceImpl implements LoginService {
     }
 
     @Override
-    public String returnExistedUserInJson(String session_id, String login, String password) throws JsonProcessingException {
+    public Customer authenticate(String sessionId, String login, String password) {
         Customer customer = new Customer();
         customer.setLogin(login);
         customer.setPassword(password);
 
         if(cd.isCustomerExist(login, password)){
 
-            authentication.setCustomer(session_id, customer);
-
-            ObjectMapper mapper = new ObjectMapper();
+            authentication.setCustomer(sessionId, customer);
 
             Customer existedCustomer = cd.getCustomer(login, password);
-            existedCustomer.setPassword("");
+            existedCustomer.setPassword(null);
 
-            try {
-                return mapper.writeValueAsString(existedCustomer);
-            }catch (Exception e){
-
-            }
+            return existedCustomer;
         }
 
         return null;
     }
+
 }

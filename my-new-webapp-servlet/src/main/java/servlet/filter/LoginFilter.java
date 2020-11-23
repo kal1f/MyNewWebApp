@@ -2,8 +2,10 @@ package servlet.filter;
 
 import database.CustomerDAO;
 import database.CustomerDAOImpl;
+import org.apache.log4j.Logger;
 import service.authentication.Authentication;
 import service.authentication.AuthenticationImpl;
+
 
 import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
@@ -19,16 +21,16 @@ public class LoginFilter implements Filter {
     private Authentication authenticationImpl;
     CustomerDAO cd;
 
+    static final Logger LOGGER = Logger.getLogger(LoginFilter.class);
+
     @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
+    public void init(FilterConfig filterConfig) {
         authenticationImpl = (AuthenticationImpl) filterConfig.getServletContext().getAttribute("authenticationImpl");
         cd = new CustomerDAOImpl();
     }
 
     @Override
-    public void doFilter(ServletRequest request,
-                         ServletResponse response,
-                         FilterChain filterChain) throws IOException, ServletException {
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) {
 
         final HttpServletRequest req = (HttpServletRequest) request;
         final HttpServletResponse resp = (HttpServletResponse) response;
@@ -37,16 +39,24 @@ public class LoginFilter implements Filter {
         String path = req.getRequestURI().substring(req.getContextPath().length());
 
 
-        if(path.startsWith("/login") || path.startsWith("/register")){
-            filterChain.doFilter(request, response);
-            return;
-        }
+        try {
+            LOGGER.debug("Filter url");
+            if(path.startsWith("/login") || path.startsWith("/register")){
+                LOGGER.debug("url starts with /login or /register -> skip");
+                filterChain.doFilter(request, response);
+                return;
+            }
 
-        if (authenticationImpl.isSessionPresent(session.getId())) {
-            filterChain.doFilter(req,resp);
-        }
-        else {
-            ((HttpServletResponse) response).sendRedirect("/login");
+            if (authenticationImpl.isSessionPresent(session.getId())) {
+                LOGGER.debug("session present -> skip");
+                filterChain.doFilter(req,resp);
+            }
+            else {
+                LOGGER.debug("send redirect to /login");
+                ((HttpServletResponse) response).sendRedirect("/login");
+            }
+        } catch (IOException | ServletException e) {
+            LOGGER.error(e.getMessage(), e);
         }
 
 

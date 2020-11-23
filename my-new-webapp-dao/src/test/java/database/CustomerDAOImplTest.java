@@ -19,7 +19,7 @@ public class CustomerDAOImplTest {
     static CustomerDAO customerDAO;
 
     @BeforeClass
-    public static void  databaseUp() throws SQLException {
+    public static void  databaseUp() {
         connectionProvider = new ConnectionProviderTestImpl();
         customerDAO = new CustomerDAOImpl(connectionProvider);
     }
@@ -137,7 +137,7 @@ public class CustomerDAOImplTest {
         assertFalse(existed);
 
     }
-    private void fillInTable() throws SQLException {
+    private void fillInTable() {
         Statement statement = null;
         try {
             statement = connectionProvider.getCon().createStatement();
