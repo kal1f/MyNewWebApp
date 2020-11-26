@@ -1,13 +1,14 @@
+/*
 package servlet;
 
+import binding.request.CustomerRegisterRequestBinding;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import service.RegisterService;
-import util.HttpResponseModel;
-import util.ResponseHandlerToJson;
+import util.DataToJson;
 import util.validator.DataValidator;
 
 import javax.servlet.RequestDispatcher;
@@ -17,6 +18,8 @@ import javax.servlet.http.HttpServletResponse;
 
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
 import static org.mockito.Mockito.*;
 
@@ -34,33 +37,26 @@ public class RegisterServletTest {
     @Mock
     DataValidator dataValidator;
     @Mock
-    ResponseHandlerToJson responseHandlerToJson;
+    DataToJson dataToJson;
     @Mock
-    HttpResponseModel httpResponseModel;
+    CustomerRegisterRequestBinding requestBinding;
 
     RegisterServlet servlet;
 
     @Before
     public void setUp(){
-        when(request.getRequestDispatcher("register.html")).thenReturn(dispatcher);
+        when(requestBinding.toCustomer()).thenReturn();
 
-        doNothing().when(httpResponseModel).setStatus(200);
-        doNothing().when(httpResponseModel).setStatus(400);
-        doNothing().when(httpResponseModel).setMessage("Ok");
-        doNothing().when(response).setCharacterEncoding("UTF-8");
-        doNothing().when(response).setStatus(200);
-        doNothing().when(response).setContentType("application/json");
+        when(request.getRequestDispatcher("register.html")).thenReturn(dispatcher);
         when(dataValidator.isRegisterFormValid("markR12w", "Alexander",
                 "!12*Alex&", "!12*Alex&")).thenReturn(true);
         when(dataValidator.isRegisterFormValid("markR12w", "Alexander",
                 "123", "!123")).thenReturn(false);
-        when(registerService.createNewCustomerInDb("markR12w", "Alexander",
-                "!12*Alex&")).thenReturn(0);
-
+        when(registerService.createNewCustomerInDb(requestBinding.toCustomer())).thenReturn(0);
     }
 
     @Test
-    public void whenCallDoGetThenServletReturnRegisterPage() throws ServletException, IOException {
+    public void whenDoGetThenServletReturnRegisterPage() throws ServletException, IOException {
 
         servlet = new RegisterServlet();
 
@@ -71,10 +67,41 @@ public class RegisterServletTest {
     }
 
     @Test
+    public void whenDoGetServletExceptionResponseStatus500() throws ServletException, IOException {
+        servlet = new RegisterServlet(dataToJson);
+
+        doThrow(ServletException.class).when(dispatcher).forward(request, response);
+
+        StringWriter stringWriter = new StringWriter();
+        PrintWriter writer = new PrintWriter(stringWriter);
+        when(response.getWriter()).thenReturn(writer);
+
+        servlet.doGet(request, response);
+
+        verify(response).setStatus(500);
+        verify(dataToJson).processResponse(response, null);
+    }
+
+    @Test
+    public void whenDoGetIOExceptionResponseStatus500() throws ServletException, IOException {
+        servlet = new RegisterServlet(dataToJson);
+        doThrow(new IOException()).when(dispatcher).forward(request, response);
+
+        StringWriter stringWriter = new StringWriter();
+        PrintWriter writer = new PrintWriter(stringWriter);
+        when(response.getWriter()).thenReturn(writer);
+
+        servlet.doGet(request, response);
+
+        verify(response).setStatus(500);
+        verify(dataToJson).processResponse(response, null);
+    }
+
+    @Test
     public void whenFormIsValidThanSetStatus200() {
 
-        servlet = new RegisterServlet(registerService, responseHandlerToJson,
-                dataValidator, httpResponseModel);
+        servlet = new RegisterServlet(registerService, dataToJson,
+                dataValidator);
 
         when(request.getParameter("password1")).thenReturn("!12*Alex&");
         when(request.getParameter("password2")).thenReturn("!12*Alex&");
@@ -86,25 +113,22 @@ public class RegisterServletTest {
         verify(registerService, times(1)).createNewCustomerInDb(request.getParameter("login"),
                 request.getParameter("name"), request.getParameter("password1"));
         verify(response).setStatus(200);
-        verify(response).setContentType("application/json");
-        verify(response).setCharacterEncoding("UTF-8");
-        verify(httpResponseModel).setStatus(200);
-        verify(httpResponseModel).setMessage("Ok");
-        verify(responseHandlerToJson).processResponse(response, httpResponseModel);
+        verify(dataToJson).processResponse(response, null);
     }
 
     @Test
     public void whenFormIsNotValidThanSetStatus400() {
 
-        servlet = new RegisterServlet(registerService, responseHandlerToJson, dataValidator, httpResponseModel);
+        servlet = new RegisterServlet(registerService, dataToJson, dataValidator);
 
         servlet.doPost(request, response);
 
-        verify(httpResponseModel).setStatus(400);
-        verify(httpResponseModel).setMessage("Customer with this params can't be registered.");
-        verify(responseHandlerToJson).processResponse(response, httpResponseModel);
+        verify(response).setStatus(400);
+        verify(dataToJson).processResponse(response, null);
 
 
     }
 
 }
+*/
+

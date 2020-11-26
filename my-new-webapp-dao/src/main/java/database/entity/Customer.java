@@ -2,7 +2,7 @@ package database.entity;
 
 public class Customer {
 
-    private int id;
+    private Integer id;
     private String login;
     private String name;
     private String password;
@@ -11,9 +11,23 @@ public class Customer {
 
     }
 
-    public Customer(String customer, String pass_, String name_, Integer id) {
+    public Customer(int id, String login) {
         this.id = id;
-        this.login = customer;
+        this.login = login;
+    }
+
+    public Customer(String login, String password){
+        this.login = login;
+        this.password = password;
+    }
+    public Customer(String login, String name, String password){
+        this.login = login;
+        this.password = password;
+    }
+
+    public Customer(String login, String pass_, String name_, Integer id) {
+        this.id = id;
+        this.login = login;
         this.password = pass_;
         this.name = name_;
     }

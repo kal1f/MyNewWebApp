@@ -4,19 +4,16 @@ import org.apache.log4j.Logger;
 import service.LogoutService;
 import service.authentication.AuthenticationImpl;
 import service.impl.LogoutServiceImpl;
-import util.HttpResponseModel;
-import util.ResponseHandlerToJson;
+import util.DataToJson;
 
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
-import java.io.IOException;
 
 @WebServlet(name = "/logout")
 public class LogoutServlet extends HttpServlet {
 
     private LogoutService logoutService;
-    private ResponseHandlerToJson responseHandlerToJson;
-    private HttpResponseModel httpResponseModel;
+    private DataToJson dataToJson;
 
     static final Logger LOGGER = Logger.getLogger(LogoutServlet.class);
 
@@ -25,33 +22,25 @@ public class LogoutServlet extends HttpServlet {
         logoutService = new LogoutServiceImpl();
     }
 
-    public LogoutServlet(LogoutService logoutService, ResponseHandlerToJson responseHandlerToJson,
-                         HttpResponseModel httpResponseModel) {
+    public LogoutServlet(LogoutService logoutService, DataToJson dataToJson) {
         super();
         this.logoutService = logoutService;
-        this.responseHandlerToJson = responseHandlerToJson;
-        this.httpResponseModel = httpResponseModel;
+        this.dataToJson = dataToJson;
     }
 
     @Override
     public void init(){
 
        this.logoutService = new LogoutServiceImpl((AuthenticationImpl) getServletContext().getAttribute("authenticationImpl"));
-       this.httpResponseModel = new HttpResponseModel();
-       this.responseHandlerToJson = new ResponseHandlerToJson();
+       this.dataToJson = new DataToJson();
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) {
 
         HttpSession session = request.getSession();
-        response.setContentType("application/json");
         logoutService.unauthenticate(session.getId());
         session.invalidate();
-        response.setStatus(200);
-
-        httpResponseModel.setStatus(200);
-        responseHandlerToJson.processResponse(response, httpResponseModel);
-
+        dataToJson.processResponse(response, 200,null);
     }
 }
 

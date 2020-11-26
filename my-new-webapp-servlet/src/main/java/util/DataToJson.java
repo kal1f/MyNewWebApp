@@ -1,5 +1,6 @@
 package util;
 
+import binding.response.ResponseBinding;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
@@ -10,34 +11,40 @@ import javax.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 
-public class ResponseHandlerToJson {
+public class DataToJson {
 
     private final Gson gson;
     private final JsonParser jp;
 
-    static final Logger LOGGER = Logger.getLogger(ResponseHandlerToJson.class);
 
-    public ResponseHandlerToJson() {
+    static final Logger LOGGER = Logger.getLogger(DataToJson.class);
+
+    public DataToJson() {
         this.gson = new GsonBuilder().setPrettyPrinting().create();
         this.jp = new JsonParser();
     }
 
-    public ResponseHandlerToJson( Gson gson, JsonParser  jp) {
+    public DataToJson(Gson gson, JsonParser jp) {
         this.gson = gson;
         this.jp = jp;
     }
 
-    public void processResponse(HttpServletResponse response, Object o) {
+    public void processResponse(HttpServletResponse response, int statusCode, ResponseBinding model) {
+        response.setStatus(statusCode);
+        processResponse(response, model);
+    }
 
-        String objectToJson = objectToJson(o);
+    public void processResponse(HttpServletResponse response, ResponseBinding model) {
+
+        String objectToJson = objectToJson(model);
         sendPrettyJsonResponse(response, objectToJson);
     }
 
-    public String objectToJson(Object o) {
-        if(o != null) {
-            return new Gson().toJson(o);
-        }
-        else {
+    public String objectToJson(ResponseBinding model) {
+
+        if (model != null) {
+            return new Gson().toJson(model);
+        } else {
             return "";
         }
     }
@@ -49,13 +56,14 @@ public class ResponseHandlerToJson {
             response.setContentType("application/json");
             response.setHeader("cache-control", "no-cache");
 
-            JsonElement je = jp.parse(jsonString);
+           /* JsonElement je = jp.parse(jsonString);
 
             String prettyJsonString = gson.toJson(je);
 
-            response.getWriter().write(prettyJsonString);
-        }
-        catch(IOException e) {
+            response.getWriter().write(prettyJsonString);*/
+
+            response.getWriter().write(jsonString);
+        } catch (IOException e) {
             LOGGER.debug(e.getMessage(), e);
         }
     }

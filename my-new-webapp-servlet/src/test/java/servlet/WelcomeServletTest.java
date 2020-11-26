@@ -1,14 +1,20 @@
+/*
 package servlet;
 
+import binding.response.ErrorResponseBinding;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import util.HttpResponseModel;
-import util.ResponseHandlerToJson;
+import util.DataToJson;
+
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import java.io.IOException;
 
 import static org.mockito.Mockito.*;
 
@@ -19,25 +25,50 @@ public class WelcomeServletTest {
     @Mock
     HttpServletRequest request;
     @Mock
-    ResponseHandlerToJson responseHandlerToJson;
+    DataToJson dataToJson;
     @Mock
-    HttpResponseModel httpResponseModel;
+    RequestDispatcher dispatcher;
 
     WelcomeServlet servlet;
 
     @Before
-    public void setUp(){
-        servlet = new WelcomeServlet(httpResponseModel, responseHandlerToJson);
+    public void setUp() throws ServletException, IOException {
+        servlet = new WelcomeServlet(dataToJson);
 
-        doNothing().when(responseHandlerToJson).processResponse(response, httpResponseModel);
+        when(request.getRequestDispatcher("register.html")).thenReturn(dispatcher);
+
+        doNothing().when(dispatcher).forward(request,response);
+        doNothing().when(dataToJson).processResponse(response, 500,ErrorResponseBinding.ERROR_RESPONSE_500 );
     }
 
     @Test
-    public void whenCallDoGetThenServletReturnWelcomePage() {
+    public void whenDoGetReturnWelcomePage() throws ServletException, IOException {
 
         servlet.doGet(request, response);
 
-        verify(responseHandlerToJson).processResponse(response, httpResponseModel);
+        verify(request.getRequestDispatcher("welcome.html")).forward(request, response);
+    }
+
+    @Test
+    public void whenDoGetServletException() throws ServletException, IOException {
+
+        doThrow(new ServletException()).when(dispatcher).forward(request, response);
+
+        servlet.doGet(request, response);
+
+        verify(dataToJson).processResponse(response, 500,
+                ErrorResponseBinding.ERROR_RESPONSE_500);
+    }
+    @Test
+    public void whenDoGetIOException() throws ServletException, IOException {
+
+        doThrow(new IOException()).when(dispatcher).forward(request, response);
+
+        servlet.doGet(request, response);
+
+        verify(dataToJson).processResponse(response, 500,
+                ErrorResponseBinding.ERROR_RESPONSE_500);
     }
 
 }
+*/

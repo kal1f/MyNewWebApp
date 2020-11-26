@@ -10,5 +10,4 @@ public interface CustomerDAO {
     Customer getCustomer(String username, String password);
     ArrayList<Customer> getCustomerByIdOrLogin(String login, Integer id);
     ArrayList<Customer> getCustomers();
-    boolean isCustomerExist(String login, String password);
 }

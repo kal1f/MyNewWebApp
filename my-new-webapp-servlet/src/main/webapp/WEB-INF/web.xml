@@ -31,7 +31,6 @@
         <servlet-class>servlet.RegisterServlet</servlet-class>
     </servlet>
 
-
     <servlet-mapping>
         <servlet-name>welcomeServlet</servlet-name>
         <url-pattern>/welcome</url-pattern>
@@ -52,5 +51,6 @@
         <servlet-name>customerServlet</servlet-name>
         <url-pattern>/customers</url-pattern>
     </servlet-mapping>
+
 
 </web-app>

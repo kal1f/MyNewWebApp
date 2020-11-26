@@ -1,3 +1,4 @@
+/*
 package service.impl;
 
 import database.CustomerDAO;
@@ -94,4 +95,4 @@ public class LoginServiceImplTest {
     }
 
 
-}
+}*/

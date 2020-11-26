@@ -1,5 +1,7 @@
 package service;
 
+import database.entity.Customer;
+
 public interface RegisterService {
-    int createNewCustomerInDb(String login, String name, String password);
+    int createNewCustomerInDb(Customer customer);
 }

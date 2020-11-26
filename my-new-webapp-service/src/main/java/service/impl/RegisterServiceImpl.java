@@ -18,7 +18,11 @@ public class RegisterServiceImpl implements RegisterService {
     }
 
     @Override
-    public int createNewCustomerInDb(String login, String name, String password){
+    public int createNewCustomerInDb(Customer customer){
+
+        String name = customer.getName();
+        String login = customer.getLogin();
+        String password = customer.getPassword();
 
         if(login != null && name!=null && password!=null) {
             Customer newCustomer;

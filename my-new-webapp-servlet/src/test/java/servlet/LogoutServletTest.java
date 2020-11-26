@@ -6,8 +6,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import service.LogoutService;
-import util.HttpResponseModel;
-import util.ResponseHandlerToJson;
+import util.DataToJson;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -25,23 +24,18 @@ public class LogoutServletTest {
     @Mock
     LogoutService logoutService;
     @Mock
-    ResponseHandlerToJson responseHandlerToJson;
-    @Mock
-    HttpResponseModel httpResponseModel;
+    DataToJson dataToJson;
 
     LogoutServlet logoutServlet;
 
     @Before
     public void setUp(){
-        logoutServlet = new LogoutServlet(logoutService, responseHandlerToJson, httpResponseModel);
+        logoutServlet = new LogoutServlet(logoutService, dataToJson);
 
         when(request.getSession()).thenReturn(session);
         when(logoutService.unauthenticate(anyString())).thenReturn(0);
         doNothing().when(session).invalidate();
-        doNothing().when(response).setContentType("application/json");
-        doNothing().when(response).setStatus(200);
-        doNothing().when(httpResponseModel).setStatus(200);
-        doNothing().when(responseHandlerToJson).processResponse(response, httpResponseModel);
+        doNothing().when(dataToJson).processResponse(response, null);
     }
 
     @Test
@@ -51,8 +45,7 @@ public class LogoutServletTest {
 
         verify(logoutService, times(1)).unauthenticate(anyString());
         verify(session, times(1)).invalidate();
-        verify(response, times(1)).setStatus(200);
-       verify(responseHandlerToJson, times(1)).processResponse(response, httpResponseModel);
+        verify(dataToJson, times(1)).processResponse(response, 200,null);
 
     }
 

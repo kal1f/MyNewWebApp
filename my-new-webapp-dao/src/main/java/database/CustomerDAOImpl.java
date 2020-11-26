@@ -157,17 +157,4 @@ public class CustomerDAOImpl implements CustomerDAO {
         return c;
     }
 
-    @Override
-    public boolean isCustomerExist(String login, String password) {
-
-        Customer c = getCustomer(login, password);
-        if(c.getLogin() != null && c.getPassword() != null ){
-            return true;
-        }
-        else {
-            return false;
-        }
-
-    }
-
 }

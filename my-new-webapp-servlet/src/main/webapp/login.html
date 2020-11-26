@@ -5,16 +5,16 @@
     <title>Title</title>
 </head>
 <body>
-<form action="login" method="post">
+<form id="form" method="post">
     <table>
         <tr>
             <td>Login: </td><td><input id="login" type="text" name="login"></td>
         </tr>
         <tr>
-            <td>Password: </td><td><input id="password" type="password" name="password1"></td>
+            <td>Password: </td><td><input id="password" type="password" name="password"></td>
         </tr>
         <tr>
-            <td><input type="submit" name="submit" value="login"></td>
+            <td><input type="submit" value="login"></td>
             <form action="register" method="get">
                 <td><a href="register">Registration</a></td>
             </form>
@@ -23,19 +23,69 @@
     </table>
 </form>
 <script>
-    fetch("http://localhost:8080/login",
-        {method: "POST",
-            body: JSON.stringify({login: document.getElementById("login"), password1:document.getElementById("password")})
-        }).then(function(response) {
-        if(response.status === 200) {
-            alert(window.location.assign("http://localhost:8080/welcome"));
-            //response.redirect("http://localhost:8080/welcome", 200)
-        }
-        else {
-            alert(response.text());
-        }
+    /*
+    HTTP1.1
+    METHOD: POST
+    CONTENT-TYPE: application/json
+    ===================
+    {"login":,"password":}*/
 
-    });
+    /*document.getElementById("loginButton").addEventListener("click", function () {
+        const data = { login: document.getElementById("login").value,
+            password: document.getElementById("password").value }
+
+        const json = data
+
+        console.log(json)
+
+        fetch('http://localhost:8080/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json',
+                'Application': 'application/json' },
+            body: JSON.stringify(json)
+            }).then(resp => {
+                if (resp.status === 200) {
+                    window.location.assign("welcome");
+                }
+                else {
+                    console.log(resp.json());
+                }
+        });
+    });*/
+    var form = document.getElementById('form')
+
+    form.addEventListener('submit', function (e) {
+
+        e.preventDefault()
+
+        var login = document.getElementById('login').value
+        var password = document.getElementById('password').value
+
+        fetch('login', {
+            method: 'POST',
+            body: JSON.stringify({
+                login: login,
+                password: password
+            }),
+            headers: {
+                'Content-Type': 'application/json; charset=UTF-8'
+            }
+        })
+            .then(function (response) {
+                if (response.status === 200) {
+                    window.location.replace('welcome');
+                }
+                else if(response.status === 400) {
+                    var json = JSON.parse(JSON.stringify(response.json()));
+                    var w = window.open();
+                    var html = "<head><style>pre {outline: 1px solid #ccc; padding: 5px; margin: 5px; } .string { color: green; } ";
+                    html+= " .number { color: darkorange; } .boolean { color: blue; } .null { color: magenta; } .key { color: red; }</style></head><body>";
+                    html+= "<pre>"+json+"</pre></body>";
+                    w.document.writeln(html);
+                }
+            })
+    })
+
 </script>
 </body>
 </html>

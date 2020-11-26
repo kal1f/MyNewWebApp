@@ -5,7 +5,6 @@ import service.authentication.Authentication;
 import service.authentication.AuthenticationImpl;
 
 
-
 public class LogoutServiceImpl implements LogoutService {
 
     private Authentication authentication;

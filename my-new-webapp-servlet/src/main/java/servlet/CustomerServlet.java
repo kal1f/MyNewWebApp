@@ -1,25 +1,29 @@
 package servlet;
 
+import binding.request.CustomerWelcomeRequestBinding;
+import binding.response.CustomerWelcomeResponseBinding;
+import binding.response.ErrorResponseBinding;
+import database.entity.Customer;
 import org.apache.log4j.Logger;
 import service.CustomerService;
 import service.impl.CustomerServiceImpl;
-import util.HttpResponseModel;
-import util.ResponseHandlerToJson;
+import util.DataToJson;
+import util.JsonToData;
 import util.validator.DataValidator;
-
-
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.ArrayList;
 
 
 @WebServlet(name = "/customers")
 public class CustomerServlet extends HttpServlet {
 
     private CustomerService customerService;
-    private ResponseHandlerToJson responseHandlerToJson;
-    private HttpResponseModel httpResponseModel;
+    private DataToJson dataToJson;
+    private JsonToData jsonToData;
     private DataValidator dataValidator;
 
     static final Logger LOGGER = Logger.getLogger(CustomerServlet.class);
@@ -28,55 +32,69 @@ public class CustomerServlet extends HttpServlet {
         super();
     }
 
-    public CustomerServlet(CustomerService customerService, ResponseHandlerToJson responseHandlerToJson,
-                           HttpResponseModel httpResponseModel, DataValidator dataValidator) {
+    public CustomerServlet(CustomerService customerService, DataToJson dataToJson,
+                           DataValidator dataValidator, JsonToData jsonToData) {
         super();
         this.customerService = customerService;
-        this.responseHandlerToJson = responseHandlerToJson;
+        this.dataToJson = dataToJson;
         this.dataValidator = dataValidator;
-        this.httpResponseModel = httpResponseModel;
+        this.jsonToData = jsonToData;
     }
 
     @Override
     public void init(){
         this.customerService = new CustomerServiceImpl();
-        this.responseHandlerToJson = new ResponseHandlerToJson();
+        this.dataToJson = new DataToJson();
         this.dataValidator = new DataValidator();
-        this.httpResponseModel = new HttpResponseModel();
+        this.jsonToData = new JsonToData();
     }
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
     {
-        String login = request.getParameter("login");
-        String id = request.getParameter("id");
+        CustomerWelcomeRequestBinding requestBinding = null;
+        try {
+            requestBinding = jsonToData.jsonToWelcomeData(request);
+        } catch (IOException e){
+            LOGGER.debug(e.getMessage(), e);
+            dataToJson.processResponse(response, 500, ErrorResponseBinding.ERROR_RESPONSE_500);
+            return;
+        }
+        if(dataValidator.isWelcomeFormValid(Integer.toString(requestBinding.getId()),requestBinding.getLogin())) {
 
-        if(dataValidator.isWelcomeFormValid(id, login)) {
-            httpResponseModel.setStatus(200);
-            httpResponseModel.setMessage("Ok");
-            httpResponseModel.setCustomers(customerService.searchCustomers(convertStringToInteger(id), login));
-            responseHandlerToJson.processResponse(response, httpResponseModel);
+            ArrayList<Customer> c = customerService.searchCustomers(requestBinding.toCustomer());
+
+            if(c.isEmpty()){
+                LOGGER.debug("Customers with login:"+requestBinding.getLogin()+
+                        " id: "+requestBinding.getId()+
+                        " are not existing");
+
+                dataToJson.processResponse(response,404, new ErrorResponseBinding(404,
+                        "Customers with login:"+requestBinding.getLogin()+
+                                " id: "+requestBinding.getId()+
+                        " are not existing"));
+            }
+            else {
+                dataToJson.processResponse(response,200, new CustomerWelcomeResponseBinding(c));
+            }
         }
         else{
-            LOGGER.warn("Login or id is not valid");
-            httpResponseModel.setStatus(400);
-            httpResponseModel.setMessage("Login or id is not valid");
-            responseHandlerToJson.processResponse(response, httpResponseModel);
+            LOGGER.debug("Login or id is not valid");
+
+            dataToJson.processResponse(response, 400, new ErrorResponseBinding(400,
+                    "Login: "+requestBinding.getLogin()+
+                            " or id: "+requestBinding.getId()+
+                            " is not valid"));
 
         }
 
     }
 
-    public Integer convertStringToInteger(String value){
-        try{
-            LOGGER.debug("Parse "+value);
-            return Integer.parseInt(value);
-        }catch(NumberFormatException e){
-            //log
-            LOGGER.error(e.getMessage(), e);
-            //
-            return null;
-        }
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response){
+
+        ArrayList<Customer>  c = customerService.outAllCustomers();
+        dataToJson.processResponse(response, 200, new CustomerWelcomeResponseBinding(c));
     }
 
 }

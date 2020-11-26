@@ -1,14 +1,19 @@
 package servlet;
 
+import binding.request.CustomerLoginRequestBinding;
+import binding.response.CustomerLoginResponseBinding;
+import binding.response.ErrorResponseBinding;
+import binding.response.ResponseBinding;
 import database.entity.Customer;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import service.LoginService;
-import util.HttpResponseModel;
-import util.ResponseHandlerToJson;
+import util.DataToJson;
+import util.JsonToData;
 import util.validator.DataValidator;
 
 import javax.servlet.RequestDispatcher;
@@ -18,6 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import java.io.IOException;
+
 
 import static org.mockito.Mockito.*;
 
@@ -33,37 +39,35 @@ public class LoginServletTest {
     @Mock
     HttpSession session;
     @Mock
-    ResponseHandlerToJson responseHandlerToJson;
+    JsonToData jsonToData;
+    @Mock
+    DataToJson dataToJson;
     @Mock
     LoginService loginService;
     @Mock
-    HttpResponseModel httpResponseModel;
-    @Mock
     DataValidator dataValidator;
+    @Mock
+    CustomerLoginRequestBinding requestBinding;
 
     LoginServlet servlet;
 
+
     @Before
     public void setUp() throws ServletException, IOException {
-        servlet = new LoginServlet(loginService, responseHandlerToJson, httpResponseModel, dataValidator);
 
-        when(request.getSession()).thenReturn(session);
+        servlet = new LoginServlet(loginService, dataToJson, dataValidator, jsonToData);
+
+        when(jsonToData.jsonToLoginData(request)).thenReturn(requestBinding);
+
         when(request.getRequestDispatcher("login.html")).thenReturn(dispatcher);
-        when(dataValidator.isLogInFormValid("markR12w","!12*Alex&")).thenReturn(true);
+        /*when(dataValidator.isLogInFormValid("markR12w","!12*Alex&")).thenReturn(true);
         when(dataValidator.isLogInFormValid("lafw","!12*Alex&")).thenReturn(false);
         when(dataValidator.isLogInFormValid("markR12w","12")).thenReturn(false);
+        when(dataValidator.isLogInFormValid(null, null)).thenReturn(false);*/
         when(request.getSession()).thenReturn(session);
 
         doNothing().when(dispatcher).forward(request,response);
-        doNothing().when(response).setStatus(200);
-        doNothing().when(httpResponseModel).setMessage("Ok");
-        doNothing().when(httpResponseModel).setStatus(200);
-        doNothing().when(httpResponseModel).setStatus(400);
-        doNothing().when(httpResponseModel).setStatus(404);
-        doNothing().when(httpResponseModel).setMessage("Login: or password: is not valid.");
-        doNothing().when(httpResponseModel).setMessage("Ok");
-        doNothing().when(httpResponseModel).setError("Unauthorized");
-        doNothing().when(responseHandlerToJson).processResponse(response, httpResponseModel);
+        doNothing().when(dataToJson).processResponse(Matchers.any(HttpServletResponse.class), anyInt(), Matchers.any(ResponseBinding.class));
     }
 
     @Test
@@ -71,73 +75,126 @@ public class LoginServletTest {
 
         servlet = new LoginServlet();
         servlet.doGet(request, response);
-        verify(request.getRequestDispatcher("login.html"), times(1)).forward(request, response);
+        verify(request.getRequestDispatcher("login.html")).forward(request, response);
+
     }
 
     @Test
-    public void whenParamsAreValidAndCustomerExistsThenDoPostReturnWelcomePageAndStatus200(){
+    public void whenDoGetServletExceptionExpectStatus500() throws IOException, ServletException {
 
-        when(request.getParameter("login")).thenReturn("markR12w");
-        when(request.getParameter("password1")).thenReturn("!12*Alex&");
-        when(loginService.authenticate(anyString(), anyString(), anyString())).thenReturn(new Customer());
+        servlet = new LoginServlet(dataToJson);
 
-        servlet.doPost(request, response);
+        doThrow(new ServletException()).when(dispatcher).forward(request, response);
 
-        verify(response, times(1)).setStatus(200);
-        verify(httpResponseModel, times(1)).setStatus(200);
-        verify(httpResponseModel, times(1)).setMessage("Ok");
-        verify(httpResponseModel, times(1)).setCustomer(loginService.authenticate(anyString(), anyString(), anyString()));
-        verify(responseHandlerToJson, times(1)).processResponse(response, httpResponseModel);
+        servlet.doGet(request, response);
+
+        verify(dataToJson).processResponse(response, 500,
+                ErrorResponseBinding.ERROR_RESPONSE_500);
+
     }
 
     @Test
-    public void whenParamsAreValidCustomerNotExistsThanReturnStatus404() throws IOException {
+    public void whenDoGetIOExceptionExpectStatus500() throws IOException, ServletException {
+        servlet = new LoginServlet(dataToJson);
 
-        when(request.getParameter("login")).thenReturn("markR12w");
-        when(request.getParameter("password1")).thenReturn("!12*Alex&");
+        doThrow(new IOException()).when(dispatcher).forward(request, response);
 
+        servlet.doGet(request, response);
 
-        when(loginService.authenticate(anyString(),anyString(),anyString())).thenReturn(null);
+        verify(dataToJson).processResponse(response, 500,
+                ErrorResponseBinding.ERROR_RESPONSE_500);
+    }
+
+    @Test
+    public void whenDoPostIOExceptionExpectStatus500() throws IOException {
+
+        doThrow(new IOException()).when(jsonToData).jsonToLoginData(request);
 
         servlet.doPost(request, response);
 
-        verify(httpResponseModel).setStatus(404);
-        verify(httpResponseModel).setError("Unauthorized");
-        verify(responseHandlerToJson, times(1)).processResponse(response,httpResponseModel);
+        verify(dataToJson).processResponse(response, 500,
+                ErrorResponseBinding.ERROR_RESPONSE_500);
+    }
+
+    @Test
+    public void whenParamsAreValidAndCustomerExistsExpectStatus200(){
+        //error when delete in setup condition in loginForm
+
+        when(requestBinding.getLogin()).thenReturn("markR12w");
+        when(requestBinding.getPassword()).thenReturn("!12*Alex&");
+
+        Customer customer = new Customer("login12", "Alexander","password12!", 120);
+
+        when(loginService.authenticate(anyString(), Matchers.any(Customer.class))).thenReturn(customer);
+
+        servlet.doPost(request, response);
+
+        verify(dataToJson).processResponse(response, 200, new CustomerLoginResponseBinding(customer.getId(), customer.getLogin(), customer.getName()));
+    }
+
+    @Test
+    public void whenParamsAreValidCustomerNotExistsThanReturnStatus401(){
+        //error when delete in setup condition in loginForm
+
+        when(requestBinding.getLogin()).thenReturn("markR12w");
+        when(requestBinding.getPassword()).thenReturn("!12*Alex&");
+
+
+        when(loginService.authenticate(anyString(), Matchers.any(Customer.class))).thenReturn(null);
+
+        servlet.doPost(request, response);
+
+        verify(dataToJson, times(1)).processResponse(response, 401,
+                new ErrorResponseBinding(401, "Unauthorized"));
 
     }
 
     @Test
     public void whenPasswordIsNotValidThenReturnStatus400(){
 
-        LoginServlet loginServlet = new LoginServlet(loginService, responseHandlerToJson,
-                httpResponseModel, dataValidator);
+        when(requestBinding.getLogin()).thenReturn("markR12w");
+        when(requestBinding.getPassword()).thenReturn("12");
 
-        when(request.getParameter("login")).thenReturn("markR12w");
-        when(request.getParameter("password1")).thenReturn("12");
+        servlet.doPost(request, response);
 
-        loginServlet.doPost(request, response);
-
-        verify(httpResponseModel).setStatus(400);
-        verify(httpResponseModel).setMessage("Login: or password: is not valid.");
-        verify(responseHandlerToJson).processResponse(response, httpResponseModel);
+        verify(dataToJson).processResponse(response, 400,new ErrorResponseBinding(400,
+                "Login: "+
+                        requestBinding.getLogin()+
+                        " or password: "+
+                        requestBinding.getPassword()+
+                        " is not correct")  );
     }
 
     @Test
-    public void whenLoginIsNotValidThenReturnStatus400(){
+    public void whenLoginIsNotValidThenExpectStatus400(){
 
-        LoginServlet loginServlet = new LoginServlet(loginService, responseHandlerToJson,
-                httpResponseModel, dataValidator);
+        when(requestBinding.getLogin()).thenReturn("lafw");
+        when(requestBinding.getPassword()).thenReturn("!12*Alex&");
 
-        when(request.getParameter("login")).thenReturn("lafw");
-        when(request.getParameter("password1")).thenReturn("!12*Alex&");
+        servlet.doPost(request, response);
 
-        loginServlet.doPost(request, response);
-
-        verify(httpResponseModel).setStatus(400);
-        verify(httpResponseModel).setMessage("Login: or password: is not valid.");
-        verify(responseHandlerToJson).processResponse(response, httpResponseModel);
+        verify(dataToJson).processResponse(response, 400, new ErrorResponseBinding(400,
+                "Login: "+
+                        requestBinding.getLogin()+
+                        " or password: "+
+                        requestBinding.getPassword()+
+                        " is not correct"));
     }
 
+
+    @Test
+    public void whenLoginAndIdNullThenExpectStatus400(){
+        when(requestBinding.getLogin()).thenReturn(null);
+        when(requestBinding.getPassword()).thenReturn(null);
+
+        servlet.doPost(request, response);
+
+        verify(dataToJson).processResponse(response, 400, new ErrorResponseBinding(400,
+                "Login: "+
+                        requestBinding.getLogin()+
+                        " or password: "+
+                        requestBinding.getPassword()+
+                        " is not correct"));
+    }
 
 }

@@ -1,42 +1,46 @@
 package servlet;
 
+import binding.response.ErrorResponseBinding;
 import org.apache.log4j.Logger;
-import util.HttpResponseModel;
-import util.ResponseHandlerToJson;
+import util.DataToJson;
 
+import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 
 @WebServlet(name = "/welcome")
 public class WelcomeServlet extends HttpServlet {
 
-    private HttpResponseModel httpResponseModel;
-    private ResponseHandlerToJson responseHandlerToJson;
+    private DataToJson dataToJson;
 
     static final Logger LOGGER = Logger.getLogger(WelcomeServlet.class);
 
     public WelcomeServlet() {
         super();
     }
-    public WelcomeServlet(HttpResponseModel httpResponseModel, ResponseHandlerToJson responseHandlerToJson) {
+    public WelcomeServlet( DataToJson dataToJson) {
         super();
-        this.httpResponseModel = httpResponseModel;
-        this.responseHandlerToJson = responseHandlerToJson;
+        this.dataToJson = dataToJson;
     }
 
     @Override
     public void init(){
-        this.responseHandlerToJson = new ResponseHandlerToJson();
-        this.httpResponseModel = new HttpResponseModel();
+        this.dataToJson = new DataToJson();
 
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response){
-
-        responseHandlerToJson.processResponse(response, httpResponseModel);
+        try {
+            request.getRequestDispatcher("welcome.html").forward(request, response);
+        }catch (IOException | ServletException e){
+            dataToJson.processResponse(response, 500,
+                    ErrorResponseBinding.ERROR_RESPONSE_500);
+            LOGGER.error(e.getMessage(), e);
+        }
     }
 
 }

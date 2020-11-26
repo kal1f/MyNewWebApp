@@ -1,4 +1,4 @@
-package service.impl;
+/*package service.impl;
 
 import database.CustomerDAO;
 import database.entity.Customer;
@@ -55,4 +55,4 @@ public class RegisterServiceImplTest {
     }
 
 
-}
+}*/

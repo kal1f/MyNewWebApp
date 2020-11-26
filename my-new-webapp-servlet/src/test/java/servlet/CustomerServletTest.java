@@ -1,29 +1,36 @@
 package servlet;
 
+import binding.request.CustomerWelcomeRequestBinding;
+import binding.response.CustomerWelcomeResponseBinding;
+import binding.response.ErrorResponseBinding;
+import binding.response.ResponseBinding;
 import database.entity.Customer;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import service.CustomerService;
-import util.HttpResponseModel;
-import util.ResponseHandlerToJson;
+import util.DataToJson;
+import util.JsonToData;
 import util.validator.DataValidator;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
-import static org.junit.Assert.*;
+
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CustomerServletTest {
-
     @Mock
-    ResponseHandlerToJson responseHandlerToJson;
+    JsonToData jsonToData;
+    @Mock
+    DataToJson dataToJson;
     @Mock
     HttpServletRequest request;
     @Mock
@@ -33,99 +40,136 @@ public class CustomerServletTest {
     @Mock
     DataValidator dataValidator;
     @Mock
-    HttpResponseModel httpResponseModel;
-
     CustomerServlet servlet;
+    @Mock
+    CustomerWelcomeRequestBinding requestBinding;
 
     @Before
-    public void setUp(){
-        servlet = new CustomerServlet(customerService, responseHandlerToJson, httpResponseModel, dataValidator);
+    public void setUp() throws IOException {
 
-        when(dataValidator.isWelcomeFormValid(null, null)).thenReturn(false);
+        servlet = new CustomerServlet(customerService, dataToJson, dataValidator, jsonToData);
+
+        when(jsonToData.jsonToWelcomeData(request)).thenReturn(requestBinding);
+        when(dataValidator.isWelcomeFormValid("0", null)).thenReturn(false);
         when(dataValidator.isWelcomeFormValid("101", null)).thenReturn(true);
-        when(dataValidator.isWelcomeFormValid(null, "natse12x")).thenReturn(true);
+        when(dataValidator.isWelcomeFormValid("0", "natse12x")).thenReturn(true);
         when(dataValidator.isWelcomeFormValid("121", "qwer12")).thenReturn(true);
-        doNothing().when(responseHandlerToJson).processResponse(response, httpResponseModel);
 
-        doNothing().when(httpResponseModel).setMessage("Ok");
-        doNothing().when(httpResponseModel).setStatus(200);
-        doNothing().when(httpResponseModel).setStatus(400);
-        doNothing().when(httpResponseModel).setMessage("Login or id is not valid");
+        doNothing().when(dataToJson).processResponse(Matchers.any(HttpServletResponse.class), anyInt(), Matchers.any(ResponseBinding.class));
+
     }
 
     @After
     public void clean(){
-       reset(responseHandlerToJson, request, response, customerService, dataValidator, httpResponseModel);
+       reset(dataToJson, request, response, customerService, dataValidator);
     }
 
     @Test
-    public void whenLoginAndIdEqualsNullReturnJsonStatus400() {
-        when(request.getParameter("login")).thenReturn(null);
-        when(request.getParameter("id")).thenReturn(null);
+    public void whenServletExceptionExpectStatus500() throws IOException {
+        doThrow(new IOException()).when(jsonToData).jsonToWelcomeData(request);
 
-        servlet.doGet(request, response);
+        servlet.doPost(request, response);
 
-        verify(httpResponseModel).setStatus(400);
-        verify(httpResponseModel).setMessage("Login or id is not valid");
-        verify(responseHandlerToJson, times(1)).processResponse(response, null);
+        verify(dataToJson).processResponse(response, 500,ErrorResponseBinding.ERROR_RESPONSE_500);
+
+    }
+    @Test
+    public void whenLoginOrIdNotExistingExpectStatus404(){
+        when(requestBinding.getLogin()).thenReturn("natse12x");
+        when(requestBinding.getId()).thenReturn(0);
+
+        when(customerService.searchCustomers(requestBinding.toCustomer())).thenReturn(new ArrayList<>());
+        servlet.doPost(request, response);
+
+        verify(dataToJson).processResponse(response, 404,new ErrorResponseBinding(404,
+                "Customers with login:"+ requestBinding.getLogin()+
+                        " id: "+ requestBinding.getId()+
+                        " are not existing"));
+
+    }
+
+    @Test
+    public void whenLoginAndIdNullExpectStatus400() {
+        when(requestBinding.getLogin()).thenReturn(null);
+        when(requestBinding.getId()).thenReturn(0);
+
+        servlet.doPost(request, response);
+
+        verify(dataToJson, times(1)).processResponse(response, 400, new ErrorResponseBinding(400,
+                "Login: "+ requestBinding.getLogin()+
+                        " or id: "+ requestBinding.getId()+
+                        " is not valid"));
+
     }
 
     @Test
     public void whenLoginNullAndIdNotNullReturnJsonWithStatus200() {
 
-        when(request.getParameter("login")).thenReturn(null);
-        when(request.getParameter("id")).thenReturn("101");
+        when(requestBinding.getLogin()).thenReturn(null);
+        when(requestBinding.getId()).thenReturn(101);
 
-        ArrayList<Customer> c = customerService.searchCustomers(servlet.convertStringToInteger(request.getParameter("id")),
-                request.getParameter("login"));
+        ArrayList<Customer> c = new ArrayList<Customer>();
 
-        servlet.doGet(request, response);
+        c.add(new Customer("login", "pass", "name", 1));
 
-        verify(httpResponseModel).setStatus(200);
-        verify(httpResponseModel).setMessage("Ok");
-        verify(httpResponseModel).setCustomers(c);
-        verify(responseHandlerToJson, times(1)).processResponse(response, httpResponseModel);
+        when(requestBinding.toCustomer()).thenReturn(new Customer(101, "login"));
+        when(customerService.searchCustomers(requestBinding.toCustomer())).thenReturn(c);
 
 
-    }
+        servlet.doPost(request, response);
 
-    @Test
-    public void whenIdNullAndLoginNotNullReturnJsonWithStatus200(){
+        verify(dataToJson).processResponse(response, 200, new CustomerWelcomeResponseBinding(c));
 
-        CustomerServlet servlet = new CustomerServlet(customerService, responseHandlerToJson ,httpResponseModel, dataValidator);
-
-        when(request.getParameter("login")).thenReturn("natse12x");
-        when(request.getParameter("id")).thenReturn(null);
-
-        ArrayList<Customer> c = customerService.searchCustomers(servlet.convertStringToInteger(request.getParameter("id")),
-                request.getParameter("login"));
-
-        servlet.doGet(request, response);
-
-        verify(httpResponseModel).setStatus(200);
-        verify(httpResponseModel).setMessage("Ok");
-        verify(httpResponseModel).setCustomers(c);
-        verify(responseHandlerToJson, times(1)).processResponse(response, httpResponseModel);
 
     }
 
     @Test
-    public void whenLoginAndIdNotNullReturnJsonWithStatus200(){
+    public void whenIdNullAndLoginAndCustomerExistingExpectStatus200(){
 
-        CustomerServlet servlet = new CustomerServlet(customerService, responseHandlerToJson, httpResponseModel, dataValidator);
+        when(requestBinding.getLogin()).thenReturn("natse12x");
+        when(requestBinding.getId()).thenReturn(0);
 
-        when(request.getParameter("login")).thenReturn("qwer12");
-        when(request.getParameter("id")).thenReturn("121");
+        ArrayList<Customer> c = new ArrayList<Customer>();
 
-        ArrayList<Customer> c = customerService.searchCustomers(servlet.convertStringToInteger(request.getParameter("id")),
-                request.getParameter("login"));
+        c.add(new Customer("login", "pass", "name", 1));
+
+        when(customerService.searchCustomers(requestBinding.toCustomer())).thenReturn(c);
+
+        servlet.doPost(request, response);
+
+        verify(dataToJson).processResponse(response, 200, new CustomerWelcomeResponseBinding(c));
+
+    }
+
+    @Test
+    public void whenLoginAndIdAndCustomerExistingExpectStatus200(){
+
+        when(requestBinding.getLogin()).thenReturn("qwer12");
+        when(requestBinding.getId()).thenReturn(121);
+
+        ArrayList<Customer> c = new ArrayList<Customer>();
+
+        c.add(new Customer("login", "pass", "name", 1));
+
+        when(customerService.searchCustomers(requestBinding.toCustomer())).thenReturn(c);
+
+        servlet.doPost(request, response);
+
+        verify(dataToJson).processResponse(response, 200, new CustomerWelcomeResponseBinding(c));
+    }
+
+    @Test
+    public void whenDoGetExpectStatus200(){
+
+        ArrayList<Customer> c = new ArrayList<Customer>();
+
+        c.add(new Customer("login", "pass", "name", 1));
+
+        when(customerService.outAllCustomers()).thenReturn(c);
 
         servlet.doGet(request, response);
 
-        verify(httpResponseModel).setStatus(200);
-        verify(httpResponseModel).setMessage("Ok");
-        verify(httpResponseModel).setCustomers(c);
-        verify(responseHandlerToJson, times(1)).processResponse(response, httpResponseModel);
+        verify(dataToJson).processResponse(response, 200, new CustomerWelcomeResponseBinding(c));
     }
-
 }
+

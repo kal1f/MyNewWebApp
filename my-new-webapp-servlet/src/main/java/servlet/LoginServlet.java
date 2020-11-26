@@ -1,26 +1,28 @@
 package servlet;
 
-
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
 import java.io.IOException;
+import binding.request.CustomerLoginRequestBinding;
+import binding.response.CustomerLoginResponseBinding;
+import binding.response.ErrorResponseBinding;
 import database.entity.Customer;
 import org.apache.log4j.Logger;
 import service.LoginService;
 import service.authentication.AuthenticationImpl;
 import service.impl.LoginServiceImpl;
-import util.HttpResponseModel;
-import util.ResponseHandlerToJson;
+import util.DataToJson;
+import util.JsonToData;
 import util.validator.DataValidator;
 
 
 @WebServlet(name = "/login")
 public class LoginServlet extends HttpServlet {
 
-    private ResponseHandlerToJson responseHandlerToJson;
+    private DataToJson dataToJson;
+    private JsonToData jsonToData;
     private LoginService loginService;
-    private HttpResponseModel httpResponseModel;
     private DataValidator dataValidator;
 
     static final Logger LOGGER = Logger.getLogger(LoginServlet.class);
@@ -29,26 +31,26 @@ public class LoginServlet extends HttpServlet {
         super();
     }
 
-    public LoginServlet(LoginServiceImpl loginService) {
-        super();
-        this.loginService = loginService;
+    public LoginServlet(DataToJson dataToJson){
+        this.dataToJson = dataToJson;
+
     }
 
-    public LoginServlet(LoginService loginService, ResponseHandlerToJson responseHandlerToJson,
-                        HttpResponseModel httpResponseModel, DataValidator dataValidator) {
+    public LoginServlet(LoginService loginService, DataToJson dataToJson,
+                        DataValidator dataValidator, JsonToData jsonToData) {
         super();
         this.loginService = loginService;
-        this.responseHandlerToJson = responseHandlerToJson;
-        this.httpResponseModel = httpResponseModel;
+        this.dataToJson = dataToJson;
         this.dataValidator = dataValidator;
+        this.jsonToData = jsonToData;
     }
 
     @Override
     public void init() {
         this.loginService = new LoginServiceImpl((AuthenticationImpl) getServletContext().getAttribute("authenticationImpl"));
-        this.responseHandlerToJson = new ResponseHandlerToJson();
+        this.dataToJson = new DataToJson();
         this.dataValidator = new DataValidator();
-        this.httpResponseModel = new HttpResponseModel();
+        this.jsonToData = new JsonToData();
     }
 
     @Override
@@ -56,6 +58,8 @@ public class LoginServlet extends HttpServlet {
         try {
             request.getRequestDispatcher("login.html").forward(request, response);
         }catch (IOException | ServletException e){
+            dataToJson.processResponse(response, 500,
+                   ErrorResponseBinding.ERROR_RESPONSE_500);
             LOGGER.error(e.getMessage(), e);
         }
 
@@ -63,41 +67,53 @@ public class LoginServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) {
+        CustomerLoginRequestBinding requestBinding=null;
+        try {
+            requestBinding = jsonToData.jsonToLoginData(request);
+        }catch (IOException e){
+            LOGGER.debug(e.getMessage(), e);
+            dataToJson.processResponse(response, 500,
+                    ErrorResponseBinding.ERROR_RESPONSE_500);
+            return;
+        }
 
-        String login = request.getParameter("login");
-        String password = request.getParameter("password1");
         HttpSession session = request.getSession();
 
-        if(dataValidator.isLogInFormValid(login,password)){
+        if(dataValidator.isLogInFormValid(requestBinding.getLogin(), requestBinding.getPassword())){
 
-            Customer customer = loginService.authenticate(session.getId(), login, password);
+            Customer customer = loginService.authenticate(session.getId(), requestBinding.toCustomer());
 
             LOGGER.debug("Check customer: "+ customer);
-            if(customer != null) {
+            if(customer != null) {       //check object null or field customer.getLogin()
                 LOGGER.debug("{} "+customer);
 
-                response.setStatus(200);
-                httpResponseModel.setStatus(200);
-                httpResponseModel.setMessage("Ok");
-                httpResponseModel.setCustomer(customer);
-                responseHandlerToJson.processResponse(response, httpResponseModel);
+                dataToJson.processResponse(response, 200,
+                        new CustomerLoginResponseBinding(customer.getId(), customer.getLogin(), customer.getName()));
             }
             else {
                 LOGGER.debug("loginService.returnExistedUserInJson() returned null value.");
 
-                httpResponseModel.setStatus(404);
-                httpResponseModel.setError("Unauthorized");
-                responseHandlerToJson.processResponse(response, httpResponseModel);
+                dataToJson.processResponse(response, 401,
+                        new ErrorResponseBinding(401, "Unauthorized"));
 
             }
         }
         else {
-            LOGGER.debug("Login: "+login+" or "+" password: "+password+"is not valid.");
+            LOGGER.debug("Login: "+
+                    requestBinding.getLogin()+
+                    " or "+" password: "+
+                    requestBinding.getPassword()+
+                    "is not valid");
 
-            httpResponseModel.setStatus(400);
-            httpResponseModel.setMessage("Login: or password: is not valid.");
-            responseHandlerToJson.processResponse(response, httpResponseModel);
+            dataToJson.processResponse(response, 400,
+                    new ErrorResponseBinding(400,
+                            "Login: "+
+                                    requestBinding.getLogin()+
+                                    " or password: "+
+                                    requestBinding.getPassword()+
+                                    " is not correct"));
 
         }
     }
+
 }

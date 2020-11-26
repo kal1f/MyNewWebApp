@@ -106,37 +106,6 @@ public class CustomerDAOImplTest {
         assertEquals(5, customers.size());
     }
 
-    @Test
-    public void isCustomerExistReturnTrueWithExistingLoginAndPassword() {
-
-        boolean existed = customerDAO.isCustomerExist("thazfr12", "wqr12.ad");
-        assertTrue(existed);
-
-    }
-
-    @Test
-    public void isCustomerExistReturnFalseWithNoExistingLogin() {
-
-        boolean existed = customerDAO.isCustomerExist("ahmed", "123");
-        assertFalse(existed);
-
-    }
-
-    @Test
-    public void isCustomerExistReturnFalseWithNoExistingPassword() {
-
-        boolean existed = customerDAO.isCustomerExist("alex", "2131254");
-        assertFalse(existed);
-
-    }
-
-    @Test
-    public void isCustomerExistReturnFalseWithNoExistingPasswordAndLogin() {
-
-        boolean existed = customerDAO.isCustomerExist("ahmed", "2435436564");
-        assertFalse(existed);
-
-    }
     private void fillInTable() {
         Statement statement = null;
         try {

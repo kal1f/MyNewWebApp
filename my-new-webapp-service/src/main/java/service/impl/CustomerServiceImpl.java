@@ -21,20 +21,19 @@ public class CustomerServiceImpl implements CustomerService {
 
 
     @Override
-    public ArrayList<Customer> searchCustomers(Integer id, String login) {
+    public ArrayList<Customer> searchCustomers(Customer customer) {
 
         ArrayList<Customer> c;
 
-        if (login != null || id != null) {
+        String login = customer.getLogin();
+        Integer id = customer.getId();
 
-            c = cd.getCustomerByIdOrLogin(login, id);
+        return cd.getCustomerByIdOrLogin(login, id);
 
-        } else {
+    }
 
-            c = cd.getCustomers();
-
-        }
-        return c;
-
+    @Override
+    public ArrayList<Customer> outAllCustomers() {
+        return cd.getCustomers();
     }
 }

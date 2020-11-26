@@ -28,16 +28,16 @@ public class LoginServiceImpl implements LoginService {
     }
 
     @Override
-    public Customer authenticate(String sessionId, String login, String password) {
-        Customer customer = new Customer();
-        customer.setLogin(login);
-        customer.setPassword(password);
+    public Customer authenticate(String sessionId, Customer customer) {
+        String login = customer.getLogin();
+        String password = customer.getPassword();
 
-        if(cd.isCustomerExist(login, password)){
+        Customer existedCustomer = cd.getCustomer(login, password);
+
+        if(existedCustomer != null){
 
             authentication.setCustomer(sessionId, customer);
 
-            Customer existedCustomer = cd.getCustomer(login, password);
             existedCustomer.setPassword(null);
 
             return existedCustomer;

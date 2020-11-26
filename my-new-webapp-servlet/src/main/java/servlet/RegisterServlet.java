@@ -1,10 +1,12 @@
 package servlet;
 
+import binding.response.ErrorResponseBinding;
+import binding.request.CustomerRegisterRequestBinding;
 import org.apache.log4j.Logger;
 import service.RegisterService;
 import service.impl.RegisterServiceImpl;
-import util.HttpResponseModel;
-import util.ResponseHandlerToJson;
+import util.DataToJson;
+import util.JsonToData;
 import util.validator.DataValidator;
 
 import javax.servlet.ServletException;
@@ -19,8 +21,9 @@ public class RegisterServlet extends HttpServlet {
 
     private RegisterService registerService;
     private DataValidator dataValidator;
-    private HttpResponseModel httpResponseModel;
-    private ResponseHandlerToJson responseHandlerToJson;
+    private DataToJson dataToJson;
+    private JsonToData jsonToData;
+
 
     static final Logger LOGGER = Logger.getLogger(RegisterServlet.class);
 
@@ -29,22 +32,28 @@ public class RegisterServlet extends HttpServlet {
         super();
     }
 
-    public RegisterServlet(RegisterService registerService, ResponseHandlerToJson responseHandlerToJson,
-                           DataValidator dataValidator, HttpResponseModel httpResponseModel) {
+    public RegisterServlet(DataToJson dataToJson){
+        super();
+        this.dataToJson = dataToJson;
+    }
+
+    public RegisterServlet(RegisterService registerService, DataToJson dataToJson,
+                           DataValidator dataValidator, JsonToData jsonToData) {
         super();
         this.registerService = registerService;
         this.dataValidator = dataValidator;
-        this.responseHandlerToJson = responseHandlerToJson;
-        this.httpResponseModel = httpResponseModel;
+        this.dataToJson = dataToJson;
+        this.jsonToData = jsonToData;
     }
+
 
     @Override
     public void init(){
 
         registerService = new RegisterServiceImpl();
         dataValidator = new DataValidator();
-        responseHandlerToJson = new ResponseHandlerToJson();
-        httpResponseModel = new HttpResponseModel();
+        dataToJson = new DataToJson();
+        jsonToData = new JsonToData();
 
     }
 
@@ -53,35 +62,44 @@ public class RegisterServlet extends HttpServlet {
         try {
             request.getRequestDispatcher("register.html").forward(request, response);
         }catch (ServletException | IOException e){
+            dataToJson.processResponse(response,
+                    ErrorResponseBinding.ERROR_RESPONSE_500);
             LOGGER.error(e.getMessage(), e);
         }
 
     }
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) {
-        String login = request.getParameter("login");
-        String name = request.getParameter("name");
-        String password1 = request.getParameter("password1");
-        String password2 = request.getParameter("password2");
+        CustomerRegisterRequestBinding requestBinding= null;
+        try {
+            requestBinding = jsonToData.jsonToRegisterData(request);
+        }catch (IOException e){
+            LOGGER.debug(e.getMessage(), e);
+            dataToJson.processResponse(response, 500,
+                    ErrorResponseBinding.ERROR_RESPONSE_500);
+            return;
+        }
 
-        if(dataValidator.isRegisterFormValid(login, name, password1, password2)) {
-            registerService.createNewCustomerInDb(login, name, password1);
-            response.setContentType("application/json");
-            response.setCharacterEncoding("UTF-8");
-            response.setStatus(200);
+        if(dataValidator.isRegisterFormValid(requestBinding.getLogin(), requestBinding.getName(),
+                requestBinding.getPassword1(), requestBinding.getPassword2())) {
 
-            httpResponseModel.setStatus(200);
-            httpResponseModel.setMessage("Ok");
-
+            registerService.createNewCustomerInDb(requestBinding.toCustomer());
+            dataToJson.processResponse(response, 201, null);
         }
         else{
-            LOGGER.info("Customer with login:"+login+" name: "+name+" password1 "+password1+" password2 "+password2+" can not be registered.");
+            LOGGER.info("Customer with login:"+
+                    requestBinding.getLogin()+" name: "+
+                    requestBinding.getName()+" password1 "+
+                    requestBinding.getPassword1()+" password2 "+
+                    requestBinding.getPassword2()+" can not be registered");
 
-            httpResponseModel.setStatus(400);
-            httpResponseModel.setMessage("Customer with this params can't be registered.");
-
+            dataToJson.processResponse(response, 400,
+                    new ErrorResponseBinding(400,
+                            "Customer with login:"+requestBinding.getLogin()+
+                                    " name: "+requestBinding.getName()+
+                                    " password1: "+requestBinding.getPassword1()+
+                                    " password2: "+requestBinding.getPassword2()+
+                                    " can not be registered"));
         }
-        responseHandlerToJson.processResponse(response, httpResponseModel);
-
     }
 }
