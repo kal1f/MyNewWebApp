@@ -1,5 +1,7 @@
 package database.entity;
 
+import java.util.Objects;
+
 public class Customer {
 
     private Integer id;
@@ -11,7 +13,7 @@ public class Customer {
 
     }
 
-    public Customer(int id, String login) {
+    public Customer(Integer id, String login) {
         this.id = id;
         this.login = login;
     }
@@ -20,8 +22,10 @@ public class Customer {
         this.login = login;
         this.password = password;
     }
+
     public Customer(String login, String name, String password){
         this.login = login;
+        this.name = name;
         this.password = password;
     }
 
@@ -31,7 +35,6 @@ public class Customer {
         this.password = pass_;
         this.name = name_;
     }
-
 
     public int getId() {
 
@@ -66,4 +69,19 @@ public class Customer {
         this.password = password;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Customer customer = (Customer) o;
+        return Objects.equals(id, customer.id) &&
+                Objects.equals(login, customer.login) &&
+                Objects.equals(name, customer.name) &&
+                Objects.equals(password, customer.password);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, login, name, password);
+    }
 }

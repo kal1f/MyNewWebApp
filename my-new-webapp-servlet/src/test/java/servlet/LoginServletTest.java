@@ -1,10 +1,11 @@
 package servlet;
 
 import binding.request.CustomerLoginRequestBinding;
-import binding.response.CustomerLoginResponseBinding;
+import binding.response.CustomerResponseBinding;
 import binding.response.ErrorResponseBinding;
 import binding.response.ResponseBinding;
 import database.entity.Customer;
+import exception.CustomerNotFoundException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -60,10 +61,10 @@ public class LoginServletTest {
         when(jsonToData.jsonToLoginData(request)).thenReturn(requestBinding);
 
         when(request.getRequestDispatcher("login.html")).thenReturn(dispatcher);
-        /*when(dataValidator.isLogInFormValid("markR12w","!12*Alex&")).thenReturn(true);
+        when(dataValidator.isLogInFormValid("markR12w","!12*Alex&")).thenReturn(true);
         when(dataValidator.isLogInFormValid("lafw","!12*Alex&")).thenReturn(false);
         when(dataValidator.isLogInFormValid("markR12w","12")).thenReturn(false);
-        when(dataValidator.isLogInFormValid(null, null)).thenReturn(false);*/
+        when(dataValidator.isLogInFormValid(null, null)).thenReturn(false);
         when(request.getSession()).thenReturn(session);
 
         doNothing().when(dispatcher).forward(request,response);
@@ -106,18 +107,18 @@ public class LoginServletTest {
     }
 
     @Test
-    public void whenDoPostIOExceptionExpectStatus500() throws IOException {
+    public void whenDoPostIOExceptionExpectStatus422() throws IOException {
 
         doThrow(new IOException()).when(jsonToData).jsonToLoginData(request);
 
         servlet.doPost(request, response);
 
-        verify(dataToJson).processResponse(response, 500,
-                ErrorResponseBinding.ERROR_RESPONSE_500);
+        verify(dataToJson).processResponse(response, 422,
+                ErrorResponseBinding.ERROR_RESPONSE_422);
     }
 
     @Test
-    public void whenParamsAreValidAndCustomerExistsExpectStatus200(){
+    public void whenParamsAreValidAndCustomerExistsExpectStatus200() throws CustomerNotFoundException {
         //error when delete in setup condition in loginForm
 
         when(requestBinding.getLogin()).thenReturn("markR12w");
@@ -129,23 +130,23 @@ public class LoginServletTest {
 
         servlet.doPost(request, response);
 
-        verify(dataToJson).processResponse(response, 200, new CustomerLoginResponseBinding(customer.getId(), customer.getLogin(), customer.getName()));
+        verify(dataToJson).processResponse(response, 200,
+                new CustomerResponseBinding(customer.getId(), customer.getLogin(), customer.getName()));
     }
 
     @Test
-    public void whenParamsAreValidCustomerNotExistsThanReturnStatus401(){
+    public void whenParamsAreValidCustomerNotExistsThanReturnStatus404() throws CustomerNotFoundException {
         //error when delete in setup condition in loginForm
 
         when(requestBinding.getLogin()).thenReturn("markR12w");
         when(requestBinding.getPassword()).thenReturn("!12*Alex&");
 
-
-        when(loginService.authenticate(anyString(), Matchers.any(Customer.class))).thenReturn(null);
+        doThrow(new CustomerNotFoundException()).when(loginService).authenticate(anyString(), Matchers.any(Customer.class));
 
         servlet.doPost(request, response);
 
-        verify(dataToJson, times(1)).processResponse(response, 401,
-                new ErrorResponseBinding(401, "Unauthorized"));
+        verify(dataToJson).processResponse(response, 404,
+                ErrorResponseBinding.ERROR_RESPONSE_404);
 
     }
 

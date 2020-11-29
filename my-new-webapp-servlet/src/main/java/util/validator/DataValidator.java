@@ -8,26 +8,49 @@ public class DataValidator {
     }
 
     public boolean isLengthValid(String parameter, int length){
+        if(parameter == null){
+            return false;
+        }
        return parameter.length() >= length;
     }
 
     public boolean isPasswordValid(String password){
+        if (password == null){
+            return false;
+        }
         return password.matches("^[0-9a-zA-Z!@#$%^&*()]+$");
     }
 
     public boolean isLoginValid(String login){
-        return login.matches("^[0-9a-zA-Z]+$");
+        if(login == null){
+            return false;
+        }
+
+        return login.matches("^[a-zA-Z][0-9a-zA-Z]+$");
+
     }
 
     public boolean isNameValid(String name){
+        if(name == null){
+            return false;
+        }
         return name.matches("^[a-zA-Z]*$");
     }
 
-    public boolean isIdValid(String id){
-        return id.matches("\\d+");
+    public boolean isIdValid(Integer id){
+        if(id == null || id < 0){
+            return false;
+        }
+
+        return true;
+
     }
 
     public boolean arePasswordsEqual(String password1, String password2){
+        if(password1 == null || password2 == null)
+        {
+            return false;
+        }
         return password1.equals(password2);
     }
 
@@ -54,9 +77,17 @@ public class DataValidator {
 
     }
 
-    public boolean isWelcomeFormValid(String id, String login){
-        return (id == null || isIdValid(id) || id.equals("")) &&
-                (login == null || login.equals("") ||(isLoginValid(login) && isLengthValid(login,6)));
+    public boolean isWelcomeFormValid(Integer id, String login){
+        if(login == null || id == null){
+            return false;
+        }
+
+        if((id == 0 || id == -1) && login.equals("")){
+            return false;
+        }
+
+        return (isIdValid(id) &&
+                (isLoginValid(login) && isLengthValid(login,6)) || login.equals("") );
     }
 
 }

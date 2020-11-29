@@ -5,9 +5,10 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
 import java.io.IOException;
 import binding.request.CustomerLoginRequestBinding;
-import binding.response.CustomerLoginResponseBinding;
+import binding.response.CustomerResponseBinding;
 import binding.response.ErrorResponseBinding;
 import database.entity.Customer;
+import exception.CustomerNotFoundException;
 import org.apache.log4j.Logger;
 import service.LoginService;
 import service.authentication.AuthenticationImpl;
@@ -58,9 +59,9 @@ public class LoginServlet extends HttpServlet {
         try {
             request.getRequestDispatcher("login.html").forward(request, response);
         }catch (IOException | ServletException e){
+            LOGGER.debug(e.getMessage(), e);
             dataToJson.processResponse(response, 500,
                    ErrorResponseBinding.ERROR_RESPONSE_500);
-            LOGGER.error(e.getMessage(), e);
         }
 
     }
@@ -72,8 +73,8 @@ public class LoginServlet extends HttpServlet {
             requestBinding = jsonToData.jsonToLoginData(request);
         }catch (IOException e){
             LOGGER.debug(e.getMessage(), e);
-            dataToJson.processResponse(response, 500,
-                    ErrorResponseBinding.ERROR_RESPONSE_500);
+            dataToJson.processResponse(response, 422,
+                    ErrorResponseBinding.ERROR_RESPONSE_422);
             return;
         }
 
@@ -81,22 +82,20 @@ public class LoginServlet extends HttpServlet {
 
         if(dataValidator.isLogInFormValid(requestBinding.getLogin(), requestBinding.getPassword())){
 
-            Customer customer = loginService.authenticate(session.getId(), requestBinding.toCustomer());
+            try {
+                Customer customer = loginService.authenticate(session.getId(), requestBinding.toCustomer());
 
-            LOGGER.debug("Check customer: "+ customer);
-            if(customer != null) {       //check object null or field customer.getLogin()
-                LOGGER.debug("{} "+customer);
+                LOGGER.debug("Customer is not null");
 
                 dataToJson.processResponse(response, 200,
-                        new CustomerLoginResponseBinding(customer.getId(), customer.getLogin(), customer.getName()));
-            }
-            else {
-                LOGGER.debug("loginService.returnExistedUserInJson() returned null value.");
+                        new CustomerResponseBinding(customer.getId(), customer.getLogin(), customer.getName()));
+            } catch (CustomerNotFoundException e) {
 
-                dataToJson.processResponse(response, 401,
-                        new ErrorResponseBinding(401, "Unauthorized"));
+                LOGGER.debug("Customer was not found", e);
 
+                dataToJson.processResponse(response, 404,ErrorResponseBinding.ERROR_RESPONSE_404);
             }
+
         }
         else {
             LOGGER.debug("Login: "+

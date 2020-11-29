@@ -1,10 +1,11 @@
 package servlet;
 
 import binding.request.CustomerWelcomeRequestBinding;
-import binding.response.CustomerWelcomeResponseBinding;
+import binding.response.CustomersResponseBinding;
 import binding.response.ErrorResponseBinding;
 import binding.response.ResponseBinding;
 import database.entity.Customer;
+import exception.CustomerNotFoundException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -49,11 +50,12 @@ public class CustomerServletTest {
 
         servlet = new CustomerServlet(customerService, dataToJson, dataValidator, jsonToData);
 
-        when(jsonToData.jsonToWelcomeData(request)).thenReturn(requestBinding);
-        when(dataValidator.isWelcomeFormValid("0", null)).thenReturn(false);
-        when(dataValidator.isWelcomeFormValid("101", null)).thenReturn(true);
-        when(dataValidator.isWelcomeFormValid("0", "natse12x")).thenReturn(true);
-        when(dataValidator.isWelcomeFormValid("121", "qwer12")).thenReturn(true);
+
+        when(dataValidator.isWelcomeFormValid(null, null)).thenReturn(false);
+        when(dataValidator.isWelcomeFormValid(107, "12asds")).thenReturn(true);
+        when(dataValidator.isWelcomeFormValid(101, null)).thenReturn(true);
+        when(dataValidator.isWelcomeFormValid(0, "natse12x")).thenReturn(true);
+        when(dataValidator.isWelcomeFormValid(121, "qwer12")).thenReturn(true);
 
         doNothing().when(dataToJson).processResponse(Matchers.any(HttpServletResponse.class), anyInt(), Matchers.any(ResponseBinding.class));
 
@@ -65,45 +67,82 @@ public class CustomerServletTest {
     }
 
     @Test
-    public void whenServletExceptionExpectStatus500() throws IOException {
+    public void whenIOExceptionExpectStatus422() throws IOException {
+
         doThrow(new IOException()).when(jsonToData).jsonToWelcomeData(request);
 
         servlet.doPost(request, response);
 
-        verify(dataToJson).processResponse(response, 500,ErrorResponseBinding.ERROR_RESPONSE_500);
+        verify(dataToJson).processResponse(response, 422,ErrorResponseBinding.ERROR_RESPONSE_422);
 
     }
+
     @Test
-    public void whenLoginOrIdNotExistingExpectStatus404(){
+    public void whenRequestBindingNullExpectStatus200(){
+
+        ArrayList<Customer> c = new ArrayList<Customer>();
+
+        c.add(new Customer("login", "pass", "name", 1));
+
+        when(customerService.getAllCustomers()).thenReturn(c);
+
+        servlet.doPost(request, response);
+
+        verify(dataToJson).processResponse(response, 200, new CustomersResponseBinding(c) );
+    }
+
+    @Test
+    public void whenCustomerNotExistsWithParamsExpectStatus404() throws CustomerNotFoundException, IOException {
+
+        when(jsonToData.jsonToWelcomeData(request)).thenReturn(requestBinding);
+
         when(requestBinding.getLogin()).thenReturn("natse12x");
         when(requestBinding.getId()).thenReturn(0);
 
-        when(customerService.searchCustomers(requestBinding.toCustomer())).thenReturn(new ArrayList<>());
+        doThrow(new CustomerNotFoundException()).when(customerService).searchCustomers(Matchers.any(Customer.class));
+
         servlet.doPost(request, response);
 
-        verify(dataToJson).processResponse(response, 404,new ErrorResponseBinding(404,
-                "Customers with login:"+ requestBinding.getLogin()+
-                        " id: "+ requestBinding.getId()+
-                        " are not existing"));
+        verify(dataToJson).processResponse(response, 404,  ErrorResponseBinding.ERROR_RESPONSE_404);
 
     }
 
     @Test
-    public void whenLoginAndIdNullExpectStatus400() {
-        when(requestBinding.getLogin()).thenReturn(null);
+    public void whenIdNullAndLoginAndCustomerExistsExpectStatus200() throws CustomerNotFoundException, IOException {
+        when(jsonToData.jsonToWelcomeData(request)).thenReturn(requestBinding);
+
+        when(requestBinding.getLogin()).thenReturn("natse12x");
         when(requestBinding.getId()).thenReturn(0);
 
+        ArrayList<Customer> c = new ArrayList<Customer>();
+
+        c.add(new Customer("login", "pass", "name", 1));
+
+        when(customerService.searchCustomers(requestBinding.toCustomer())).thenReturn(c);
+
         servlet.doPost(request, response);
 
-        verify(dataToJson, times(1)).processResponse(response, 400, new ErrorResponseBinding(400,
-                "Login: "+ requestBinding.getLogin()+
-                        " or id: "+ requestBinding.getId()+
-                        " is not valid"));
+        verify(dataToJson).processResponse(response, 200, new CustomersResponseBinding(c));
 
     }
 
     @Test
-    public void whenLoginNullAndIdNotNullReturnJsonWithStatus200() {
+    public void whenLoginAndIdNullExpectStatus400() throws IOException {
+        when(jsonToData.jsonToWelcomeData(request)).thenReturn(requestBinding);
+
+        when(requestBinding.getLogin()).thenReturn(null);
+        when(requestBinding.getId()).thenReturn(null);
+
+        servlet.doPost(request, response);
+
+        verify(dataToJson, times(1)).processResponse(response, 400,
+                new ErrorResponseBinding(400, "Login or ID is not valid"));
+
+    }
+
+    @Test
+    public void whenLoginNullAndIdNotNullReturnJsonWithStatus200() throws CustomerNotFoundException, IOException {
+        when(jsonToData.jsonToWelcomeData(request)).thenReturn(requestBinding);
 
         when(requestBinding.getLogin()).thenReturn(null);
         when(requestBinding.getId()).thenReturn(101);
@@ -115,34 +154,17 @@ public class CustomerServletTest {
         when(requestBinding.toCustomer()).thenReturn(new Customer(101, "login"));
         when(customerService.searchCustomers(requestBinding.toCustomer())).thenReturn(c);
 
-
         servlet.doPost(request, response);
 
-        verify(dataToJson).processResponse(response, 200, new CustomerWelcomeResponseBinding(c));
+        verify(dataToJson).processResponse(response, 200, new CustomersResponseBinding(c));
 
 
     }
 
-    @Test
-    public void whenIdNullAndLoginAndCustomerExistingExpectStatus200(){
-
-        when(requestBinding.getLogin()).thenReturn("natse12x");
-        when(requestBinding.getId()).thenReturn(0);
-
-        ArrayList<Customer> c = new ArrayList<Customer>();
-
-        c.add(new Customer("login", "pass", "name", 1));
-
-        when(customerService.searchCustomers(requestBinding.toCustomer())).thenReturn(c);
-
-        servlet.doPost(request, response);
-
-        verify(dataToJson).processResponse(response, 200, new CustomerWelcomeResponseBinding(c));
-
-    }
 
     @Test
-    public void whenLoginAndIdAndCustomerExistingExpectStatus200(){
+    public void whenLoginAndIdAndCustomerExistingExpectStatus200() throws CustomerNotFoundException, IOException {
+        when(jsonToData.jsonToWelcomeData(request)).thenReturn(requestBinding);
 
         when(requestBinding.getLogin()).thenReturn("qwer12");
         when(requestBinding.getId()).thenReturn(121);
@@ -155,21 +177,9 @@ public class CustomerServletTest {
 
         servlet.doPost(request, response);
 
-        verify(dataToJson).processResponse(response, 200, new CustomerWelcomeResponseBinding(c));
+        verify(dataToJson).processResponse(response, 200, new CustomersResponseBinding(c));
     }
 
-    @Test
-    public void whenDoGetExpectStatus200(){
 
-        ArrayList<Customer> c = new ArrayList<Customer>();
-
-        c.add(new Customer("login", "pass", "name", 1));
-
-        when(customerService.outAllCustomers()).thenReturn(c);
-
-        servlet.doGet(request, response);
-
-        verify(dataToJson).processResponse(response, 200, new CustomerWelcomeResponseBinding(c));
-    }
 }
 

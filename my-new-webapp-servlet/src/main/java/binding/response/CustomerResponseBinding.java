@@ -4,18 +4,18 @@ import database.entity.Customer;
 
 import java.util.Objects;
 
-public class CustomerLoginResponseBinding implements ResponseBinding {
+public class CustomerResponseBinding implements ResponseBinding {
     private int id;
     private String login;
     private String name;
 
-    public CustomerLoginResponseBinding(int id, String login, String name) {
+    public CustomerResponseBinding(int id, String login, String name) {
         this.id = id;
         this.login = login;
         this.name = name;
     }
 
-    public CustomerLoginResponseBinding(Customer customer) {
+    public CustomerResponseBinding(Customer customer) {
         this.id = customer.getId();
         this.login = customer.getLogin();
         this.name = customer.getName();
@@ -49,7 +49,7 @@ public class CustomerLoginResponseBinding implements ResponseBinding {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        CustomerLoginResponseBinding that = (CustomerLoginResponseBinding) o;
+        CustomerResponseBinding that = (CustomerResponseBinding) o;
         return id == that.id &&
                 Objects.equals(login, that.login) &&
                 Objects.equals(name, that.name);

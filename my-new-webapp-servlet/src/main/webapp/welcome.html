@@ -4,90 +4,93 @@
     <meta charset="UTF-8">
     <title>Welcome</title>
 </head>
-    <h1> Hello admin !!</h1>
-    <h2>Find user by id or login</h2>
-    <form id='search' method="post">
-        <table>
-            <tr>
-                <td>Id: </td><td><input id="id" type="text" name="id"></td>
-            </tr>
-            <tr>
-                <td>Login: </td><td><input id="login" type="text" name="login"></td>
-            <tr>
-                <td><input type="submit" value="FindBy"></td>
-            </tr>
-        </table>
-    </form>
-    <form id="out" method="get">
-        <h2>Print users</h2>
-        <input type="submit" value="Print All users">
-    </form>
-    <form id="logout" method="get">
-        <h2>Logout</h2>
-        <input type="submit" value="Logout">
-    </form>
+<h1> Hello admin !!</h1>
+<h2>Find user by id or login</h2>
+<form id='search' method="post">
+    <table>
+        <tr>
+            <td>Id: </td><td><input id="id" type="text" name="id"></td>
+        </tr>
+        <tr>
+            <td>Login: </td><td><input id="login" type="text" name="login"></td>
+        <tr>
+            <td><input type="submit" value="FindBy"></td>
+        </tr>
+    </table>
+</form>
+<form id="out" method="post">
+    <h2>Print users</h2>
+    <input type="submit" value="Print All users">
+</form>
+<form id="logout" method="get">
+    <h2>Logout</h2>
+    <input type="submit" value="Logout">
+</form>
 <div class = "forData">
 
 </div>
-    <script>
-        var search = document.getElementById('search');
-        var out = document.getElementById('out');
-        var logout = document.getElementById('logout');
+<script>
+    var search = document.getElementById('search');
+    var out = document.getElementById('out');
+    var logout = document.getElementById('logout');
 
-        search.addEventListener('submit', function (e){
-            e.preventDefault();
+    search.addEventListener('submit', function (e){
+        e.preventDefault();
 
-            var id = document.getElementById('id').value
-            var login = document.getElementById('login').value
+        var id = document.getElementById('id').value
+        var login = document.getElementById('login').value
 
-            fetch('customers', {
-                method: 'POST',
-                body: JSON.stringify({
-                    id: id,
-                    login: login
-                }),
-                headers: {
-                    'Content-Type': 'application/json; charset=UTF-8'
+        fetch('customers', {
+            method: 'POST',
+            body: JSON.stringify({
+                id: id,
+                login: login
+            }),
+            headers: {
+                'Content-Type': 'application/json; charset=UTF-8'
+            }
+        })
+            .then(function (response) {
+                if (response.status === 200) {
+                    console.log(response.json());
                 }
-            })
-                .then(function (response) {
-                    if (response.status === 200) {
-                        // console.log(response.json().length);
-                    }
+                else {
+                    console.log(response.json());
+                }
 
-                })
             })
+    })
 
-        out.addEventListener('submit', function (e){
-            e.preventDefault();
+    out.addEventListener('submit', function (e){
+        e.preventDefault();
 
-            fetch('customers',{
-                method: 'GET',
-                headers: {'Content-Type': 'application/json; charset=UTF-8'}
-            })
+        fetch('customers',{
+            method: 'POST',
+            headers: {'Content-Type': 'application/json; charset=UTF-8'}
+        })
             .then(function (response){
                 if (response.status === 200){
-                    //console.log(response.json().length);
+                    console.log(response.json());
                 }
             })
+    })
+
+    logout.addEventListener('submit', function (e){
+        e.preventDefault();
+
+        fetch('logout', {
+            method: 'GET',
+            headers: {'Content-Type': 'application/json; charset=UTF-8'}
         })
-
-        logout.addEventListener('submit', function (e){
-            e.preventDefault();
-
-            fetch('logout', {
-                method: 'GET',
-                headers: {'Content-Type': 'application/json; charset=UTF-8'}
-            })
             .then(function (response){
                 if (response.status === 200){
                     window.location.replace('login');
                 }
                 else {
-                    // console.log(response.json().length);
+                     console.log(response.json());
                 }
             })
-        })
-    </script>
+    })
+</script>
 </body>
 </html>

@@ -37,9 +37,9 @@ public class WelcomeServlet extends HttpServlet {
         try {
             request.getRequestDispatcher("welcome.html").forward(request, response);
         }catch (IOException | ServletException e){
+            LOGGER.error(e.getMessage(), e);
             dataToJson.processResponse(response, 500,
                     ErrorResponseBinding.ERROR_RESPONSE_500);
-            LOGGER.error(e.getMessage(), e);
         }
     }
 

@@ -3,7 +3,6 @@ package util;
 import binding.response.ResponseBinding;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import org.apache.log4j.Logger;
 
@@ -55,12 +54,6 @@ public class DataToJson {
             response.setCharacterEncoding("UTF-8");
             response.setContentType("application/json");
             response.setHeader("cache-control", "no-cache");
-
-           /* JsonElement je = jp.parse(jsonString);
-
-            String prettyJsonString = gson.toJson(je);
-
-            response.getWriter().write(prettyJsonString);*/
 
             response.getWriter().write(jsonString);
         } catch (IOException e) {

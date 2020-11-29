@@ -1,14 +1,19 @@
-/*
 package servlet;
 
 import binding.request.CustomerRegisterRequestBinding;
+import binding.response.CustomerResponseBinding;
+import binding.response.ErrorResponseBinding;
+import database.entity.Customer;
+import exception.CustomerNotFoundException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import service.RegisterService;
 import util.DataToJson;
+import util.JsonToData;
 import util.validator.DataValidator;
 
 import javax.servlet.RequestDispatcher;
@@ -18,8 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 
 
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
+
 
 import static org.mockito.Mockito.*;
 
@@ -39,24 +43,25 @@ public class RegisterServletTest {
     @Mock
     DataToJson dataToJson;
     @Mock
+    JsonToData jsonToData;
+    @Mock
     CustomerRegisterRequestBinding requestBinding;
 
     RegisterServlet servlet;
 
     @Before
-    public void setUp(){
-        when(requestBinding.toCustomer()).thenReturn();
-
+    public void setUp() throws IOException {
+        when(jsonToData.jsonToRegisterData(request)).thenReturn(requestBinding);
         when(request.getRequestDispatcher("register.html")).thenReturn(dispatcher);
         when(dataValidator.isRegisterFormValid("markR12w", "Alexander",
                 "!12*Alex&", "!12*Alex&")).thenReturn(true);
         when(dataValidator.isRegisterFormValid("markR12w", "Alexander",
                 "123", "!123")).thenReturn(false);
-        when(registerService.createNewCustomerInDb(requestBinding.toCustomer())).thenReturn(0);
+
     }
 
     @Test
-    public void whenDoGetThenServletReturnRegisterPage() throws ServletException, IOException {
+    public void whenDoGetExpectRegisterPage() throws ServletException, IOException {
 
         servlet = new RegisterServlet();
 
@@ -67,68 +72,101 @@ public class RegisterServletTest {
     }
 
     @Test
-    public void whenDoGetServletExceptionResponseStatus500() throws ServletException, IOException {
+    public void whenDoGetServletExceptionExpectStatus500() throws ServletException, IOException {
         servlet = new RegisterServlet(dataToJson);
 
-        doThrow(ServletException.class).when(dispatcher).forward(request, response);
-
-        StringWriter stringWriter = new StringWriter();
-        PrintWriter writer = new PrintWriter(stringWriter);
-        when(response.getWriter()).thenReturn(writer);
+        doThrow(new ServletException()).when(dispatcher).forward(request, response);
 
         servlet.doGet(request, response);
 
-        verify(response).setStatus(500);
-        verify(dataToJson).processResponse(response, null);
+        verify(dataToJson).processResponse(response, 500, ErrorResponseBinding.ERROR_RESPONSE_500);
     }
 
     @Test
-    public void whenDoGetIOExceptionResponseStatus500() throws ServletException, IOException {
+    public void whenDoGetIOExceptionExpectStatus500() throws ServletException, IOException {
         servlet = new RegisterServlet(dataToJson);
         doThrow(new IOException()).when(dispatcher).forward(request, response);
 
-        StringWriter stringWriter = new StringWriter();
-        PrintWriter writer = new PrintWriter(stringWriter);
-        when(response.getWriter()).thenReturn(writer);
 
         servlet.doGet(request, response);
 
-        verify(response).setStatus(500);
-        verify(dataToJson).processResponse(response, null);
+        verify(dataToJson).processResponse(response, 500,ErrorResponseBinding.ERROR_RESPONSE_500);
     }
 
     @Test
-    public void whenFormIsValidThanSetStatus200() {
+    public void whenDoPostIOExceptionExpectStatus422() throws IOException {
+        servlet = new RegisterServlet(registerService, dataToJson, dataValidator, jsonToData);
 
-        servlet = new RegisterServlet(registerService, dataToJson,
-                dataValidator);
-
-        when(request.getParameter("password1")).thenReturn("!12*Alex&");
-        when(request.getParameter("password2")).thenReturn("!12*Alex&");
-        when(request.getParameter("name")).thenReturn("Alexander");
-        when(request.getParameter("login")).thenReturn("markR12w");
+        doThrow(new IOException()).when(jsonToData).jsonToRegisterData(request);
 
         servlet.doPost(request, response);
 
-        verify(registerService, times(1)).createNewCustomerInDb(request.getParameter("login"),
-                request.getParameter("name"), request.getParameter("password1"));
-        verify(response).setStatus(200);
-        verify(dataToJson).processResponse(response, null);
+        verify(dataToJson).processResponse(response, 422, ErrorResponseBinding.ERROR_RESPONSE_422);
+
     }
 
     @Test
-    public void whenFormIsNotValidThanSetStatus400() {
+    public void whenFormIsValidAndCustomerExistsExpectStatus201() throws CustomerNotFoundException {
 
-        servlet = new RegisterServlet(registerService, dataToJson, dataValidator);
+        servlet = new RegisterServlet(registerService, dataToJson, dataValidator, jsonToData);
+
+        Customer customer = new Customer();
+
+        customer.setId(101);
+        customer.setName("Alex");
+        customer.setLogin("aslex2");
+
+        when(requestBinding.getPassword1()).thenReturn("!12*Alex&");
+        when(requestBinding.getPassword2()).thenReturn("!12*Alex&");
+        when(requestBinding.getName()).thenReturn("Alexander");
+        when(requestBinding.getLogin()).thenReturn("markR12w");
+
+        when(registerService.createNewCustomerInDb(requestBinding.toCustomer())).thenReturn(customer);
 
         servlet.doPost(request, response);
 
-        verify(response).setStatus(400);
-        verify(dataToJson).processResponse(response, null);
+
+        verify(dataToJson).processResponse(response, 201, new CustomerResponseBinding(customer));
+    }
+
+    @Test
+    public void whenFormIsValidAndCustomerNotExistsExpectStatus404() throws CustomerNotFoundException{
+
+        servlet = new RegisterServlet(registerService, dataToJson, dataValidator, jsonToData);
+
+        when(requestBinding.getPassword1()).thenReturn("!12*Alex&");
+        when(requestBinding.getPassword2()).thenReturn("!12*Alex&");
+        when(requestBinding.getName()).thenReturn("Alexander");
+        when(requestBinding.getLogin()).thenReturn("markR12w");
+
+        doThrow(new CustomerNotFoundException()).when(registerService).createNewCustomerInDb(Matchers.any(Customer.class));
+
+        servlet.doPost(request, response);
+
+        verify(dataToJson).processResponse(response, 404, ErrorResponseBinding.ERROR_RESPONSE_404);
+    }
+
+    @Test
+    public void whenFormIsNotValidThanSeExpectStatus400() {
+
+        servlet = new RegisterServlet(registerService, dataToJson, dataValidator, jsonToData);
+
+        when(requestBinding.getPassword1()).thenReturn("123");
+        when(requestBinding.getPassword2()).thenReturn("!123");
+        when(requestBinding.getName()).thenReturn("Alexander");
+        when(requestBinding.getLogin()).thenReturn("markR12w");
+
+        servlet.doPost(request, response);
+
+        verify(dataToJson).processResponse(response, 400,new ErrorResponseBinding(400,
+                "Customer with login:"+requestBinding.getLogin()+
+                        " name: "+requestBinding.getName()+
+                        " password1: "+requestBinding.getPassword1()+
+                        " password2: "+requestBinding.getPassword2()+
+                        " can not be registered"));
 
 
     }
 
 }
-*/
 

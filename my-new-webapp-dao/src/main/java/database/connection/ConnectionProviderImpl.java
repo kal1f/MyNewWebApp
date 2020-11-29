@@ -1,8 +1,13 @@
 package database.connection;
 
+import database.CustomerDAOImpl;
+import org.apache.log4j.Logger;
+
 import java.sql.*;
 
 public class ConnectionProviderImpl implements ConnectionProvider {
+
+    static final Logger LOGGER = Logger.getLogger(ConnectionProviderImpl.class);
 
     public Connection getCon(){
         Connection conn = null;
@@ -11,7 +16,7 @@ public class ConnectionProviderImpl implements ConnectionProvider {
             conn = DriverManager.getConnection(ProviderConstants.connection,
                     ProviderConstants.username, ProviderConstants.pwd);
         } catch (Exception e) {
-            System.out.println(e);
+            LOGGER.debug(e.getMessage(), e);
         }
 
         return conn;

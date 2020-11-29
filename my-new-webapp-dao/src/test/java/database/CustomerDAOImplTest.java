@@ -30,7 +30,7 @@ public class CustomerDAOImplTest {
     @Before
     public void beforeMethod() throws SQLException {
         Statement createTable = connectionProvider.getCon().createStatement();
-        createTable.execute("CREATE TABLE customer(customer VARCHAR(50), pass_ VARCHAR(50), name_ VARCHAR(50), id INT PRIMARY KEY AUTO_INCREMENT )");
+        createTable.execute("CREATE TABLE customer(id INT PRIMARY KEY AUTO_INCREMENT, customer VARCHAR(50) NOT NULL UNIQUE, pass_ VARCHAR(50) NOT NULL, name_ VARCHAR(50) DEFAULT NULL ,)");
         fillInTable();
         connectionProvider.closeStatement(createTable);
     }
@@ -61,19 +61,14 @@ public class CustomerDAOImplTest {
     @Test
     public void getCustomerWithNoExistedPassReturnNull(){
         Customer c = customerDAO.getCustomer("alex", "23423");
-        assertNull(c.getLogin());
-        assertNull(c.getPassword());
-        assertNull(c.getName());
-        assertEquals(0 , c.getId());
+
+        assertNull(c);
     }
 
     @Test
     public void getCustomerWithNoExistedLoginReturnNull(){
         Customer c = customerDAO.getCustomer("ahmed", "esh141s.");
-        assertNull(c.getLogin());
-        assertNull(c.getPassword());
-        assertNull(c.getName());
-        assertEquals(0, c.getId());
+        assertNull(c);
     }
 
     @Test
@@ -112,19 +107,19 @@ public class CustomerDAOImplTest {
             statement = connectionProvider.getCon().createStatement();
 
             String sql = "INSERT INTO CUSTOMER " +
-                    "VALUES ('jarty12', 'esh141s.', 'Ramesh', 1)";
+                    "VALUES (1,'jarty12', 'esh141s.', 'Ramesh')";
             statement.executeUpdate(sql);
             sql = "INSERT INTO CUSTOMER " +
-                    "VALUES ('milka', 'mksd214', 'Mike', 2)";
+                    "VALUES (2,'milka', 'mksd214', 'Mike')";
             statement.executeUpdate(sql);
             sql = "INSERT INTO CUSTOMER " +
-                    "VALUES ('miketins', 'da2.w12', 'Maks', 3)";
+                    "VALUES (3,'miketins', 'da2.w12', 'Maks')";
             statement.executeUpdate(sql);
             sql = "INSERT INTO CUSTOMER " +
-                    "VALUES ('das21', 'd2.cw', 'Alexander', 4)";
+                    "VALUES (4,'das21', 'd2.cw', 'Alexander')";
             statement.executeUpdate(sql);
             sql = "INSERT INTO CUSTOMER " +
-                    "VALUES ('thazfr12', 'wqr12.ad', 'Miron', 5)";
+                    "VALUES (5,'thazfr12', 'wqr12.ad', 'Miron')";
             statement.executeUpdate(sql);
         }catch (Exception e){
             System.out.println(e.getMessage());

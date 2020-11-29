@@ -1,4 +1,3 @@
-/*
 package servlet;
 
 import binding.response.ErrorResponseBinding;
@@ -35,7 +34,7 @@ public class WelcomeServletTest {
     public void setUp() throws ServletException, IOException {
         servlet = new WelcomeServlet(dataToJson);
 
-        when(request.getRequestDispatcher("register.html")).thenReturn(dispatcher);
+        when(request.getRequestDispatcher("welcome.html")).thenReturn(dispatcher);
 
         doNothing().when(dispatcher).forward(request,response);
         doNothing().when(dataToJson).processResponse(response, 500,ErrorResponseBinding.ERROR_RESPONSE_500 );
@@ -71,4 +70,3 @@ public class WelcomeServletTest {
     }
 
 }
-*/

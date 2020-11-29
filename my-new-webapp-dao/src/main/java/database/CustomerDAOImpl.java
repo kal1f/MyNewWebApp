@@ -3,6 +3,7 @@ package database;
 import database.connection.ConnectionProvider;
 import database.connection.ConnectionProviderImpl;
 import database.entity.Customer;
+import org.apache.log4j.Logger;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -10,7 +11,9 @@ import java.util.ArrayList;
 public class CustomerDAOImpl implements CustomerDAO {
 
 
-     private ConnectionProvider connectionProvider;
+    private final ConnectionProvider connectionProvider;
+
+    static final Logger LOGGER = Logger.getLogger(CustomerDAOImpl.class);
 
     public CustomerDAOImpl(){
 
@@ -46,12 +49,11 @@ public class CustomerDAOImpl implements CustomerDAO {
             }
 
         } catch (Exception e) {
-            System.out.println(e);
+            LOGGER.debug(e.getMessage(), e);
         }
         finally {
             connectionProvider.closeRS(rs);
             connectionProvider.closeStatement(ps);
-            //connectionProvider.closeStatement(getIdStatement);
             connectionProvider.closeCon(con);
         }
         return id;
@@ -59,8 +61,7 @@ public class CustomerDAOImpl implements CustomerDAO {
 
     @Override
     public Customer getCustomer(String login, String pass) {
-
-        Customer c = new Customer();
+        Customer c = null;
         Connection con = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
@@ -72,16 +73,18 @@ public class CustomerDAOImpl implements CustomerDAO {
             ps.setString(2,pass);
 
             rs=ps.executeQuery();
-            while(rs.next()){
-                c.setLogin(rs.getString(1));
-                c.setPassword(rs.getString(2));
-                c.setName(rs.getString(3));
-                c.setId(rs.getInt(4));
-            }
 
+
+            while(rs.next()){
+                c = new Customer();
+                c.setLogin(rs.getString(2));
+                c.setPassword(rs.getString(3));
+                c.setName(rs.getString(4));
+                c.setId(rs.getInt(1));
+            }
         }
         catch (Exception e){
-            System.out.println(e);
+            LOGGER.debug(e.getMessage(), e);
         }
         finally {
             connectionProvider.closeRS(rs);
@@ -116,7 +119,7 @@ public class CustomerDAOImpl implements CustomerDAO {
 
         }
         catch (Exception e){
-            System.out.println(e);
+            LOGGER.debug(e.getMessage(), e);
         }
         finally {
             connectionProvider.closeRS(rs);
@@ -147,7 +150,7 @@ public class CustomerDAOImpl implements CustomerDAO {
             }
         }
         catch (Exception e){
-            System.out.println(e);
+            LOGGER.debug(e.getMessage(), e);
         }
         finally {
             connectionProvider.closeRS(rs);

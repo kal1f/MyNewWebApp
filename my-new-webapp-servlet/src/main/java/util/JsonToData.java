@@ -14,7 +14,6 @@ public class JsonToData {
 
     private Gson gson;
 
-    static final Logger LOGGER = Logger.getLogger(JsonToData.class);
 
     public JsonToData() {
         this.gson = new Gson();

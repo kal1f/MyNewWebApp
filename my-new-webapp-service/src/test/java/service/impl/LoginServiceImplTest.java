@@ -1,8 +1,8 @@
-/*
 package service.impl;
 
 import database.CustomerDAO;
 import database.entity.Customer;
+import exception.CustomerNotFoundException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -34,11 +34,6 @@ public class LoginServiceImplTest {
 
         loginService = new LoginServiceImpl(authentication, cd);
 
-        when(cd.isCustomerExist("alex2","132saw2!")).thenReturn(true);
-
-        when(cd.isCustomerExist(null,null)).thenReturn(false);
-        when(cd.isCustomerExist("alex2",null)).thenReturn(false);
-        when(cd.isCustomerExist(null,"132saw2!")).thenReturn(false);
         when(cd.getCustomer("alex2", "132saw2!")).thenReturn(new Customer("alex2",
                 "132saw2!", "Marko", 101));
 
@@ -48,51 +43,67 @@ public class LoginServiceImplTest {
 
 
     @Test
-    public void authenticateCustomerWhenPassAndLoginAreNotNull(){
+    public void authenticateCustomerWhenPassAndLoginAreNotNull() throws CustomerNotFoundException {
 
-        Customer authenticated = loginService.authenticate("SHDGSF22XCD21","alex2",
-                "132saw2!");
+        Customer authenticated = loginService.authenticate("SHDGSF22XCD21",new Customer("alex2", "132saw2!"));
 
-        verify(cd).isCustomerExist("alex2", "132saw2!");
         verify(cd).getCustomer("alex2", "132saw2!");
 
         assertEquals(customer.getLogin(), authenticated.getLogin());
-        assertEquals(null, authenticated.getPassword());
+        assertNull(authenticated.getPassword());
         assertEquals(101, authenticated.getId());
         assertEquals("Marko", authenticated.getName());
 
     }
+
     @Test
     public void notAuthenticateWhenPassAndLoginAreNull(){
+        String message = null;
 
-        Customer authenticated = loginService.authenticate("SHDGSF22XCD21",null,
-                null);
+        try {
+           loginService.authenticate("SHDGSF22XCD21",
+                   new Customer((String) null, null));
+        } catch (CustomerNotFoundException e) {
+            message = e.getMessage();
+        }
 
-        verify(cd).isCustomerExist(null, null);
+        verify(cd).getCustomer(null, null);
 
-
-        assertNull(authenticated);
+        assertEquals("Customer with login: null, pass: null is not exists", message);
     }
 
     @Test
-    public void notAuthenticateWhenPassNullLoginNotNull(){
+    public void notAuthenticateWhenPassNullLoginNotNull() {
 
-        Customer authenticated = loginService.authenticate("SHDGSF22XCD21","login",null);
+        String message = null;
+        try {
+           loginService.authenticate("SHDGSF22XCD21",
+                   new Customer("login", null));
+        } catch (CustomerNotFoundException e) {
+            message = e.getMessage();
+        }
 
-        verify(cd).isCustomerExist(anyString(), (String)isNull());
+        verify(cd).getCustomer(anyString(), (String)isNull());
 
-        assertNull(authenticated);
+        assertEquals("Customer with login: login, pass: null is not exists", message);
     }
 
     @Test
-    public void notAuthenticateWhenPassNotNullAndLoginNull() {
+    public void notAuthenticateWhenPassNotNullAndLoginNull(){
 
-        Customer authenticated = loginService.authenticate("SHDGSF22XCD21",null,"132saw2!");
+        String message = null;
 
-        verify(cd).isCustomerExist((String) isNull(), anyString());
+        try {
+           loginService.authenticate("SHDGSF22XCD21",
+                    new Customer((String) null, "132saw2!"));
+        } catch (CustomerNotFoundException e) {
+            message = e.getMessage();
+        }
 
-        assertNull(authenticated);
+        verify(cd).getCustomer((String) isNull(), anyString());
+
+        assertEquals("Customer with login: null, pass: 132saw2! is not exists", message);
     }
 
 
-}*/
+}

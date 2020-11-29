@@ -1,7 +1,10 @@
 package servlet;
 
+import binding.response.CustomerResponseBinding;
 import binding.response.ErrorResponseBinding;
 import binding.request.CustomerRegisterRequestBinding;
+import database.entity.Customer;
+import exception.CustomerNotFoundException;
 import org.apache.log4j.Logger;
 import service.RegisterService;
 import service.impl.RegisterServiceImpl;
@@ -62,9 +65,9 @@ public class RegisterServlet extends HttpServlet {
         try {
             request.getRequestDispatcher("register.html").forward(request, response);
         }catch (ServletException | IOException e){
-            dataToJson.processResponse(response,
-                    ErrorResponseBinding.ERROR_RESPONSE_500);
             LOGGER.error(e.getMessage(), e);
+            dataToJson.processResponse(response,500,
+                    ErrorResponseBinding.ERROR_RESPONSE_500);
         }
 
     }
@@ -75,16 +78,26 @@ public class RegisterServlet extends HttpServlet {
             requestBinding = jsonToData.jsonToRegisterData(request);
         }catch (IOException e){
             LOGGER.debug(e.getMessage(), e);
-            dataToJson.processResponse(response, 500,
-                    ErrorResponseBinding.ERROR_RESPONSE_500);
+            dataToJson.processResponse(response, 422,
+                    ErrorResponseBinding.ERROR_RESPONSE_422);
             return;
         }
 
         if(dataValidator.isRegisterFormValid(requestBinding.getLogin(), requestBinding.getName(),
                 requestBinding.getPassword1(), requestBinding.getPassword2())) {
 
-            registerService.createNewCustomerInDb(requestBinding.toCustomer());
-            dataToJson.processResponse(response, 201, null);
+            try {
+                Customer customer = registerService.createNewCustomerInDb(requestBinding.toCustomer());
+
+                LOGGER.debug("Customer is created");
+
+                dataToJson.processResponse(response, 201, new CustomerResponseBinding(customer));
+            }catch (CustomerNotFoundException e){
+                LOGGER.debug("Customer is not created", e);
+
+                dataToJson.processResponse(response, 404, ErrorResponseBinding.ERROR_RESPONSE_404);
+            }
+
         }
         else{
             LOGGER.info("Customer with login:"+

@@ -1,7 +1,8 @@
 package service;
 
 import database.entity.Customer;
+import exception.CustomerNotFoundException;
 
 public interface RegisterService {
-    int createNewCustomerInDb(Customer customer);
+    Customer createNewCustomerInDb(Customer customer) throws CustomerNotFoundException;
 }

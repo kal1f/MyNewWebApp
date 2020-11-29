@@ -10,6 +10,12 @@ public class ErrorResponseBinding implements ResponseBinding {
     public static final ErrorResponseBinding ERROR_RESPONSE_500 =
             new ErrorResponseBinding(500, "Internal Server Error");
 
+    public static final ErrorResponseBinding ERROR_RESPONSE_404 =
+            new ErrorResponseBinding(404, "Not found");
+
+    public static final ErrorResponseBinding ERROR_RESPONSE_422 =
+            new ErrorResponseBinding(422, "Unprocessable Entity");
+
     public ErrorResponseBinding(int code, String message) {
         this.code = code;
         this.message = message;

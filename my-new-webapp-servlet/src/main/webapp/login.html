@@ -30,28 +30,6 @@
     ===================
     {"login":,"password":}*/
 
-    /*document.getElementById("loginButton").addEventListener("click", function () {
-        const data = { login: document.getElementById("login").value,
-            password: document.getElementById("password").value }
-
-        const json = data
-
-        console.log(json)
-
-        fetch('http://localhost:8080/login', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json',
-                'Application': 'application/json' },
-            body: JSON.stringify(json)
-            }).then(resp => {
-                if (resp.status === 200) {
-                    window.location.assign("welcome");
-                }
-                else {
-                    console.log(resp.json());
-                }
-        });
-    });*/
     var form = document.getElementById('form')
 
     form.addEventListener('submit', function (e) {
@@ -76,12 +54,13 @@
                     window.location.replace('welcome');
                 }
                 else if(response.status === 400) {
-                    var json = JSON.parse(JSON.stringify(response.json()));
-                    var w = window.open();
-                    var html = "<head><style>pre {outline: 1px solid #ccc; padding: 5px; margin: 5px; } .string { color: green; } ";
-                    html+= " .number { color: darkorange; } .boolean { color: blue; } .null { color: magenta; } .key { color: red; }</style></head><body>";
-                    html+= "<pre>"+json+"</pre></body>";
-                    w.document.writeln(html);
+                    // var json = JSON.parse(JSON.stringify(response.json()));
+                    // var w = window.open();
+                    // var html = "<head><style>pre {outline: 1px solid #ccc; padding: 5px; margin: 5px; } .string { color: green; } ";
+                    // html+= " .number { color: darkorange; } .boolean { color: blue; } .null { color: magenta; } .key { color: red; }</style></head><body>";
+                    // html+= "<pre>"+json+"</pre></body>";
+                    // w.document.writeln(html);
+                    console.log(response.json());
                 }
             })
     })

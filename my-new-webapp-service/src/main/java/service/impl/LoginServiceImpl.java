@@ -3,6 +3,8 @@ package service.impl;
 import database.CustomerDAO;
 import database.CustomerDAOImpl;
 import database.entity.Customer;
+import exception.CustomerNotFoundException;
+import org.apache.log4j.Logger;
 import service.LoginService;
 import service.authentication.Authentication;
 import service.authentication.AuthenticationImpl;
@@ -10,8 +12,10 @@ import service.authentication.AuthenticationImpl;
 
 public class LoginServiceImpl implements LoginService {
 
-    private CustomerDAO cd;
-    private Authentication authentication;
+    private final CustomerDAO cd;
+    private final Authentication authentication;
+
+    static final Logger LOGGER = Logger.getLogger(LoginServiceImpl.class);
 
     public LoginServiceImpl() {
         this.cd = new CustomerDAOImpl();
@@ -28,7 +32,7 @@ public class LoginServiceImpl implements LoginService {
     }
 
     @Override
-    public Customer authenticate(String sessionId, Customer customer) {
+    public Customer authenticate(String sessionId, Customer customer) throws CustomerNotFoundException {
         String login = customer.getLogin();
         String password = customer.getPassword();
 
@@ -42,8 +46,11 @@ public class LoginServiceImpl implements LoginService {
 
             return existedCustomer;
         }
+        else {
+            LOGGER.debug("getCustomer(String login, String password) returned null");
+            throw new CustomerNotFoundException("Customer with login: "+login+", pass: "+password+" is not exists");
+        }
 
-        return null;
     }
 
 }

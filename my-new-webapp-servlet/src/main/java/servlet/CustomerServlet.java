@@ -1,9 +1,10 @@
 package servlet;
 
 import binding.request.CustomerWelcomeRequestBinding;
-import binding.response.CustomerWelcomeResponseBinding;
+import binding.response.CustomersResponseBinding;
 import binding.response.ErrorResponseBinding;
 import database.entity.Customer;
+import exception.CustomerNotFoundException;
 import org.apache.log4j.Logger;
 import service.CustomerService;
 import service.impl.CustomerServiceImpl;
@@ -57,44 +58,36 @@ public class CustomerServlet extends HttpServlet {
             requestBinding = jsonToData.jsonToWelcomeData(request);
         } catch (IOException e){
             LOGGER.debug(e.getMessage(), e);
-            dataToJson.processResponse(response, 500, ErrorResponseBinding.ERROR_RESPONSE_500);
+            dataToJson.processResponse(response, 422, ErrorResponseBinding.ERROR_RESPONSE_422);
             return;
         }
-        if(dataValidator.isWelcomeFormValid(Integer.toString(requestBinding.getId()),requestBinding.getLogin())) {
 
-            ArrayList<Customer> c = customerService.searchCustomers(requestBinding.toCustomer());
+        if(requestBinding == null){
+            ArrayList<Customer> c = customerService.getAllCustomers();
+            dataToJson.processResponse(response, 200, new CustomersResponseBinding(c));
+        }
+        else if(dataValidator.isWelcomeFormValid(requestBinding.getId(),requestBinding.getLogin())) {
 
-            if(c.isEmpty()){
+            try {
+                ArrayList<Customer> c = customerService.searchCustomers(requestBinding.toCustomer());
+                dataToJson.processResponse(response,200, new CustomersResponseBinding(c));
+            } catch (CustomerNotFoundException e) {
                 LOGGER.debug("Customers with login:"+requestBinding.getLogin()+
                         " id: "+requestBinding.getId()+
                         " are not existing");
+                dataToJson.processResponse(response,404, ErrorResponseBinding.ERROR_RESPONSE_404);
+            }
 
-                dataToJson.processResponse(response,404, new ErrorResponseBinding(404,
-                        "Customers with login:"+requestBinding.getLogin()+
-                                " id: "+requestBinding.getId()+
-                        " are not existing"));
-            }
-            else {
-                dataToJson.processResponse(response,200, new CustomerWelcomeResponseBinding(c));
-            }
         }
         else{
             LOGGER.debug("Login or id is not valid");
 
             dataToJson.processResponse(response, 400, new ErrorResponseBinding(400,
-                    "Login: "+requestBinding.getLogin()+
-                            " or id: "+requestBinding.getId()+
-                            " is not valid"));
+                    "Login or ID is not valid"));
 
         }
 
     }
 
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response){
-
-        ArrayList<Customer>  c = customerService.outAllCustomers();
-        dataToJson.processResponse(response, 200, new CustomerWelcomeResponseBinding(c));
-    }
 
 }

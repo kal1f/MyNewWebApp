@@ -5,11 +5,11 @@ import database.entity.Customer;
 import java.util.ArrayList;
 import java.util.Objects;
 
-public class CustomerWelcomeResponseBinding implements ResponseBinding {
+public class CustomersResponseBinding implements ResponseBinding {
 
     private ArrayList<Customer> customers;
 
-    public CustomerWelcomeResponseBinding(ArrayList<Customer> customers) {
+    public CustomersResponseBinding(ArrayList<Customer> customers) {
         this.customers = customers;
     }
 
@@ -25,7 +25,7 @@ public class CustomerWelcomeResponseBinding implements ResponseBinding {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        CustomerWelcomeResponseBinding that = (CustomerWelcomeResponseBinding) o;
+        CustomersResponseBinding that = (CustomersResponseBinding) o;
         return Objects.equals(customers, that.customers);
     }
 
