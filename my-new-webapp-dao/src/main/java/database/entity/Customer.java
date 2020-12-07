@@ -8,6 +8,7 @@ public class Customer {
     private String login;
     private String name;
     private String password;
+    private String role;
 
     public Customer(){
 
@@ -34,6 +35,14 @@ public class Customer {
         this.login = login;
         this.password = pass_;
         this.name = name_;
+    }
+
+    public Customer(Integer id, String login, String name, String password, String role) {
+        this.id = id;
+        this.login = login;
+        this.name = name;
+        this.password = password;
+        this.role = role;
     }
 
     public int getId() {
@@ -67,6 +76,14 @@ public class Customer {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 
     @Override

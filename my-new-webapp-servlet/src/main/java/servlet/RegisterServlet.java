@@ -2,9 +2,9 @@ package servlet;
 
 import binding.response.CustomerResponseBinding;
 import binding.response.ErrorResponseBinding;
-import binding.request.CustomerRegisterRequestBinding;
+import binding.request.CustomerRequestBinding;
 import database.entity.Customer;
-import exception.CustomerNotFoundException;
+import exception.EntityNotFoundException;
 import org.apache.log4j.Logger;
 import service.RegisterService;
 import service.impl.RegisterServiceImpl;
@@ -12,7 +12,6 @@ import util.DataToJson;
 import util.JsonToData;
 import util.validator.DataValidator;
 
-import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -60,20 +59,21 @@ public class RegisterServlet extends HttpServlet {
 
     }
 
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) {
-        try {
-            request.getRequestDispatcher("register.html").forward(request, response);
-        }catch (ServletException | IOException e){
-            LOGGER.error(e.getMessage(), e);
-            dataToJson.processResponse(response,500,
-                    ErrorResponseBinding.ERROR_RESPONSE_500);
-        }
+//    @Override
+//    protected void doGet(HttpServletRequest request, HttpServletResponse response) {
+//        try {
+//            request.getRequestDispatcher("register.html").forward(request, response);
+//        }catch (ServletException | IOException e){
+//            LOGGER.error(e.getMessage(), e);
+//            dataToJson.processResponse(response,500,
+//                    ErrorResponseBinding.ERROR_RESPONSE_500);
+//        }
+//
+//    }
 
-    }
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) {
-        CustomerRegisterRequestBinding requestBinding= null;
+        CustomerRequestBinding requestBinding;
         try {
             requestBinding = jsonToData.jsonToRegisterData(request);
         }catch (IOException e){
@@ -83,16 +83,16 @@ public class RegisterServlet extends HttpServlet {
             return;
         }
 
-        if(dataValidator.isRegisterFormValid(requestBinding.getLogin(), requestBinding.getName(),
+        if(dataValidator.isCustomerDataValid(requestBinding.getLogin(), requestBinding.getName(),
                 requestBinding.getPassword1(), requestBinding.getPassword2())) {
 
             try {
-                Customer customer = registerService.createNewCustomerInDb(requestBinding.toCustomer());
+                Customer customer = registerService.createNewCustomerInDb(requestBinding.toEntityObject());
 
                 LOGGER.debug("Customer is created");
 
                 dataToJson.processResponse(response, 201, new CustomerResponseBinding(customer));
-            }catch (CustomerNotFoundException e){
+            }catch (EntityNotFoundException e){
                 LOGGER.debug("Customer is not created", e);
 
                 dataToJson.processResponse(response, 404, ErrorResponseBinding.ERROR_RESPONSE_404);

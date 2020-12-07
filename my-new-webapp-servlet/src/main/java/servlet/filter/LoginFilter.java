@@ -1,10 +1,12 @@
 package servlet.filter;
 
-import database.CustomerDAO;
-import database.CustomerDAOImpl;
+import binding.response.FilterResponseBinding;
+import database.dao.CustomerDAO;
+import database.dao.impl.CustomerDAOImpl;
 import org.apache.log4j.Logger;
 import service.authentication.Authentication;
 import service.authentication.AuthenticationImpl;
+import util.DataToJson;
 
 
 import javax.servlet.*;
@@ -19,6 +21,7 @@ import java.io.IOException;
 public class LoginFilter implements Filter {
 
     private Authentication authenticationImpl;
+    private DataToJson dataToJson;
     CustomerDAO cd;
 
     static final Logger LOGGER = Logger.getLogger(LoginFilter.class);
@@ -27,6 +30,7 @@ public class LoginFilter implements Filter {
     public void init(FilterConfig filterConfig) {
         authenticationImpl = (AuthenticationImpl) filterConfig.getServletContext().getAttribute("authenticationImpl");
         cd = new CustomerDAOImpl();
+        dataToJson = new DataToJson();
     }
 
     @Override
@@ -53,7 +57,9 @@ public class LoginFilter implements Filter {
             }
             else {
                 LOGGER.debug("send redirect to /login");
-                ((HttpServletResponse) response).sendRedirect("/login");
+                dataToJson.processResponse(resp, 401,
+                        new FilterResponseBinding(401, "Unauthorized", "http://localhost:8080/login"));
+                //((HttpServletResponse) response).sendRedirect("/login");
             }
         } catch (IOException | ServletException e) {
             LOGGER.error(e.getMessage(), e);

@@ -1,8 +1,8 @@
 package service.impl;
 
-import database.CustomerDAO;
+import database.dao.CustomerDAO;
 import database.entity.Customer;
-import exception.CustomerNotFoundException;
+import exception.EntityNotFoundException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -56,13 +56,13 @@ public class CustomerServiceImplTest {
     }
 
     @Test
-    public void searchCustomersExpectEmptyArrayWhenIdIsNullAndLoginIsNull() throws CustomerNotFoundException {
+    public void searchCustomersExpectEmptyArrayWhenIdIsNullAndLoginIsNull() throws EntityNotFoundException {
         ArrayList<Customer> customers;
         String message = null;
 
         try {
             customers = customerService.searchCustomers(new Customer(0, null));
-        }catch (CustomerNotFoundException e){
+        }catch (EntityNotFoundException e){
             message = e.getMessage();
         }
 
@@ -72,7 +72,7 @@ public class CustomerServiceImplTest {
     }
 
     @Test
-    public void searchCustomersExpectArrayWhenIdExistsAndLoginExists() throws CustomerNotFoundException{
+    public void searchCustomersExpectArrayWhenIdExistsAndLoginExists() throws EntityNotFoundException {
 
         customers.remove(2);
         ArrayList<Customer> customers = customerService.searchCustomers(new Customer(201, "lada12"));
@@ -84,7 +84,7 @@ public class CustomerServiceImplTest {
     }
 
     @Test
-    public void searchCustomersExpectArrayWhenIdIsNotExistingAndLogin() throws CustomerNotFoundException{
+    public void searchCustomersExpectArrayWhenIdIsNotExistingAndLogin() throws EntityNotFoundException {
         customers.remove(0);
         customers.remove(1);
 
@@ -97,7 +97,7 @@ public class CustomerServiceImplTest {
     }
 
     @Test
-    public void searchCustomersExpectArrayWhenLoginExistsAndIdNull() throws CustomerNotFoundException{
+    public void searchCustomersExpectArrayWhenLoginExistsAndIdNull() throws EntityNotFoundException {
         customers.remove(1);
         customers.remove(1);
 
@@ -110,14 +110,14 @@ public class CustomerServiceImplTest {
     }
 
     @Test
-    public void searchCustomersExpectEmptyArrayWhenIdIsNotExistingAndLoginNull() throws CustomerNotFoundException{
+    public void searchCustomersExpectEmptyArrayWhenIdIsNotExistingAndLoginNull() throws EntityNotFoundException {
 
         ArrayList<Customer> customers = null;
         String message = null;
 
         try {
             customers = customerService.searchCustomers(new Customer(101, null));
-        } catch (CustomerNotFoundException e) {
+        } catch (EntityNotFoundException e) {
             message = e.getMessage();
         }
 
@@ -126,16 +126,15 @@ public class CustomerServiceImplTest {
         assertEquals("Search customers returned empty array", message);
     }
 
-
     @Test
-    public void searchCustomersExpectEmptyArrayWhenLoginIsNotExistingAndIdNull()throws CustomerNotFoundException{
+    public void searchCustomersExpectEmptyArrayWhenLoginIsNotExistingAndIdNull()throws EntityNotFoundException {
 
         ArrayList<Customer> customers = null;
         String message = null;
 
         try {
             customers = customerService.searchCustomers(new Customer(0, "da41xd"));
-        } catch (CustomerNotFoundException e) {
+        } catch (EntityNotFoundException e) {
             message = e.getMessage();
         }
 
@@ -145,13 +144,13 @@ public class CustomerServiceImplTest {
     }
 
     @Test
-    public void searchCustomersExpectEmptyArrayWhenIdNotExistsAndLoginNotExisting()throws CustomerNotFoundException{
+    public void searchCustomersExpectEmptyArrayWhenIdNotExistsAndLoginNotExisting()throws EntityNotFoundException {
         ArrayList<Customer> customers;
         String message = null;
 
         try {
             customers = customerService.searchCustomers(new Customer(101, "da41xd"));
-        }catch (CustomerNotFoundException e){
+        }catch (EntityNotFoundException e){
             message = e.getMessage();
         }
 

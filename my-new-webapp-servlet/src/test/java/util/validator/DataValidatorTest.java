@@ -114,7 +114,7 @@ public class DataValidatorTest {
 
     @Test
     public void isIdValidReturnFalseIfIntegerNull(){
-        boolean status =  dataValidator.isIdValid(null);
+        boolean status =  dataValidator.isIdValid((Integer) null);
 
       assertFalse(status);
     }
@@ -156,9 +156,9 @@ public class DataValidatorTest {
 
     @Test
     public void isLogInFormValidReturnFalseIfParamsNull() {
-        boolean statusLoginAndPassAreNull = dataValidator.isLogInFormValid(null, null);
-        boolean statusLoginIsNull = dataValidator.isLogInFormValid(null, "1234Qwe!");
-        boolean statusPassIsNull = dataValidator.isLogInFormValid("alexan21", null);
+        boolean statusLoginAndPassAreNull = dataValidator.isLogInDataValid(null, null);
+        boolean statusLoginIsNull = dataValidator.isLogInDataValid(null, "1234Qwe!");
+        boolean statusPassIsNull = dataValidator.isLogInDataValid("alexan21", null);
 
         assertFalse(statusLoginAndPassAreNull);
         assertFalse(statusLoginIsNull);
@@ -167,48 +167,48 @@ public class DataValidatorTest {
 
     @Test
     public void isLogInFormValidReturnTrue() {
-        boolean status = dataValidator.isLogInFormValid("admin12", "1234!qwdz");
+        boolean status = dataValidator.isLogInDataValid("admin12", "1234!qwdz");
 
         assertTrue(status);
     }
 
     @Test
     public void isRegisterFormValidReturnTrue() {
-        boolean status = dataValidator.isRegisterFormValid("admin12","alex",
+        boolean status = dataValidator.isCustomerDataValid("admin12","alex",
                 "1234qwer!", "1234qwer!");
         assertTrue(status);
     }
 
     @Test
     public void isRegisterFormValidReturnFalseIfParamsNull() {
-        boolean statusLoginNull = dataValidator.isRegisterFormValid(null,"alex",
+        boolean statusLoginNull = dataValidator.isCustomerDataValid(null,"alex",
                 "1234qwer!", "1234qwer!");
-        boolean statusNameNull = dataValidator.isRegisterFormValid("login12",null,
+        boolean statusNameNull = dataValidator.isCustomerDataValid("login12",null,
                 "1234qwer!", "1234qwer!");
-        boolean statusPass1Null = dataValidator.isRegisterFormValid("login12","alex",
+        boolean statusPass1Null = dataValidator.isCustomerDataValid("login12","alex",
                 null, "1234qwer!");
-        boolean statusPass2Null = dataValidator.isRegisterFormValid("login12","alex",
+        boolean statusPass2Null = dataValidator.isCustomerDataValid("login12","alex",
                 "1234qwer!", null);
-        boolean statusLoginNameNull = dataValidator.isRegisterFormValid(null, null,
+        boolean statusLoginNameNull = dataValidator.isCustomerDataValid(null, null,
                 "1234qwer!", "1234qwer!");
-        boolean statusLoginPass1Null = dataValidator.isRegisterFormValid(null, "alex",
+        boolean statusLoginPass1Null = dataValidator.isCustomerDataValid(null, "alex",
                 null, "1234qwer!");
-        boolean statusLoginPass2Null = dataValidator.isRegisterFormValid(null, "alex",
+        boolean statusLoginPass2Null = dataValidator.isCustomerDataValid(null, "alex",
                 "1234qwer!", null);
-        boolean statusNamePass1Null = dataValidator.isRegisterFormValid("login12", "alex",
+        boolean statusNamePass1Null = dataValidator.isCustomerDataValid("login12", "alex",
                 null, "1234qwer!");
-        boolean statusNamePass2Null = dataValidator.isRegisterFormValid("login12", null,
+        boolean statusNamePass2Null = dataValidator.isCustomerDataValid("login12", null,
                 "1234qwer!", null);
-        boolean statusLoginIsNotNull = dataValidator.isRegisterFormValid(null, "alex",
+        boolean statusLoginIsNotNull = dataValidator.isCustomerDataValid(null, "alex",
                 "1234qwer!", "1234qwer!");
-        boolean statusNameIsNotNull = dataValidator.isRegisterFormValid("login12", null,
+        boolean statusNameIsNotNull = dataValidator.isCustomerDataValid("login12", null,
                 "1234qwer!", "1234qwer!");
-        boolean statusPass1IsNotNull = dataValidator.isRegisterFormValid("login12", "alex",
+        boolean statusPass1IsNotNull = dataValidator.isCustomerDataValid("login12", "alex",
                 null, "1234qwer!");
-        boolean statusPass2IsNotNull = dataValidator.isRegisterFormValid("login12", "alex",
+        boolean statusPass2IsNotNull = dataValidator.isCustomerDataValid("login12", "alex",
                 "1234qwer!", null);
 
-        boolean statusAllNull = dataValidator.isRegisterFormValid(null, null,
+        boolean statusAllNull = dataValidator.isCustomerDataValid(null, null,
                 null, null);
 
         assertFalse(statusAllNull);
@@ -229,15 +229,15 @@ public class DataValidatorTest {
 
     @Test
     public void isWelcomeFormValidReturnTrue() {
-        boolean status = dataValidator.isWelcomeFormValid(124, "admin12");
+        boolean status = dataValidator.isWelcomeDataValid("124", "admin12");
         assertTrue(status);
     }
 
     @Test
     public void isWelcomeFormValidReturnFalseIfParamsNull(){
-        boolean statusAllNull = dataValidator.isWelcomeFormValid(null, null);
-        boolean statusIdNull = dataValidator.isWelcomeFormValid(null, "login12");
-        boolean statusLoginNull = dataValidator.isWelcomeFormValid(123, null);
+        boolean statusAllNull = dataValidator.isWelcomeDataValid(null, null);
+        boolean statusIdNull = dataValidator.isWelcomeDataValid(null, "login12");
+        boolean statusLoginNull = dataValidator.isWelcomeDataValid("123", null);
 
         assertFalse(statusAllNull);
         assertFalse(statusIdNull);
@@ -246,8 +246,8 @@ public class DataValidatorTest {
 
     @Test
     public void isWelcomeFormValidReturnFalseIfParamsNotValid(){
-        boolean statusLoginNotValid = dataValidator.isWelcomeFormValid(null, "12das");
-        boolean statusIdNotValid = dataValidator.isWelcomeFormValid(null, "log12");
+        boolean statusLoginNotValid = dataValidator.isWelcomeDataValid(null, "12das");
+        boolean statusIdNotValid = dataValidator.isWelcomeDataValid(null, "log12");
 
         assertFalse(statusLoginNotValid);
         assertFalse(statusIdNotValid);

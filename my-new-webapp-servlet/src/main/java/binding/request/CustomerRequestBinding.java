@@ -2,7 +2,7 @@ package binding.request;
 
 import database.entity.Customer;
 
-public class CustomerRegisterRequestBinding implements RequestBinding {
+public class CustomerRequestBinding implements RequestBinding {
 
     private String login;
     private String name;
@@ -10,8 +10,8 @@ public class CustomerRegisterRequestBinding implements RequestBinding {
     private String password2;
 
 
-    public CustomerRegisterRequestBinding(String login, String name,
-                                          String password1, String password2) {
+    public CustomerRequestBinding(String login, String name,
+                                  String password1, String password2) {
         this.login = login;
         this.name = name;
         this.password1 = password1;
@@ -49,7 +49,7 @@ public class CustomerRegisterRequestBinding implements RequestBinding {
     }
 
     @Override
-    public Customer toCustomer() {
+    public Customer toEntityObject() {
         return new Customer(login, name, password1);
     }
 }

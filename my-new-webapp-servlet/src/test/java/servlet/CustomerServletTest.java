@@ -1,11 +1,11 @@
 package servlet;
 
-import binding.request.CustomerWelcomeRequestBinding;
+import binding.request.CustomerSearchRequestBinding;
 import binding.response.CustomersResponseBinding;
 import binding.response.ErrorResponseBinding;
 import binding.response.ResponseBinding;
 import database.entity.Customer;
-import exception.CustomerNotFoundException;
+import exception.EntityNotFoundException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -43,7 +43,7 @@ public class CustomerServletTest {
     @Mock
     CustomerServlet servlet;
     @Mock
-    CustomerWelcomeRequestBinding requestBinding;
+    CustomerSearchRequestBinding requestBinding;
 
     @Before
     public void setUp() throws IOException {
@@ -51,11 +51,11 @@ public class CustomerServletTest {
         servlet = new CustomerServlet(customerService, dataToJson, dataValidator, jsonToData);
 
 
-        when(dataValidator.isWelcomeFormValid(null, null)).thenReturn(false);
-        when(dataValidator.isWelcomeFormValid(107, "12asds")).thenReturn(true);
-        when(dataValidator.isWelcomeFormValid(101, null)).thenReturn(true);
-        when(dataValidator.isWelcomeFormValid(0, "natse12x")).thenReturn(true);
-        when(dataValidator.isWelcomeFormValid(121, "qwer12")).thenReturn(true);
+        when(dataValidator.isWelcomeDataValid(null, null)).thenReturn(false);
+        when(dataValidator.isWelcomeDataValid(107, "12asds")).thenReturn(true);
+        when(dataValidator.isWelcomeDataValid(101, null)).thenReturn(true);
+        when(dataValidator.isWelcomeDataValid(0, "natse12x")).thenReturn(true);
+        when(dataValidator.isWelcomeDataValid(121, "qwer12")).thenReturn(true);
 
         doNothing().when(dataToJson).processResponse(Matchers.any(HttpServletResponse.class), anyInt(), Matchers.any(ResponseBinding.class));
 
@@ -71,7 +71,7 @@ public class CustomerServletTest {
 
         doThrow(new IOException()).when(jsonToData).jsonToWelcomeData(request);
 
-        servlet.doPost(request, response);
+        servlet.doGet(request, response);
 
         verify(dataToJson).processResponse(response, 422,ErrorResponseBinding.ERROR_RESPONSE_422);
 
@@ -86,29 +86,29 @@ public class CustomerServletTest {
 
         when(customerService.getAllCustomers()).thenReturn(c);
 
-        servlet.doPost(request, response);
+        servlet.doGet(request, response);
 
         verify(dataToJson).processResponse(response, 200, new CustomersResponseBinding(c) );
     }
 
     @Test
-    public void whenCustomerNotExistsWithParamsExpectStatus404() throws CustomerNotFoundException, IOException {
+    public void whenCustomerNotExistsWithParamsExpectStatus404() throws EntityNotFoundException, IOException {
 
         when(jsonToData.jsonToWelcomeData(request)).thenReturn(requestBinding);
 
         when(requestBinding.getLogin()).thenReturn("natse12x");
         when(requestBinding.getId()).thenReturn(0);
 
-        doThrow(new CustomerNotFoundException()).when(customerService).searchCustomers(Matchers.any(Customer.class));
+        doThrow(new EntityNotFoundException()).when(customerService).searchCustomers(Matchers.any(Customer.class));
 
-        servlet.doPost(request, response);
+        servlet.doGet(request, response);
 
         verify(dataToJson).processResponse(response, 404,  ErrorResponseBinding.ERROR_RESPONSE_404);
 
     }
 
     @Test
-    public void whenIdNullAndLoginAndCustomerExistsExpectStatus200() throws CustomerNotFoundException, IOException {
+    public void whenIdNullAndLoginAndCustomerExistsExpectStatus200() throws EntityNotFoundException, IOException {
         when(jsonToData.jsonToWelcomeData(request)).thenReturn(requestBinding);
 
         when(requestBinding.getLogin()).thenReturn("natse12x");
@@ -118,9 +118,9 @@ public class CustomerServletTest {
 
         c.add(new Customer("login", "pass", "name", 1));
 
-        when(customerService.searchCustomers(requestBinding.toCustomer())).thenReturn(c);
+        when(customerService.searchCustomers(requestBinding.toEntityObject())).thenReturn(c);
 
-        servlet.doPost(request, response);
+        servlet.doGet(request, response);
 
         verify(dataToJson).processResponse(response, 200, new CustomersResponseBinding(c));
 
@@ -133,7 +133,7 @@ public class CustomerServletTest {
         when(requestBinding.getLogin()).thenReturn(null);
         when(requestBinding.getId()).thenReturn(null);
 
-        servlet.doPost(request, response);
+        servlet.doGet(request, response);
 
         verify(dataToJson, times(1)).processResponse(response, 400,
                 new ErrorResponseBinding(400, "Login or ID is not valid"));
@@ -141,7 +141,7 @@ public class CustomerServletTest {
     }
 
     @Test
-    public void whenLoginNullAndIdNotNullReturnJsonWithStatus200() throws CustomerNotFoundException, IOException {
+    public void whenLoginNullAndIdNotNullReturnJsonWithStatus200() throws EntityNotFoundException, IOException {
         when(jsonToData.jsonToWelcomeData(request)).thenReturn(requestBinding);
 
         when(requestBinding.getLogin()).thenReturn(null);
@@ -151,19 +151,18 @@ public class CustomerServletTest {
 
         c.add(new Customer("login", "pass", "name", 1));
 
-        when(requestBinding.toCustomer()).thenReturn(new Customer(101, "login"));
-        when(customerService.searchCustomers(requestBinding.toCustomer())).thenReturn(c);
+        when(requestBinding.toEntityObject()).thenReturn(new Customer(101, "login"));
+        when(customerService.searchCustomers(requestBinding.toEntityObject())).thenReturn(c);
 
-        servlet.doPost(request, response);
+        servlet.doGet(request, response);
 
         verify(dataToJson).processResponse(response, 200, new CustomersResponseBinding(c));
 
 
     }
 
-
     @Test
-    public void whenLoginAndIdAndCustomerExistingExpectStatus200() throws CustomerNotFoundException, IOException {
+    public void whenLoginAndIdAndCustomerExistingExpectStatus200() throws EntityNotFoundException, IOException {
         when(jsonToData.jsonToWelcomeData(request)).thenReturn(requestBinding);
 
         when(requestBinding.getLogin()).thenReturn("qwer12");
@@ -173,9 +172,9 @@ public class CustomerServletTest {
 
         c.add(new Customer("login", "pass", "name", 1));
 
-        when(customerService.searchCustomers(requestBinding.toCustomer())).thenReturn(c);
+        when(customerService.searchCustomers(requestBinding.toEntityObject())).thenReturn(c);
 
-        servlet.doPost(request, response);
+        servlet.doGet(request, response);
 
         verify(dataToJson).processResponse(response, 200, new CustomersResponseBinding(c));
     }

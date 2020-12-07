@@ -1,9 +1,9 @@
 package service.impl;
 
-import database.CustomerDAO;
-import database.CustomerDAOImpl;
+import database.dao.CustomerDAO;
+import database.dao.impl.CustomerDAOImpl;
 import database.entity.Customer;
-import exception.CustomerNotFoundException;
+import exception.EntityNotFoundException;
 import org.apache.log4j.Logger;
 import service.LoginService;
 import service.authentication.Authentication;
@@ -32,7 +32,7 @@ public class LoginServiceImpl implements LoginService {
     }
 
     @Override
-    public Customer authenticate(String sessionId, Customer customer) throws CustomerNotFoundException {
+    public Customer authenticate(String sessionId, Customer customer) throws EntityNotFoundException {
         String login = customer.getLogin();
         String password = customer.getPassword();
 
@@ -48,7 +48,7 @@ public class LoginServiceImpl implements LoginService {
         }
         else {
             LOGGER.debug("getCustomer(String login, String password) returned null");
-            throw new CustomerNotFoundException("Customer with login: "+login+", pass: "+password+" is not exists");
+            throw new EntityNotFoundException("Customer with login: "+login+", pass: "+password+" is not exists");
         }
 
     }

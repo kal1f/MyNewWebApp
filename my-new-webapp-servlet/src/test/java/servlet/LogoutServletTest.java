@@ -41,7 +41,7 @@ public class LogoutServletTest {
     @Test
     public void whenCallDoGetThenCustomerAuthenticationIsDeletedAndReturnLoginPage() {
 
-        logoutServlet.doGet(request, response);
+        logoutServlet.doPost(request, response);
 
         verify(logoutService, times(1)).unauthenticate(anyString());
         verify(session, times(1)).invalidate();

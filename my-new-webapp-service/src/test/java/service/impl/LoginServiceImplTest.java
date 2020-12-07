@@ -1,8 +1,8 @@
 package service.impl;
 
-import database.CustomerDAO;
+import database.dao.CustomerDAO;
 import database.entity.Customer;
-import exception.CustomerNotFoundException;
+import exception.EntityNotFoundException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -43,7 +43,7 @@ public class LoginServiceImplTest {
 
 
     @Test
-    public void authenticateCustomerWhenPassAndLoginAreNotNull() throws CustomerNotFoundException {
+    public void authenticateCustomerWhenPassAndLoginAreNotNull() throws EntityNotFoundException {
 
         Customer authenticated = loginService.authenticate("SHDGSF22XCD21",new Customer("alex2", "132saw2!"));
 
@@ -63,7 +63,7 @@ public class LoginServiceImplTest {
         try {
            loginService.authenticate("SHDGSF22XCD21",
                    new Customer((String) null, null));
-        } catch (CustomerNotFoundException e) {
+        } catch (EntityNotFoundException e) {
             message = e.getMessage();
         }
 
@@ -79,7 +79,7 @@ public class LoginServiceImplTest {
         try {
            loginService.authenticate("SHDGSF22XCD21",
                    new Customer("login", null));
-        } catch (CustomerNotFoundException e) {
+        } catch (EntityNotFoundException e) {
             message = e.getMessage();
         }
 
@@ -96,7 +96,7 @@ public class LoginServiceImplTest {
         try {
            loginService.authenticate("SHDGSF22XCD21",
                     new Customer((String) null, "132saw2!"));
-        } catch (CustomerNotFoundException e) {
+        } catch (EntityNotFoundException e) {
             message = e.getMessage();
         }
 

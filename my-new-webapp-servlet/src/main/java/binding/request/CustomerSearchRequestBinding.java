@@ -7,13 +7,13 @@ import util.json.deserializer.IntegerDeserializer;
 import java.util.Objects;
 
 
-public class CustomerWelcomeRequestBinding implements RequestBinding {
+public class CustomerSearchRequestBinding implements RequestBinding {
 
     @JsonAdapter(IntegerDeserializer.class)
     private Integer id;
     private String login;
 
-    public CustomerWelcomeRequestBinding(Integer id, String login) {
+    public CustomerSearchRequestBinding(Integer id, String login) {
         this.id = id;
         this.login = login;
     }
@@ -36,7 +36,7 @@ public class CustomerWelcomeRequestBinding implements RequestBinding {
     }
 
     @Override
-    public Customer toCustomer() {
+    public Customer toEntityObject() {
 
         return new Customer(id, login);
     }
@@ -45,7 +45,7 @@ public class CustomerWelcomeRequestBinding implements RequestBinding {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        CustomerWelcomeRequestBinding that = (CustomerWelcomeRequestBinding) o;
+        CustomerSearchRequestBinding that = (CustomerSearchRequestBinding) o;
         return Objects.equals(id, that.id) &&
                 Objects.equals(login, that.login);
     }

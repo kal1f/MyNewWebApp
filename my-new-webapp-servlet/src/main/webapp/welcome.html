@@ -55,7 +55,21 @@
                     console.log(response.json());
                 }
                 else {
-                    console.log(response.json());
+
+                    const textPromise = response.text();
+
+                    textPromise.then(function (jsonString){
+                        const jsonObject = JSON.parse(jsonString);
+
+                        if(response.status === 401){
+                            const location = jsonObject.location;
+                            window.location.replace(location);
+                        }else {
+                            console.log(jsonObject);
+                            console.log(jsonString);
+                        }
+                    })
+
                 }
 
             })
@@ -72,6 +86,23 @@
                 if (response.status === 200){
                     console.log(response.json());
                 }
+                else {
+
+                    const textPromise = response.text();
+
+                    textPromise.then(function (jsonString){
+                        const jsonObject = JSON.parse(jsonString);
+
+                        if(response.status === 401){
+                            const location = jsonObject.location;
+                            window.location.replace(location);
+                        }else {
+                            console.log(jsonObject);
+                            console.log(jsonString);
+                        }
+                    })
+
+                }
             })
     })
 
@@ -87,7 +118,21 @@
                     window.location.replace('login');
                 }
                 else {
-                     console.log(response.json());
+
+                    const textPromise = response.text();
+
+                    textPromise.then(function (jsonString){
+                        const jsonObject = JSON.parse(jsonString);
+
+                        if(response.status === 401){
+                            const location = jsonObject.location;
+                            window.location.replace(location);
+                        }else {
+                            console.log(jsonObject);
+                            console.log(jsonString);
+                        }
+                    })
+
                 }
             })
     })

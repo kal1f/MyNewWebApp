@@ -46,6 +46,7 @@
                 password: password
             }),
             headers: {
+                'Access-Control-Allow-Origin':'*',
                 'Content-Type': 'application/json; charset=UTF-8'
             }
         })
@@ -53,14 +54,22 @@
                 if (response.status === 200) {
                     window.location.replace('welcome');
                 }
-                else if(response.status === 400) {
-                    // var json = JSON.parse(JSON.stringify(response.json()));
-                    // var w = window.open();
-                    // var html = "<head><style>pre {outline: 1px solid #ccc; padding: 5px; margin: 5px; } .string { color: green; } ";
-                    // html+= " .number { color: darkorange; } .boolean { color: blue; } .null { color: magenta; } .key { color: red; }</style></head><body>";
-                    // html+= "<pre>"+json+"</pre></body>";
-                    // w.document.writeln(html);
-                    console.log(response.json());
+                else {
+
+                    const textPromise = response.text();
+
+                    textPromise.then(function (jsonString){
+                        const jsonObject = JSON.parse(jsonString);
+
+                        if(response.status === 401){
+                            const location = jsonObject.location;
+                            window.location.replace(location);
+                        }else {
+                            console.log(jsonObject);
+                            console.log(jsonString);
+                        }
+                    })
+
                 }
             })
     })

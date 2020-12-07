@@ -2,12 +2,12 @@ package binding.request;
 
 import database.entity.Customer;
 
-public class CustomerLoginRequestBinding implements RequestBinding {
+public class LoginRequestBinding implements RequestBinding {
 
     private String login;
     private String password;
 
-    public CustomerLoginRequestBinding(String login, String password) {
+    public LoginRequestBinding(String login, String password) {
         this.login = login;
         this.password = password;
     }
@@ -29,7 +29,7 @@ public class CustomerLoginRequestBinding implements RequestBinding {
     }
 
     @Override
-    public Customer toCustomer(){
+    public Customer toEntityObject(){
 
         return new Customer(login, password);
     }

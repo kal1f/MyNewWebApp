@@ -1,9 +1,9 @@
 package service.impl;
 
-import database.CustomerDAO;
-import database.CustomerDAOImpl;
+import database.dao.CustomerDAO;
+import database.dao.impl.CustomerDAOImpl;
 import database.entity.Customer;
-import exception.CustomerNotFoundException;
+import exception.EntityNotFoundException;
 import org.apache.log4j.Logger;
 import service.RegisterService;
 
@@ -22,7 +22,7 @@ public class RegisterServiceImpl implements RegisterService {
     }
 
     @Override
-    public Customer createNewCustomerInDb(Customer customer) throws CustomerNotFoundException {
+    public Customer createNewCustomerInDb(Customer customer) throws EntityNotFoundException {
 
         int id = cd.insertCustomer(customer);
 
@@ -32,7 +32,7 @@ public class RegisterServiceImpl implements RegisterService {
         }
         else {
             LOGGER.debug("Customer was not created in database");
-            throw new CustomerNotFoundException("Customer with id=0 is not exists");
+            throw new EntityNotFoundException("Customer with id=0 is not exists");
         }
 
     }

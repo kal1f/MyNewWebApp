@@ -1,16 +1,18 @@
 package servlet;
 
-import binding.request.CustomerWelcomeRequestBinding;
+import binding.request.CustomerUpdateRequestBinding;
+import binding.response.CustomerResponseBinding;
 import binding.response.CustomersResponseBinding;
 import binding.response.ErrorResponseBinding;
 import database.entity.Customer;
-import exception.CustomerNotFoundException;
+import exception.EntityNotFoundException;
 import org.apache.log4j.Logger;
 import service.CustomerService;
 import service.impl.CustomerServiceImpl;
 import util.DataToJson;
 import util.JsonToData;
 import util.validator.DataValidator;
+
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -51,29 +53,23 @@ public class CustomerServlet extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-    {
-        CustomerWelcomeRequestBinding requestBinding = null;
-        try {
-            requestBinding = jsonToData.jsonToWelcomeData(request);
-        } catch (IOException e){
-            LOGGER.debug(e.getMessage(), e);
-            dataToJson.processResponse(response, 422, ErrorResponseBinding.ERROR_RESPONSE_422);
-            return;
-        }
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) {
 
-        if(requestBinding == null){
+        String login = request.getParameter("login");
+        String id = request.getParameter("id");
+
+        if(login==null && id==null){
             ArrayList<Customer> c = customerService.getAllCustomers();
             dataToJson.processResponse(response, 200, new CustomersResponseBinding(c));
         }
-        else if(dataValidator.isWelcomeFormValid(requestBinding.getId(),requestBinding.getLogin())) {
+        else if(dataValidator.isWelcomeDataValid(id,login)) {
 
             try {
-                ArrayList<Customer> c = customerService.searchCustomers(requestBinding.toCustomer());
+                ArrayList<Customer> c = customerService.searchCustomers(new Customer(id, login));
                 dataToJson.processResponse(response,200, new CustomersResponseBinding(c));
-            } catch (CustomerNotFoundException e) {
-                LOGGER.debug("Customers with login:"+requestBinding.getLogin()+
-                        " id: "+requestBinding.getId()+
+            } catch (EntityNotFoundException e) {
+                LOGGER.debug("Customers with login:"+login+
+                        " id: "+id+
                         " are not existing");
                 dataToJson.processResponse(response,404, ErrorResponseBinding.ERROR_RESPONSE_404);
             }
@@ -89,5 +85,34 @@ public class CustomerServlet extends HttpServlet {
 
     }
 
+    @Override
+    protected void doPut(HttpServletRequest request, HttpServletResponse response) {
+        CustomerUpdateRequestBinding requestBinding = null;
 
+        try{
+            requestBinding=jsonToData.jsonToCustomerUpdateData(request);
+        }catch (IOException e){
+            LOGGER.debug(e.getMessage(), e);
+            dataToJson.processResponse(response, 422, ErrorResponseBinding.ERROR_RESPONSE_422);
+            return;
+        }
+
+        if(dataValidator.isCustomerUpdateDataValid(requestBinding)){
+            try {
+                Customer c = customerService.updateCustomer(requestBinding.toEntityObject(), requestBinding.getId());
+                dataToJson.processResponse(response, 200, new CustomerResponseBinding(c));
+            }catch (EntityNotFoundException e){
+                LOGGER.debug("Customer with params"+
+                        requestBinding.getId()+
+                        "was not been updated" , e);
+                dataToJson.processResponse(response, 404, ErrorResponseBinding.ERROR_RESPONSE_404);
+            }
+        }
+        else {
+            LOGGER.debug("Input data is not valid");
+
+            dataToJson.processResponse(response, 400, new ErrorResponseBinding(400,
+                    "Input data in not valid"));
+        }
+    }
 }

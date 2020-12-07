@@ -1,6 +1,5 @@
 package database.connection;
 
-import database.CustomerDAOImpl;
 import org.apache.log4j.Logger;
 
 import java.sql.*;

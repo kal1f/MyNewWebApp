@@ -1,6 +1,8 @@
 package util.validator;
 
 
+import binding.request.*;
+
 public class DataValidator {
 
     public boolean isNotNull(String parameter){
@@ -46,6 +48,30 @@ public class DataValidator {
 
     }
 
+    public boolean isIdValid(String id){
+        int number;
+
+        try {
+            number = Integer.parseInt(id);
+        }catch (NumberFormatException e){
+            return false;
+        }
+
+        return number >= 0;
+    }
+
+    public boolean isTransactionStatusValid(String status){
+        return status.equals("CREATED") || status.equals("PAID") ||
+                status.equals("BOXING") || status.equals("DELIVERING") ||
+                status.equals("COMPLETE");
+    }
+
+    public boolean isTransactionPaymentTypeValid(String paymentType){
+        return paymentType.equals("CREDITCARD") ||
+                paymentType.equals("CASH") ||
+                paymentType.equals("LOYALTY");
+    }
+
     public boolean arePasswordsEqual(String password1, String password2){
         if(password1 == null || password2 == null)
         {
@@ -54,7 +80,7 @@ public class DataValidator {
         return password1.equals(password2);
     }
 
-    public boolean isLogInFormValid(String login, String password){
+    public boolean isLogInDataValid(String login, String password){
         return isLoginValid(login) &&
                 isPasswordValid(password) &&
                 isNotNull(login) && isNotNull(password) &&
@@ -62,7 +88,7 @@ public class DataValidator {
                 isLengthValid(password, 8);
     }
 
-    public boolean isRegisterFormValid(String login, String name, String password1, String password2){
+    public boolean isCustomerDataValid(String login, String name, String password1, String password2){
         return isLoginValid(login) &&
                 isPasswordValid(password1) &&
                 isNameValid(name) &&
@@ -77,17 +103,57 @@ public class DataValidator {
 
     }
 
-    public boolean isWelcomeFormValid(Integer id, String login){
-        if(login == null || id == null){
-            return false;
-        }
+    public boolean isCustomerUpdateDataValid(CustomerUpdateRequestBinding binding){
+        return isIdValid(binding.getId()) && isCustomerDataValid(
+                binding.getCustomer().getLogin(),
+                binding.getCustomer().getName(),
+                binding.getCustomer().getPassword1(),
+                binding.getCustomer().getPassword1());
+    }
 
-        if((id == 0 || id == -1) && login.equals("")){
-            return false;
-        }
+    public boolean isProductDataValid(String name, String category){
+        return isNameValid(name) && isNameValid(category);
+    }
 
-        return (isIdValid(id) &&
-                (isLoginValid(login) && isLengthValid(login,6)) || login.equals("") );
+    public boolean isProductUpdateDataValid(ProductUpdateRequestBinding binding){
+        return isIdValid(binding.getId()) && isProductDataValid(binding.getProduct().getName(),
+                binding.getProduct().getCategory());
+    }
+
+//    public boolean isWelcomeFormValid(Integer id, String login){
+//        if(login == null || id == null){
+//            return false;
+//        }
+//
+//        if((id == 0 || id == -1) && login.equals("")){
+//            return false;
+//        }
+//
+//        return (isIdValid(id) &&
+//                (isLoginValid(login) && isLengthValid(login,6)) || login.equals("") );
+//    }
+    public boolean isWelcomeDataValid(String id, String login){
+
+        return ((isIdValid(id) || id == null) &&
+                ((isLoginValid(login) && isLengthValid(login,6)) || login.equals("")));
+    }
+
+    public boolean isTransactionDataValid(TransactionRequestBinding binding){
+        return isIdValid(binding.getCustomerId()) &&
+                isIdValid(binding.getProductId()) &&
+                isTransactionPaymentTypeValid(binding.getPaymentType());
+    }
+
+    public boolean isTransactionUpdateDataValid(TransactionUpdateRequestBinding binding){
+        return isIdValid(binding.getId()) && isTransactionStatusValid(binding.getStatus());
+    }
+
+    public boolean isRoleDataValid(RoleRequestBinding binding){
+        return isNameValid(binding.getName());
+    }
+
+    public boolean isRoleUpdateDataValid(RoleUpdateRequestBinding binding){
+        return isNameValid(binding.getName()) && isIdValid(binding.getId());
     }
 
 }

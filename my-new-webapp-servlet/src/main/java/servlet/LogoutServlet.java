@@ -30,14 +30,13 @@ public class LogoutServlet extends HttpServlet {
 
     @Override
     public void init(){
-
        this.logoutService = new LogoutServiceImpl((AuthenticationImpl) getServletContext().getAttribute("authenticationImpl"));
        this.dataToJson = new DataToJson();
     }
 
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) {
 
-        HttpSession session = request.getSession();
+        HttpSession session = request.getSession(false);
         logoutService.unauthenticate(session.getId());
         session.invalidate();
         dataToJson.processResponse(response, 200,null);

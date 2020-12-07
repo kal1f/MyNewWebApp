@@ -1,12 +1,11 @@
 package service.impl;
 
-import database.CustomerDAO;
+import database.dao.CustomerDAO;
 import database.entity.Customer;
-import exception.CustomerNotFoundException;
+import exception.EntityNotFoundException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import service.RegisterService;
@@ -29,7 +28,7 @@ public class RegisterServiceImplTest {
     }
 
     @Test
-    public void createNewCustomerInDbAndReturnCustomerWhenAllParamsAreNotNull() throws CustomerNotFoundException {
+    public void createNewCustomerInDbAndReturnCustomerWhenAllParamsAreNotNull() throws EntityNotFoundException {
 
         when(cd.insertCustomer(new Customer("login12", "myname", "pass1234!"))).thenReturn(120);
 
@@ -46,49 +45,49 @@ public class RegisterServiceImplTest {
         String statusOfNullLogin = null;
         try {
             Customer customer = registerService.createNewCustomerInDb(new Customer(null,"dad","Dsa"));
-        } catch (CustomerNotFoundException e) {
+        } catch (EntityNotFoundException e) {
             statusOfNullLogin = e.getMessage();
         }
 
         String statusOfNullPass = null;
         try {
             Customer customer = registerService.createNewCustomerInDb(new Customer("alex",null,"Dsa"));
-        } catch (CustomerNotFoundException e) {
+        } catch (EntityNotFoundException e) {
             statusOfNullPass = e.getMessage();
         }
 
         String statusOfNullName = null;
         try {
             Customer customer = registerService.createNewCustomerInDb(new Customer("alex","dad",null));
-        } catch (CustomerNotFoundException e) {
+        } catch (EntityNotFoundException e) {
             statusOfNullName = e.getMessage();
         }
 
         String statusOfNullLoginAndName = null;
         try {
             Customer customer = registerService.createNewCustomerInDb(new Customer(null,null,"Dsa"));
-        } catch (CustomerNotFoundException e) {
+        } catch (EntityNotFoundException e) {
             statusOfNullLoginAndName = e.getMessage();
         }
 
         String statusOfNullLoginAndPass = null;
         try {
             Customer customer = registerService.createNewCustomerInDb(new Customer(null,"dad",null));
-        } catch (CustomerNotFoundException e) {
+        } catch (EntityNotFoundException e) {
             statusOfNullLoginAndPass = e.getMessage();
         }
 
         String statusOfNullNameAndLogin = null;
         try {
             Customer customer = registerService.createNewCustomerInDb(new Customer("alex",null,null));
-        } catch (CustomerNotFoundException e) {
+        } catch (EntityNotFoundException e) {
             statusOfNullNameAndLogin = e.getMessage();
         }
 
         String statusOfNullParams = null;
         try {
             Customer customer = registerService.createNewCustomerInDb(new Customer(null,null,null));
-        } catch (CustomerNotFoundException e) {
+        } catch (EntityNotFoundException e) {
             statusOfNullParams = e.getMessage();
         }
 
