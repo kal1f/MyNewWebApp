@@ -50,7 +50,6 @@ public class LoginFilter implements Filter {
                 filterChain.doFilter(request, response);
                 return;
             }
-
             if (authenticationImpl.isSessionPresent(session.getId())) {
                 LOGGER.debug("session present -> skip");
                 filterChain.doFilter(req,resp);
@@ -59,7 +58,6 @@ public class LoginFilter implements Filter {
                 LOGGER.debug("send redirect to /login");
                 dataToJson.processResponse(resp, 401,
                         new FilterResponseBinding(401, "Unauthorized", "http://localhost:8080/login"));
-                //((HttpServletResponse) response).sendRedirect("/login");
             }
         } catch (IOException | ServletException e) {
             LOGGER.error(e.getMessage(), e);

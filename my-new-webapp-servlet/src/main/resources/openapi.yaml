@@ -1,0 +1,850 @@
+openapi: "3.0.0"
+
+info:
+  description: "This is a MyNewWebApp server. This file describe my restfull server app that is writed on java8."
+  version: "1.0.0"
+  title: "Backend NewWebAPP"
+  
+servers:
+- url: http://localhost:8080/
+
+tags:
+- name: "login"
+  description: "Access to login page"
+- name: "logout"
+  description: "Access to logout operation"
+- name: "register"
+  description: "Access to create new user"
+- name: "customers"
+  description: "Operations on customers"
+- name: "transactions"
+  description: "Operations on transactions"
+- name: "roles"
+  description: "Operations on roles"
+- name: "products"
+  description: "Operations on products"
+
+
+paths:
+  /products:
+    post:
+      tags:
+      - "products"
+      summary: "Add a new product to the store"
+      description: ""
+      operationId: "addProduct"
+      
+      requestBody:
+        description: "Product object that needs to be added"
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProductRequest"
+      security:
+        - cookieAuth: []
+      responses:
+        "200":
+          description: "Successful operation"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProductsResponse"
+        "400":
+          description: "Invalid input"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: "Not found"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "422":
+          description: "Unprocessable Entity"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    
+    put:
+      tags:
+      - "products"
+      summary: "Update an existing product"
+      description: ""
+      operationId: "updateProduct"
+      
+      requestBody:
+        description: "Product object that needs to be added to the store"
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProductRequest"
+      security:
+        - cookieAuth: []
+        
+      responses:
+        "200":
+          description: "Successful operation"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProductsResponse"
+        "400":
+          description: "Invalid ID supplied"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: "Product not found"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "422":
+          description: "Unprocessable Entity"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    
+    get:
+      tags:
+      - "products"
+      summary: "Get products"
+      description: "Id values can be only digital"
+      operationId: "getProducts"
+      
+      parameters:
+      - in: query
+        name: id
+        required: false
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: "Successful operation"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProductsResponse"
+        "400":
+          description: "Invalid id value"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: "Not found"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+                
+  /roles:
+  
+    post:
+      tags:
+      - "roles"
+      summary: "Add a new role"
+      description: ""
+      operationId: "addRole"
+      
+      requestBody:
+        description: "Product object that needs to be added to the store"
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RoleRequest"
+      security:
+        - cookieAuth: []
+      responses:
+        "200":
+          description: "Ok"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RoleResponse"
+        "400":
+          description: "Invalid ID supplied"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: "Role not found"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "422":
+          description: "Unprocessable Entity"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+          
+    put:
+      tags:
+      - "roles"
+      summary: "Update an existing role"
+      description: ""
+      operationId: "updateRoleStatusById"
+      
+      security:
+        - cookieAuth: []
+        
+      requestBody:
+        description: "Role object that needs to be added"
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RoleRequest"
+      
+      responses:
+        "200":
+          description: "Ok"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RoleResponse"
+        "400":
+          description: "Invalid ID supplied"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: "Role not found"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "422":
+          description: "Unprocessable Entity"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+          
+    get:
+      tags:
+      - "roles"
+      summary: "Find role by ID"
+      description: "For valid response try integer IDs with value >= 1 and <= 2.         Other values will generated exceptions"
+      operationId: "getRoles"
+      
+      security:
+        - cookieAuth: []
+      
+      parameters:
+      - name: "id"
+        in: "query"
+        description: "ID of role that needs to be fetched"
+        required: false
+        schema:
+          type: "integer"
+          maximum: 2
+          minimum: 1
+          format: "int32"
+    
+      responses:
+        "200":
+          description: "successful operation"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RolesResponse"
+        "400":
+          description: "Invalid ID supplied"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: "Role not found"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+         
+  /transactions:
+    post:
+      tags:
+      - "transactions"
+      summary: "Create transaction"
+      description: ""
+      operationId: "createTransaction"
+      
+      requestBody:
+        description: "Created transaction object"
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TransactionRequest"
+      responses:
+        "200":
+          description: "successful operation"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TransactionResponse"
+        "404":
+          description: "Transaction not found"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "400":
+          description: "Invalid data"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "422":
+          description: "Unprocessable Entity"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        
+    put:
+      tags:
+      - "transactions"
+      summary: "Update an existing transaction status"
+      description: ""
+      operationId: "updateTransactionStatusById"
+      
+      security:
+        - cookieAuth: []
+      requestBody:
+        required: true
+        description: "Update customer object by id"
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TransactionUpdateRequest"
+      
+      responses:
+        "200":
+          description: "Ok"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TransactionResponse"
+        "400":
+          description: "Invalid ID supplied"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: "Transaction not found"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "422":
+          description: "Unprocessable Entity"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+          
+    get:
+      tags:
+      - "transactions"
+      summary: "Find transactions"
+      description: "Id must be digits."
+      operationId: "getTransactions"
+      
+      parameters:
+      - name: "id"
+        in: "query"
+        description: "id of transaction"
+        required: false
+        schema:
+          type: "integer"
+          format: "int64"
+      security:
+        - cookieAuth: []
+      responses:
+        "200":
+          description: "Ok"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TransactionsResponse"
+        "400":
+          description: "Invalid ID supplied"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: "Transaction not found"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+          
+  /logout:
+    post:
+      tags:
+      - "logout"
+      summary: "Logs out current logged in user session"
+      description: ""
+      operationId: "unauthenticate"
+      security:
+        - cookieAuth: []
+      responses:
+        "200":
+          description: "Ok"
+  
+  /login:
+    post:
+      tags:
+      - "login"
+      summary: "Login current user session"
+      description: ""
+      operationId: "authenticate"
+      
+      requestBody:
+        description: "Authenticate user"
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+          
+      responses:
+        "200":
+          description: "Successful operation"
+          headers: 
+            Set-Cookie:
+              schema: 
+                type: string
+                example: JSESSIONID=abcde12345; Path=/; HttpOnly
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerResponse'
+            
+        "400":
+          description: "Login or ID is not valid"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+          
+        "404":
+          description: "Not found"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+          
+        "422":
+          description: "Unprocessable Entity"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      
+  /customers:
+    
+    get:
+      tags:
+      - "customers"
+      summary: "Find customers"
+      description: "Id must be digits. Login must be validated."
+      operationId: "getCustomers"
+      security:
+        - cookieAuth: []
+      
+      parameters:
+      - name: id
+        in: query
+        description: "ID of customer"
+        required: false
+        schema:
+          type: "integer"
+          format: "int64"
+      - name: login
+        in: query
+        description: "Login of customer"
+        required: false
+        schema:
+          type: "string"
+      responses:
+        "200":
+          description: "successful operation"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CustomersResponse"
+        "400":
+          description: "Login or ID is not valid"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: "Not found"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "422":
+          description: "Unprocessable Entity"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        
+    put:
+      tags:
+      - "customers"
+      summary: "Updated customer object"
+      description: "This can only be done by the logged in customer."
+      operationId: "updateCustomer"
+      security:
+        - cookieAuth: []
+        
+      requestBody:
+        required: true
+        description: "Update customer object by id"
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateCustomerRequest'
+      
+      responses:
+        "200":
+          description: "successful operation"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CustomerResponse"
+            
+        "400":
+          description: "Invalid customer supplied"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+          
+        "404":
+          description: "User not found"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "422":
+          description: "Unprocessable entity"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+          
+  /register:
+    post:
+      tags:
+      - "register"
+      summary: "Create customer"
+      operationId: "createCustomer"
+      
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomerRequest'
+     
+      responses:
+        "201":
+          description: "Ok"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CustomerResponse"
+          
+        "404":
+          description: "Not found"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+          
+        "400":
+          description: "Customer with params can not be registered"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+          
+        "422":
+          description: "Unprocessable entity"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+ 
+components:
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: JSESSIONID 
+  
+  schemas:  
+    LoginRequest:
+      type: "object"
+      required:
+      - "login"
+      - "password"
+      properties:
+        login:
+          type: "string"
+        password: 
+          type: "string"
+      xml:
+        name: "LoginRequest"
+        
+    CustomerRequest:
+      type: "object"
+      required:
+      - "login"
+      - "name"
+      - "password1"
+      - "password2"
+      properties:
+        login:
+          type: "string"
+        name:
+          type: "string"
+        password1: 
+          type: "string"
+        password2:
+          type: "string"
+      xml:
+        name: "CustomerRequest"
+    
+    UpdateCustomerRequest:
+      type: "object"
+      properties:
+        id:
+          type: "integer"
+          format: "int64"
+        customer:
+          $ref: '#/components/schemas/CustomerRequest'
+      xml:
+        name: "UpdateCustomerRequest"
+      
+    ProductRequest:
+      type: "object"
+      required:
+      - "name"
+      - "category"
+      - "price"
+      properties:
+        name:
+          type: "string"
+          example: "lemon"
+        category:
+          type: "string"
+          example: "foods"
+        price:
+          type: "integer"
+          example: 2.2
+        priceDiscount:
+          type: "integer"
+          example: 0.1
+      xml:
+        name: "ProductRequest"
+    
+    TransactionRequest:
+      type: "object"
+      properties:
+        customerId:
+          type: "integer"
+          format: "int64"
+        productId:
+          type: "integer"
+          format: "int64"
+        paymentType:
+          type: "string"
+          description: "User payed by"
+          enum:
+            - "CREADITCARD"
+            - "CASH"
+            - "LOYALTY"
+        crdCardNumber:
+          type: "string"
+          description: "User card number"
+      xml:
+        name: "TransactionRequest"
+        
+    TransactionUpdateRequest:
+      type: "object"
+      properties:
+        id:
+          type: "integer"
+        status: 
+          type: "string"
+      xml:
+        name: "TransactionUpdateRequest"
+        
+    RoleRequest:
+      type: "object"
+      properties:
+        name:
+          type: "string"
+      xml:
+        name: "RoleRequest"
+        
+    ErrorResponse:
+      type: "object"
+      properties:
+        code:
+          type: "integer"
+          format: "int32"
+        message:
+          type: "string"
+      xml:
+        name: "ErrorResponse"    
+          
+    CustomerResponse:
+      type: "object"
+      properties:
+        id:
+          type: "integer"
+          format: "int64"
+        login:
+          type: "string"
+        name:
+          type: "string"
+        role:
+          type: "string"
+      xml:
+        name: "CustomerResponse"       
+      
+    CustomersResponse:
+      type: "object"
+      properties: 
+        customers:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/CustomerResponse"
+            
+      xml:
+        name: "CustomersResponse"  
+    
+    FilterResponse:
+      type: "object"
+      properties: 
+        code: 
+          type: "integer"
+          format: "int64"
+        message:
+          type: "string"
+        location: 
+          type: "string"
+      xml:
+        name: "FilterResponse" 
+          
+    ProductResponse:
+      type: "object"
+      properties:
+        id: 
+          type: "integer"
+          format: 'int64'
+        name:
+          type: "string"
+        category:
+          type: "string"
+        dateAdded:
+          type: "string"
+        price:
+          type: "number"
+        priceDiscount:
+          type: "number"
+      xml:
+        name: "ProductResponse" 
+    
+    ProductsResponse:
+      type: "object"
+      properties: 
+        customers:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/ProductResponse"
+      xml:
+        name: "ProductsResponse" 
+      
+    TransactionResponse:
+      type: "object"
+      properties:
+        id:
+          type: "integer"
+          format: "int64"
+        customerId:
+          type: "integer"
+          format: "int64"
+        productId:
+          type: "integer"
+          format: "int64"
+        purchTmst:
+          type: "string"
+        paymentType:
+          type: "string"
+        status:
+          type: "string"
+        crdCardNumber:
+          type: "string"
+          description: "User card number"
+      xml:
+        name: "TransactionResponse" 
+        
+    TransactionsResponse:
+      type: "object"
+      properties: 
+        customers:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/TransactionResponse"
+      xml:
+        name: "TransactionsResponse" 
+        
+    RoleResponse:
+      type: "object"
+      properties:
+        id:
+          type: "integer"
+          example: 1
+        name:
+          type: "string"
+          example: "buyer"
+      xml:
+        name: "RoleResponse"
+        
+    RolesResponse:
+      type: "object"
+      properties: 
+        customers:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/RoleResponse"
+      xml:
+        name: "RolesResponse"
+  
+      
+  
+      

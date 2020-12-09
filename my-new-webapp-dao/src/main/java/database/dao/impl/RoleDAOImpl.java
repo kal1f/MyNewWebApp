@@ -91,6 +91,35 @@ public class RoleDAOImpl implements RoleDAO {
     }
 
     @Override
+    public int updateRoleById(Role role){
+        int rows = 0;
+        Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+
+            con = connectionProvider.getCon();
+            ps = con.prepareStatement("UPDATE role SET name=? WHERE id=? ",
+                    Statement.RETURN_GENERATED_KEYS);
+
+            ps.setString(1, role.getName());
+            ps.setInt(2, role.getId());
+
+            rows = ps.executeUpdate();
+
+
+        } catch (Exception e) {
+            LOGGER.debug(e.getMessage(), e);
+        }
+        finally {
+            connectionProvider.closeRS(rs);
+            connectionProvider.closeStatement(ps);
+            connectionProvider.closeCon(con);
+        }
+        return rows;
+    }
+
+    @Override
     public int insertRole(String role) {
         int id = 0;
         Connection con = null;
@@ -123,4 +152,6 @@ public class RoleDAOImpl implements RoleDAO {
         }
         return id;
     }
+
+
 }

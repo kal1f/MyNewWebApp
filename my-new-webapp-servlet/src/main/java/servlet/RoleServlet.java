@@ -1,10 +1,8 @@
 package servlet;
 
-import binding.request.ProductUpdateRequestBinding;
 import binding.request.RoleRequestBinding;
 import binding.request.RoleUpdateRequestBinding;
 import binding.response.*;
-import database.entity.Product;
 import database.entity.Role;
 import exception.EntityNotFoundException;
 import org.apache.log4j.Logger;
@@ -19,7 +17,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.math.BigInteger;
 import java.util.List;
 
 @WebServlet(name = "/roles")
@@ -87,11 +84,11 @@ public class RoleServlet extends HttpServlet {
             dataToJson.processResponse(response, 422, ErrorResponseBinding.ERROR_RESPONSE_422);
             return;
         }
-        if(dataValidator.isRoleDataValid(requestBinding)) {
+        if(dataValidator.isRoleDataValid(requestBinding.getName())) {
             try {
                 Role role = roleService.addNewRole(requestBinding.getName());
                 LOGGER.debug("Role is created");
-                dataToJson.processResponse(response, 200, new RoleResponseBinding(role));
+                dataToJson.processResponse(response, 201, new RoleResponseBinding(role));
             } catch (EntityNotFoundException e) {
                 LOGGER.debug("Role is not created", e);
                 dataToJson.processResponse(response, 404, ErrorResponseBinding.ERROR_RESPONSE_404);
@@ -106,4 +103,34 @@ public class RoleServlet extends HttpServlet {
         }
     }
 
+    @Override
+    protected void doPut(HttpServletRequest request, HttpServletResponse response) {
+        RoleUpdateRequestBinding requestBinding = null;
+
+        try{
+            requestBinding=jsonToData.jsonToRoleUpdateData(request);
+        }catch (IOException e){
+            LOGGER.debug(e.getMessage(), e);
+            dataToJson.processResponse(response, 422, ErrorResponseBinding.ERROR_RESPONSE_422);
+            return;
+        }
+
+        if(dataValidator.isRoleUpdateDataValid(requestBinding.getId(), requestBinding.getName())){
+            try {
+                Role p = roleService.updateRoleName(requestBinding.toEntityObject());
+                dataToJson.processResponse(response, 200, new RoleResponseBinding(p));
+            }catch (EntityNotFoundException e){
+                LOGGER.debug("Role with id"+
+                        requestBinding.getId()+
+                        "was not been updated" , e);
+                dataToJson.processResponse(response, 404, ErrorResponseBinding.ERROR_RESPONSE_404);
+            }
+        }
+        else {
+            LOGGER.debug("Id or name is not valid");
+
+            dataToJson.processResponse(response, 400, new ErrorResponseBinding(400,
+                    "Id or name is not valid"));
+        }
+    }
 }

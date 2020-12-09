@@ -66,7 +66,8 @@ public final class Transaction {
         this.crdCardNumber = crdCardNumber;
     }
 
-    public Transaction(String status) {
+    public Transaction(Integer id, String status) {
+        this.id = id;
         this.status = Status.valueOf(status);
     }
 
@@ -127,7 +128,7 @@ public final class Transaction {
     }
 
     public void setStatus(String status) {
-        this.paymentType = PaymentType.valueOf(status);
+        this.status = Status.valueOf(status);
     }
 
     public String getCrdCardNumber() {

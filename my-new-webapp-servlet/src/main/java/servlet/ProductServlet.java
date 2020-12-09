@@ -91,11 +91,12 @@ public class ProductServlet extends HttpServlet {
             return;
         }
 
-        if(dataValidator.isProductDataValid(requestBinding.getName(), requestBinding.getCategory())){
+        if(dataValidator.isProductDataValid(requestBinding.getCategory(), requestBinding.getName(),
+                requestBinding.getPrice(), requestBinding.getPriceDiscount())){
             try {
                 Product product = productService.addNewProduct(requestBinding.toEntityObject());
                 LOGGER.debug("Product is created");
-                dataToJson.processResponse(response, 200, new ProductResponseBinding(product));
+                dataToJson.processResponse(response, 201, new ProductResponseBinding(product));
             }catch (EntityNotFoundException e){
                 LOGGER.debug("Customer is not created",e );
                 dataToJson.processResponse(response, 404,ErrorResponseBinding.ERROR_RESPONSE_404);
@@ -130,7 +131,8 @@ public class ProductServlet extends HttpServlet {
             return;
         }
 
-        if(dataValidator.isProductUpdateDataValid(requestBinding)){
+        if(dataValidator.isProductUpdateDataValid(requestBinding.getId(), requestBinding.toEntityObject().getName(),
+                requestBinding.toEntityObject().getCategory(), requestBinding.toEntityObject().getPrice(), requestBinding.toEntityObject().getPriceDiscount())){
             try {
                 Product p = productService.updateProductById(requestBinding.toEntityObject(), BigInteger.valueOf(requestBinding.getId()));
                 dataToJson.processResponse(response, 200, new ProductResponseBinding(p));

@@ -14,6 +14,7 @@ public class Customer {
 
     }
 
+
     public Customer(Integer id, String login) {
         this.id = id;
         this.login = login;
@@ -52,6 +53,15 @@ public class Customer {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public void setId(String id){
+        if(id.equals("")){
+            this.id = 0;
+        }
+        else {
+            this.id = Integer.parseInt(id);
+        }
     }
 
     public String getLogin() {

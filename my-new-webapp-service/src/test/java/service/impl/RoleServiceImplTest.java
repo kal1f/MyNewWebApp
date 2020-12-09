@@ -2,6 +2,7 @@ package service.impl;
 
 import database.dao.RoleDAO;
 import database.entity.Role;
+import database.entity.Transaction;
 import exception.EntityNotFoundException;
 import org.junit.Before;
 import org.junit.Test;
@@ -9,6 +10,8 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import service.RoleService;
+
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,7 +30,7 @@ public class RoleServiceImplTest {
     List<Role> roles;
 
     @Before
-    public void setUp(){
+    public void setUp() throws EntityNotFoundException{
         roleService = new RoleServiceImpl(rd);
 
         roles = new ArrayList<>();
@@ -39,7 +42,8 @@ public class RoleServiceImplTest {
         when(rd.getRoleById(5)).thenReturn(null);
         when(rd.insertRole("developer")).thenReturn(3);
         when(rd.getRoleById(3)).thenReturn(new Role(3, "developer"));
-
+        when(rd.updateRoleById(new Role(1, "dasdas"))).thenReturn(1);
+        when(rd.updateRoleById(new Role(12, "dasdas"))).thenReturn(0);
     }
 
     @Test
@@ -115,4 +119,27 @@ public class RoleServiceImplTest {
         verify(rd).insertRole("admin");
         assertEquals("Role with id=0 is not exists", message);
     }
+
+//    @Test
+//    public void updateRoleNameByIdExpectTransactionObject() throws EntityNotFoundException{
+//        Role role = roleService.updateRoleName(new Role(1, "dasdas"));
+//
+//        verify(rd).updateRoleById(new Role(1, "dasdas"));
+//        verify(rd).getRoleById(1);
+//
+//        assertEquals("dasdas", role.getName());
+//    }
+//
+//    @Test
+//    public void updateStatusByNotExistingIdExpectEntityNotFoundException(){
+//        String message = null;
+//
+//        try {
+//            roleService.updateRoleName(new Role(12, "dasdas"));
+//        } catch (EntityNotFoundException e) {
+//            message = e.getMessage();
+//        }
+//
+//        assertEquals("Transaction is not updated", message);
+//    }
 }

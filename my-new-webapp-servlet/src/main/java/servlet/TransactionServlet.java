@@ -86,11 +86,11 @@ public class TransactionServlet extends HttpServlet {
             dataToJson.processResponse(response, 422, ErrorResponseBinding.ERROR_RESPONSE_422);
             return;
         }
-        if(dataValidator.isTransactionDataValid(requestBinding)) {
+        if(dataValidator.isTransactionDataValid(requestBinding.getCustomerId(), requestBinding.getProductId(), requestBinding.getPaymentType())) {
             try {
                 Transaction transaction = transactionService.createTransaction(requestBinding.toEntityObject());
                 LOGGER.debug("Transaction is created");
-                dataToJson.processResponse(response, 200, new TransactionResponseBinding(transaction));
+                dataToJson.processResponse(response, 201, new TransactionResponseBinding(transaction));
             } catch (EntityNotFoundException e) {
                 LOGGER.debug("Transaction is not created", e);
                 dataToJson.processResponse(response, 404, ErrorResponseBinding.ERROR_RESPONSE_404);
@@ -116,7 +116,7 @@ public class TransactionServlet extends HttpServlet {
             return;
         }
 
-        if(dataValidator.isTransactionUpdateDataValid(requestBinding)){
+        if(dataValidator.isTransactionUpdateDataValid(requestBinding.getId(), requestBinding.getStatus())){
             try {
                 Transaction t = transactionService.updateStatusById(requestBinding.getStatus(), BigInteger.valueOf(requestBinding.getId()));
                 dataToJson.processResponse(response, 200, new TransactionResponseBinding(t));
@@ -131,7 +131,7 @@ public class TransactionServlet extends HttpServlet {
             LOGGER.debug("Input data is not valid");
 
             dataToJson.processResponse(response, 400, new ErrorResponseBinding(400,
-                    "Input data in not valid"));
+                    "Input data is not valid"));
         }
     }
 }

@@ -78,6 +78,24 @@ public class RoleDAOImplTest {
         assertEquals(0, roleDAO.insertRole("admin"));
     }
 
+    @Test
+    public void updateRoleByExistingStatusReturn0() {
+        int updated = roleDAO.updateRoleById(new Role(1, "admin"));
+        assertEquals(0,updated);
+    }
+
+    @Test
+    public void updateRoleByNewStatusReturn1() {
+        int updated = roleDAO.updateRoleById(new Role(1, "dasdd"));
+        assertEquals(1,updated);
+    }
+
+    @Test
+    public void updateTransactionStatusByNotExistingIdReturn0() {
+        int updated = roleDAO.updateRoleById(new Role(21, "admin"));
+        assertEquals(0,updated);
+    }
+
     private void fillInTable(){
         Statement statement = null;
         try {

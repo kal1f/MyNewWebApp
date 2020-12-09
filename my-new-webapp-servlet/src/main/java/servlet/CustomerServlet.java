@@ -65,7 +65,10 @@ public class CustomerServlet extends HttpServlet {
         else if(dataValidator.isWelcomeDataValid(id,login)) {
 
             try {
-                ArrayList<Customer> c = customerService.searchCustomers(new Customer(id, login));
+                Customer customer = new Customer();
+                customer.setId(id);
+                customer.setLogin(login);
+                ArrayList<Customer> c = customerService.searchCustomers(customer);
                 dataToJson.processResponse(response,200, new CustomersResponseBinding(c));
             } catch (EntityNotFoundException e) {
                 LOGGER.debug("Customers with login:"+login+
@@ -97,7 +100,9 @@ public class CustomerServlet extends HttpServlet {
             return;
         }
 
-        if(dataValidator.isCustomerUpdateDataValid(requestBinding)){
+        if(dataValidator.isCustomerUpdateDataValid(requestBinding.getId(), requestBinding.getCustomer().getLogin(),
+                requestBinding.getCustomer().getName(), requestBinding.getCustomer().getPassword1(),
+                requestBinding.getCustomer().getPassword2())){
             try {
                 Customer c = customerService.updateCustomer(requestBinding.toEntityObject(), requestBinding.getId());
                 dataToJson.processResponse(response, 200, new CustomerResponseBinding(c));

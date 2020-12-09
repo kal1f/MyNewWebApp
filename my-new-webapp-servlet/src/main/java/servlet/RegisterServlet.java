@@ -59,17 +59,6 @@ public class RegisterServlet extends HttpServlet {
 
     }
 
-//    @Override
-//    protected void doGet(HttpServletRequest request, HttpServletResponse response) {
-//        try {
-//            request.getRequestDispatcher("register.html").forward(request, response);
-//        }catch (ServletException | IOException e){
-//            LOGGER.error(e.getMessage(), e);
-//            dataToJson.processResponse(response,500,
-//                    ErrorResponseBinding.ERROR_RESPONSE_500);
-//        }
-//
-//    }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) {

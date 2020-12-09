@@ -43,6 +43,20 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
+    public Role updateRoleName(Role role) throws EntityNotFoundException {
+        int updatedRows = rd.updateRoleById(role);
+
+        if(updatedRows != 0){
+
+            return rd.getRoleById(role.getId());
+        }
+        else {
+            LOGGER.debug("updateRoleById(Role role) returned 0");
+            throw new EntityNotFoundException("Role is not updated");
+        }
+    }
+
+    @Override
     public Role addNewRole(String name) throws EntityNotFoundException {
 
         int id = rd.insertRole(name);

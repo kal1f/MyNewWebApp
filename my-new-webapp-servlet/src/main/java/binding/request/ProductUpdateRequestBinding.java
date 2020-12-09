@@ -1,14 +1,12 @@
 package binding.request;
 
-import binding.response.ProductResponseBinding;
-import database.entity.Customer;
 import database.entity.Product;
 
 public class ProductUpdateRequestBinding implements RequestBinding {
     private Integer id;
-    private ProductResponseBinding product;
+    private ProductRequestBinding product;
 
-    public ProductUpdateRequestBinding(Integer id, ProductResponseBinding product) {
+    public ProductUpdateRequestBinding(Integer id, ProductRequestBinding product) {
         this.id = id;
         this.product = product;
     }
@@ -21,11 +19,11 @@ public class ProductUpdateRequestBinding implements RequestBinding {
         this.id = id;
     }
 
-    public ProductResponseBinding getProduct() {
+    public ProductRequestBinding getProduct() {
         return product;
     }
 
-    public void setProduct(ProductResponseBinding product) {
+    public void setProduct(ProductRequestBinding product) {
         this.product = product;
     }
 

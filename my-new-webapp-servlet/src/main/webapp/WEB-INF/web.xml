@@ -18,12 +18,13 @@
         <param-name>log4j-config-location</param-name>
         <param-value>WEB-INF/log4j.properties</param-value>
     </context-param>
+
     <servlet>
         <servlet-name>loginServlet</servlet-name>
         <servlet-class>servlet.LoginServlet</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>welcomeServlet</servlet-name>
+        <servlet-name>productServlet</servlet-name>
         <servlet-class>servlet.ProductServlet</servlet-class>
     </servlet>
     <servlet>
@@ -38,10 +39,18 @@
         <servlet-name>registerServlet</servlet-name>
         <servlet-class>servlet.RegisterServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>transactionServlet</servlet-name>
+        <servlet-class>servlet.TransactionServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>roleServlet</servlet-name>
+        <servlet-class>servlet.RoleServlet</servlet-class>
+    </servlet>
 
     <servlet-mapping>
-        <servlet-name>welcomeServlet</servlet-name>
-        <url-pattern>/welcome</url-pattern>
+        <servlet-name>productServlet</servlet-name>
+        <url-pattern>/products</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>registerServlet</servlet-name>
@@ -58,6 +67,14 @@
     <servlet-mapping>
         <servlet-name>customerServlet</servlet-name>
         <url-pattern>/customers</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>roleServlet</servlet-name>
+        <url-pattern>/roles</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>transactionServlet</servlet-name>
+        <url-pattern>/transactions</url-pattern>
     </servlet-mapping>
 
 

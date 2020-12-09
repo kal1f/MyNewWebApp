@@ -30,6 +30,6 @@ public class TransactionUpdateRequestBinding implements RequestBinding{
 
     @Override
     public Transaction toEntityObject() {
-        return new Transaction(status);
+        return new Transaction(id, status);
     }
 }

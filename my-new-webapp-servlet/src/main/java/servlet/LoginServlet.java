@@ -53,18 +53,6 @@ public class LoginServlet extends HttpServlet {
         this.jsonToData = new JsonToData();
     }
 
-//    @Override
-//    protected void doGet(HttpServletRequest request, HttpServletResponse response) {
-//        try {
-//            request.getRequestDispatcher("login.html").forward(request, response);
-//        }catch (IOException | ServletException e){
-//            LOGGER.debug(e.getMessage(), e);
-//            dataToJson.processResponse(response, 500,
-//                   ErrorResponseBinding.ERROR_RESPONSE_500);
-//        }
-//
-//    }
-
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) {
         LoginRequestBinding requestBinding;

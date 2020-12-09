@@ -36,7 +36,7 @@ public class LogoutServlet extends HttpServlet {
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) {
 
-        HttpSession session = request.getSession(false);
+        HttpSession session = request.getSession(false); // request.getSession()
         logoutService.unauthenticate(session.getId());
         session.invalidate();
         dataToJson.processResponse(response, 200,null);

@@ -61,12 +61,18 @@ public class DataValidator {
     }
 
     public boolean isTransactionStatusValid(String status){
+        if(status == null){
+            return false;
+        }
         return status.equals("CREATED") || status.equals("PAID") ||
                 status.equals("BOXING") || status.equals("DELIVERING") ||
                 status.equals("COMPLETE");
     }
 
     public boolean isTransactionPaymentTypeValid(String paymentType){
+        if(paymentType == null){
+            return false;
+        }
         return paymentType.equals("CREDITCARD") ||
                 paymentType.equals("CASH") ||
                 paymentType.equals("LOYALTY");
@@ -103,21 +109,23 @@ public class DataValidator {
 
     }
 
-    public boolean isCustomerUpdateDataValid(CustomerUpdateRequestBinding binding){
-        return isIdValid(binding.getId()) && isCustomerDataValid(
-                binding.getCustomer().getLogin(),
-                binding.getCustomer().getName(),
-                binding.getCustomer().getPassword1(),
-                binding.getCustomer().getPassword1());
+    public boolean isCustomerUpdateDataValid(Integer id, String login, String name, String password1, String password2){
+        return isIdValid(id) && isCustomerDataValid(
+                login,
+                name,
+                password1,
+                password2);
     }
 
-    public boolean isProductDataValid(String name, String category){
-        return isNameValid(name) && isNameValid(category);
+    public boolean isProductDataValid(String name, String category, Double price, Double priceDiscount){
+        if(price == null){
+            return  false;
+        }
+        return isNameValid(name) && isNameValid(category) && price >= 0 && (priceDiscount == null || priceDiscount >= 0);
     }
 
-    public boolean isProductUpdateDataValid(ProductUpdateRequestBinding binding){
-        return isIdValid(binding.getId()) && isProductDataValid(binding.getProduct().getName(),
-                binding.getProduct().getCategory());
+    public boolean isProductUpdateDataValid(Integer id, String name, String category, Double price, Double priceDiscount){
+        return isIdValid(id) && isProductDataValid(name, category, price, priceDiscount);
     }
 
 //    public boolean isWelcomeFormValid(Integer id, String login){
@@ -133,27 +141,45 @@ public class DataValidator {
 //                (isLoginValid(login) && isLengthValid(login,6)) || login.equals("") );
 //    }
     public boolean isWelcomeDataValid(String id, String login){
+        if(login == null || id == null){
+            return false;
+        }
 
-        return ((isIdValid(id) || id == null) &&
-                ((isLoginValid(login) && isLengthValid(login,6)) || login.equals("")));
+        if(id.equals("") && login.equals("")){
+            return false;
+        }
+
+        if(isIdValid(id) && login.equals("")){
+            return true;
+        }
+
+        if(id.equals("") && (isLoginValid(login) && isLengthValid(login, 6))){
+            return true;
+        }
+
+        //return isIdValid(id) && (isLoginValid(login) && isLengthValid(login, 6));
+//        return ((isIdValid(id) || id == null || id.equals("")) &&
+//                ((isLoginValid(login) && isLengthValid(login,6)) || login.equals("")));
+        return (isIdValid(id) &&
+                (isLoginValid(login) && isLengthValid(login,6)) || login.equals(""));
     }
 
-    public boolean isTransactionDataValid(TransactionRequestBinding binding){
-        return isIdValid(binding.getCustomerId()) &&
-                isIdValid(binding.getProductId()) &&
-                isTransactionPaymentTypeValid(binding.getPaymentType());
+    public boolean isTransactionDataValid(Integer customerId, Integer productId, String payment){
+        return isIdValid(customerId) &&
+                isIdValid(productId) &&
+                isTransactionPaymentTypeValid(payment);
     }
 
-    public boolean isTransactionUpdateDataValid(TransactionUpdateRequestBinding binding){
-        return isIdValid(binding.getId()) && isTransactionStatusValid(binding.getStatus());
+    public boolean isTransactionUpdateDataValid(Integer id, String status){
+        return isIdValid(id) && isTransactionStatusValid(status);
     }
 
-    public boolean isRoleDataValid(RoleRequestBinding binding){
-        return isNameValid(binding.getName());
+    public boolean isRoleDataValid(String name){
+        return isNameValid(name);
     }
 
-    public boolean isRoleUpdateDataValid(RoleUpdateRequestBinding binding){
-        return isNameValid(binding.getName()) && isIdValid(binding.getId());
+    public boolean isRoleUpdateDataValid(Integer id, String name){
+        return isNameValid(name) && isIdValid(id);
     }
 
 }

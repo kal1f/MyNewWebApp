@@ -32,7 +32,7 @@ public class LogoutServletTest {
     public void setUp(){
         logoutServlet = new LogoutServlet(logoutService, dataToJson);
 
-        when(request.getSession()).thenReturn(session);
+        when(request.getSession(false)).thenReturn(session);
         when(logoutService.unauthenticate(anyString())).thenReturn(0);
         doNothing().when(session).invalidate();
         doNothing().when(dataToJson).processResponse(response, null);

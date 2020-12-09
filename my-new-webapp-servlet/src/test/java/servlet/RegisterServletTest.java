@@ -50,8 +50,9 @@ public class RegisterServletTest {
 
     @Before
     public void setUp() throws IOException {
+        servlet = new RegisterServlet(registerService, dataToJson, dataValidator, jsonToData);
+
         when(jsonToData.jsonToRegisterData(request)).thenReturn(requestBinding);
-        when(request.getRequestDispatcher("register.html")).thenReturn(dispatcher);
         when(dataValidator.isCustomerDataValid("markR12w", "Alexander",
                 "!12*Alex&", "!12*Alex&")).thenReturn(true);
         when(dataValidator.isCustomerDataValid("markR12w", "Alexander",
@@ -59,42 +60,9 @@ public class RegisterServletTest {
 
     }
 
-//    @Test
-//    public void whenDoGetExpectRegisterPage() throws ServletException, IOException {
-//
-//        servlet = new RegisterServlet();
-//
-//        servlet.doGet(request, response);
-//
-//        verify(request, times(1)).getRequestDispatcher("register.html");
-//        verify(dispatcher).forward(request, response);
-//    }
-//
-//    @Test
-//    public void whenDoGetServletExceptionExpectStatus500() throws ServletException, IOException {
-//        servlet = new RegisterServlet(dataToJson);
-//
-//        doThrow(new ServletException()).when(dispatcher).forward(request, response);
-//
-//        servlet.doGet(request, response);
-//
-//        verify(dataToJson).processResponse(response, 500, ErrorResponseBinding.ERROR_RESPONSE_500);
-//    }
-//
-//    @Test
-//    public void whenDoGetIOExceptionExpectStatus500() throws ServletException, IOException {
-//        servlet = new RegisterServlet(dataToJson);
-//        doThrow(new IOException()).when(dispatcher).forward(request, response);
-//
-//
-//        servlet.doGet(request, response);
-//
-//        verify(dataToJson).processResponse(response, 500,ErrorResponseBinding.ERROR_RESPONSE_500);
-//    }
 
     @Test
     public void whenDoPostIOExceptionExpectStatus422() throws IOException {
-        servlet = new RegisterServlet(registerService, dataToJson, dataValidator, jsonToData);
 
         doThrow(new IOException()).when(jsonToData).jsonToRegisterData(request);
 
@@ -106,8 +74,6 @@ public class RegisterServletTest {
 
     @Test
     public void whenFormIsValidAndCustomerExistsExpectStatus201() throws EntityNotFoundException {
-
-        servlet = new RegisterServlet(registerService, dataToJson, dataValidator, jsonToData);
 
         Customer customer = new Customer();
 
@@ -130,8 +96,6 @@ public class RegisterServletTest {
 
     @Test
     public void whenFormIsValidAndCustomerNotExistsExpectStatus404() throws EntityNotFoundException {
-
-        servlet = new RegisterServlet(registerService, dataToJson, dataValidator, jsonToData);
 
         when(requestBinding.getPassword1()).thenReturn("!12*Alex&");
         when(requestBinding.getPassword2()).thenReturn("!12*Alex&");

@@ -60,7 +60,6 @@ public class LoginServletTest {
 
         when(jsonToData.jsonToLoginData(request)).thenReturn(requestBinding);
 
-        when(request.getRequestDispatcher("login.html")).thenReturn(dispatcher);
         when(dataValidator.isLogInDataValid("markR12w","!12*Alex&")).thenReturn(true);
         when(dataValidator.isLogInDataValid("lafw","!12*Alex&")).thenReturn(false);
         when(dataValidator.isLogInDataValid("markR12w","12")).thenReturn(false);
@@ -71,40 +70,6 @@ public class LoginServletTest {
         doNothing().when(dataToJson).processResponse(Matchers.any(HttpServletResponse.class), anyInt(), Matchers.any(ResponseBinding.class));
     }
 
-//    @Test
-//    public void whenDoGetThenServletReturnLoginPage() throws ServletException, IOException {
-//
-//        servlet = new LoginServlet();
-//        servlet.doGet(request, response);
-//        verify(request.getRequestDispatcher("login.html")).forward(request, response);
-//
-//    }
-//
-//    @Test
-//    public void whenDoGetServletExceptionExpectStatus500() throws IOException, ServletException {
-//
-//        servlet = new LoginServlet(dataToJson);
-//
-//        doThrow(new ServletException()).when(dispatcher).forward(request, response);
-//
-//        servlet.doGet(request, response);
-//
-//        verify(dataToJson).processResponse(response, 500,
-//                ErrorResponseBinding.ERROR_RESPONSE_500);
-//
-//    }
-//
-//    @Test
-//    public void whenDoGetIOExceptionExpectStatus500() throws IOException, ServletException {
-//        servlet = new LoginServlet(dataToJson);
-//
-//        doThrow(new IOException()).when(dispatcher).forward(request, response);
-//
-//        servlet.doGet(request, response);
-//
-//        verify(dataToJson).processResponse(response, 500,
-//                ErrorResponseBinding.ERROR_RESPONSE_500);
-//    }
 
     @Test
     public void whenDoPostIOExceptionExpectStatus422() throws IOException {
