@@ -40,7 +40,7 @@ public class LoginServiceImpl implements LoginService {
 
         if(existedCustomer != null){
 
-            authentication.setCustomer(sessionId, customer);
+            authentication.setCustomer(sessionId, existedCustomer);
 
             existedCustomer.setPassword(null);
 

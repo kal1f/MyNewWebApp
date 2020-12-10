@@ -8,12 +8,11 @@ public class Customer {
     private String login;
     private String name;
     private String password;
-    private String role;
+    private Role role;
 
     public Customer(){
 
     }
-
 
     public Customer(Integer id, String login) {
         this.id = id;
@@ -38,7 +37,7 @@ public class Customer {
         this.name = name_;
     }
 
-    public Customer(Integer id, String login, String name, String password, String role) {
+    public Customer(Integer id, String login, String name, String password, Role role) {
         this.id = id;
         this.login = login;
         this.name = name;
@@ -88,11 +87,12 @@ public class Customer {
         this.password = password;
     }
 
-    public String getRole() {
+    public Role getRole() {
         return role;
     }
 
-    public void setRole(String role) {
+    public void setRole(Role role) {
+
         this.role = role;
     }
 

@@ -1,10 +1,6 @@
 package service.authentication;
 
 import database.entity.Customer;
-import org.apache.commons.io.filefilter.FalseFileFilter;
-import org.apache.log4j.Logger;
-import service.impl.LogoutServiceImpl;
-
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 

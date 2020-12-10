@@ -75,7 +75,7 @@ public class LoginServlet extends HttpServlet {
                 LOGGER.debug("Customer is not null");
 
                 dataToJson.processResponse(response, 200,
-                        new CustomerResponseBinding(customer.getId(), customer.getLogin(), customer.getName(), customer.getRole()));
+                        new CustomerResponseBinding(customer.getId(), customer.getLogin(), customer.getName(), customer.getRole().getName()));
             } catch (EntityNotFoundException e) {
 
                 LOGGER.debug("Customer was not found", e);

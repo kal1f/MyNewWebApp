@@ -4,6 +4,7 @@ import database.connection.ConnectionProvider;
 import database.connection.ConnectionProviderImpl;
 import database.dao.CustomerDAO;
 import database.entity.Customer;
+import database.entity.Role;
 import org.apache.log4j.Logger;
 
 import java.sql.*;
@@ -63,13 +64,20 @@ public class CustomerDAOImpl implements CustomerDAO {
     @Override
     public Customer getCustomer(String login, String pass) {
         Customer c = null;
+        Role r;
         Connection con = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
 
         try{
             con = connectionProvider.getCon();
-            ps = con.prepareStatement("select * from customer where login=? and password=?");
+            ps = con.prepareStatement("SELECT c.id, c.login, c.password, c.name, r.id, r.name " +
+                    "FROM role as `r` " +
+                    "INNER JOIN (SELECT * FROM customer where login=? and password=? ) as `c` " +
+                    "ON r.id = c.role_id;");
+//            ps = con.prepareStatement("SELECT `t2`.id, `t2`.login, `t2`.password, `t2`.name, `role`.name from \n" +
+//                            "(SELECT * FROM customer where `login`=? and `password`=?) as t2, role\n" +
+//                            "where `role`.id = `t2`.role_id\n");
             ps.setString(1,login);
             ps.setString(2,pass);
 
@@ -78,11 +86,14 @@ public class CustomerDAOImpl implements CustomerDAO {
 
             while(rs.next()){
                 c = new Customer();
+                r = new Role();
+                c.setId(rs.getInt(1));
                 c.setLogin(rs.getString(2));
                 c.setPassword(rs.getString(3));
                 c.setName(rs.getString(4));
-                c.setRole(rs.getString(5));
-                c.setId(rs.getInt(1));
+                r.setId(rs.getInt(5));
+                r.setName(rs.getString(6));
+                c.setRole(r);
             }
         }
         catch (Exception e){
@@ -111,8 +122,8 @@ public class CustomerDAOImpl implements CustomerDAO {
                     "name=? WHERE id = ? ", Statement.RETURN_GENERATED_KEYS);
 
             ps.setString(1, customer.getLogin());
-            ps.setString(2, customer.getName());
-            ps.setString(3, customer.getPassword());
+            ps.setString(2, customer.getPassword());
+            ps.setString(3, customer.getName());
             ps.setInt(4,id);
 
             updated = ps.executeUpdate();
@@ -138,19 +149,31 @@ public class CustomerDAOImpl implements CustomerDAO {
 
         try{
             con = connectionProvider.getCon();
-            ps = con.prepareStatement("select * from customer where id=? or login=? ");
+            ps = con.prepareStatement("SELECT c.id, c.login, c.password, c.name, r.id, r.name " +
+                    "FROM role AS `r` " +
+                    "INNER JOIN (SELECT * FROM customer WHERE id=? OR login=? ) AS `c` " +
+                    "ON r.id = c.role_id");
             ps.setInt(1,id);
             ps.setString(2,login);
 
-
             rs=ps.executeQuery();
+
             while(rs.next()){
-                Customer customer = new Customer(
-                        rs.getInt("id"),
-                        rs.getString("login"),
-                        rs.getString("password"),
-                        rs.getString("name"),
-                        rs.getString("role_id"));
+                Customer customer = new Customer();
+                Role r = new Role();
+                customer.setId(rs.getInt(1));
+                customer.setLogin(rs.getString(2));
+                customer.setPassword(rs.getString(3));
+                customer.setName(rs.getString(4));
+                r.setId(rs.getInt(5));
+                r.setName(rs.getString(6));
+                customer.setRole(r);
+//                Customer customer = new Customer(
+//                        rs.getInt("id"),
+//                        rs.getString("login"),
+//                        rs.getString("password"),
+//                        rs.getString("name"),
+//                        rs.getString("role_id"));
                 c.add(customer);
             }
 
@@ -175,16 +198,28 @@ public class CustomerDAOImpl implements CustomerDAO {
 
         try{
             con = connectionProvider.getCon();
-            ps = con.prepareStatement("select * from customer");
+            ps = con.prepareStatement("SELECT c.id, c.login, c.password, c.name, r.id, r.name " +
+                    "FROM role AS `r`" +
+                    "INNER JOIN (SELECT * FROM customer) AS `c` " +
+                    "ON r.id = c.role_id;");
 
             rs = ps.executeQuery();
 
             while(rs.next()){
-                Customer customer = new Customer(rs.getInt("id"),
-                        rs.getString("login"),
-                        rs.getString("password"),
-                        rs.getString("name"),
-                        rs.getString("role_id"));
+                Customer customer = new Customer();
+                Role r = new Role();
+                customer.setId(rs.getInt(1));
+                customer.setLogin(rs.getString(2));
+                customer.setPassword(rs.getString(3));
+                customer.setName(rs.getString(4));
+                r.setId(rs.getInt(5));
+                r.setName(rs.getString(6));
+                customer.setRole(r);
+//                Customer customer = new Customer(rs.getInt("id"),
+//                        rs.getString("login"),
+//                        rs.getString("password"),
+//                        rs.getString("name"),
+//                        rs.getString("role_id"));
                 c.add(customer);
             }
         }

@@ -21,7 +21,7 @@ public class CustomerResponseBinding implements ResponseBinding {
         this.id = customer.getId();
         this.login = customer.getLogin();
         this.name = customer.getName();
-        this.role = customer.getRole();
+        this.role = customer.getRole().getName();
     }
 
     public int getId() {

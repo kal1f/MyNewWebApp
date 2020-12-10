@@ -8,6 +8,7 @@ import database.dao.CustomerDAO;
 import database.dao.impl.CustomerDAOImpl;
 import database.entity.Customer;
 import database.entity.Product;
+import database.entity.Role;
 import org.apache.log4j.Logger;
 import org.junit.*;
 
@@ -37,17 +38,22 @@ public class CustomerDAOImplTest {
     @Before
     public void beforeMethod() throws SQLException {
         Statement createTable = connectionProvider.getCon().createStatement();
-        createTable.execute("CREATE TABLE customer(id INT PRIMARY KEY AUTO_INCREMENT," +
+        createTable.execute("CREATE TABLE ROLE(id INT PRIMARY KEY AUTO_INCREMENT," +
+                "name VARCHAR(15) NOT NULL unique );" +
+                "CREATE TABLE CUSTOMER(id INT PRIMARY KEY AUTO_INCREMENT," +
                 " login VARCHAR(50) NOT NULL UNIQUE," +
                 " password VARCHAR(50) NOT NULL," +
-                " name VARCHAR(50) DEFAULT NULL ," +
-                " role_id INT DEFAULT 1)");
+                " name VARCHAR(50) DEFAULT NULL," +
+                " role_id INT DEFAULT 1, " +
+                "CONSTRAINT fk FOREIGN KEY (role_id) REFERENCES ROLE(ID));");
+
         fillInTable();
         connectionProvider.closeStatement(createTable);
     }
     @After
     public void afterMethod() throws SQLException {
-        connectionProvider.getCon().createStatement().execute("DROP TABLE customer");
+        connectionProvider.getCon().createStatement().execute("DROP TABLE role; DROP TABLE customer; ");
+
     }
 
     @Test
@@ -56,7 +62,7 @@ public class CustomerDAOImplTest {
         customer.setLogin("alex");
         customer.setPassword("123");
         customer.setName("alex");
-        customer.setRole("buyer");
+        customer.setRole(new Role(1,"buyer"));
         assertEquals(6, customerDAO.insertCustomer(customer));
 
     }
@@ -67,7 +73,7 @@ public class CustomerDAOImplTest {
         customer.setLogin("jarty12");
         customer.setPassword("123");
         customer.setName("alex");
-        customer.setRole("buyer");
+        customer.setRole(new Role(1, "buyer" ));
         assertEquals(0, customerDAO.insertCustomer(customer));
 
     }
@@ -140,7 +146,13 @@ public class CustomerDAOImplTest {
         try {
             statement = connectionProvider.getCon().createStatement();
 
-            String sql = "INSERT INTO CUSTOMER " +
+            String sql = "INSERT INTO `role` " +
+                    "VALUES (1,'buyer')";
+            statement.executeUpdate(sql);
+            sql = "INSERT INTO role " +
+                    "VALUES (2,'admin')";
+            statement.executeUpdate(sql);
+            sql = "INSERT INTO CUSTOMER " +
                     "VALUES (1,'jarty12', 'esh141s.', 'Ramesh', 1)";
             statement.executeUpdate(sql);
             sql = "INSERT INTO CUSTOMER " +

@@ -1,35 +1,26 @@
 package servlet.filter;
 
 import binding.response.FilterResponseBinding;
-import database.dao.CustomerDAO;
-import database.dao.impl.CustomerDAOImpl;
 import org.apache.log4j.Logger;
 import service.authentication.Authentication;
-import service.authentication.AuthenticationImpl;
 import util.DataToJson;
-
-
 import javax.servlet.*;
-import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
 
-@WebFilter(urlPatterns = "/*")
-public class LoginFilter implements Filter {
+public class AuthFilter implements Filter {
 
     private Authentication authenticationImpl;
     private DataToJson dataToJson;
-    CustomerDAO cd;
 
-    static final Logger LOGGER = Logger.getLogger(LoginFilter.class);
+    static final Logger LOGGER = Logger.getLogger(AuthFilter.class);
 
     @Override
     public void init(FilterConfig filterConfig) {
-        authenticationImpl = (AuthenticationImpl) filterConfig.getServletContext().getAttribute("authenticationImpl");
-        cd = new CustomerDAOImpl();
+        authenticationImpl = (Authentication) filterConfig.getServletContext().getAttribute("authenticationImpl");
         dataToJson = new DataToJson();
     }
 
@@ -44,7 +35,7 @@ public class LoginFilter implements Filter {
 
 
         try {
-            LOGGER.debug("Filter url");
+            LOGGER.debug("AuthFilter url");
             if(path.startsWith("/login") || path.startsWith("/register")){
                 LOGGER.debug("url starts with /login or /register -> skip");
                 filterChain.doFilter(request, response);
@@ -59,10 +50,9 @@ public class LoginFilter implements Filter {
                 dataToJson.processResponse(resp, 401,
                         new FilterResponseBinding(401, "Unauthorized", "http://localhost:8080/login"));
             }
-        } catch (IOException | ServletException e) {
+        }
+        catch (IOException | ServletException e) {
             LOGGER.error(e.getMessage(), e);
         }
-
-
     }
 }

@@ -14,7 +14,7 @@ import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebFilter(urlPatterns = "/*")
+
 public class SimpleCORSFilter implements Filter {
 
 private final List<String> allowedOrigins = Arrays.asList("http://localhost:55921");

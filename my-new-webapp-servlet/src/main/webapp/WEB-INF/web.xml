@@ -5,20 +5,37 @@
          version="4.0">
     <display-name>MyWebApp</display-name>
 
-    <filter>
-        <filter-name>SimpleCORSFilter</filter-name>
-        <filter-class>servlet.filter.SimpleCORSFilter</filter-class>
-    </filter>
-    <filter-mapping>
-        <filter-name>SimpleCORSFilter</filter-name>
-        <url-pattern>/*</url-pattern>
-    </filter-mapping>
-
     <context-param>
         <param-name>log4j-config-location</param-name>
         <param-value>WEB-INF/log4j.properties</param-value>
     </context-param>
 
+    <filter>
+        <filter-name>SimpleCORSFilter</filter-name>
+        <filter-class>servlet.filter.SimpleCORSFilter</filter-class>
+    </filter>
+    <filter>
+        <filter-name>AuthFilter</filter-name>
+        <filter-class>servlet.filter.AuthFilter</filter-class>
+    </filter>
+    <filter>
+        <filter-name>AccessFilter</filter-name>
+        <filter-class>servlet.filter.AccessFilter</filter-class>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>SimpleCORSFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>AuthFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>AccessFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+    
     <servlet>
         <servlet-name>loginServlet</servlet-name>
         <servlet-class>servlet.LoginServlet</servlet-class>
