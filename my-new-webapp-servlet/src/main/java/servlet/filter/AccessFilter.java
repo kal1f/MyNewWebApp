@@ -8,13 +8,15 @@ import org.apache.log4j.Logger;
 import service.authentication.Authentication;
 import util.DataToJson;
 import util.JsonToData;
-import wrapper.CachedBodyHttpServletRequest;
-
+import util.validator.DataValidator;
+import wrapper.CachedHttpServletRequestWrapper;
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 
 public class AccessFilter implements Filter {
@@ -22,6 +24,7 @@ public class AccessFilter implements Filter {
     private Authentication authenticationImpl;
     private DataToJson dataToJson;
     private JsonToData jsonToData;
+    private DataValidator dataValidator;
 
     static final Logger LOGGER = Logger.getLogger(AccessFilter.class);
 
@@ -30,16 +33,22 @@ public class AccessFilter implements Filter {
         this.authenticationImpl = (Authentication) filterConfig.getServletContext().getAttribute("authenticationImpl");
         this.dataToJson = new DataToJson();
         this.jsonToData = new JsonToData();
+        this.dataValidator = new DataValidator();
     }
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException {
 
-        CachedBodyHttpServletRequest req = new CachedBodyHttpServletRequest( (HttpServletRequest) request);
+        CachedHttpServletRequestWrapper req = new CachedHttpServletRequestWrapper( (HttpServletRequest) request);
         HttpServletResponse resp = (HttpServletResponse) response;
         final HttpSession session = req.getSession(false);
         String method = req.getMethod();
         String path = req.getRequestURI().substring(req.getContextPath().length());
+
+        final List<String> blockedEndpoints = Arrays.asList("POST /role","PUT /role","PUT /transactions",
+                "PUT /products","POST /products", "GET /customers", "PUT /customers");
+
+        final List<String> checkId = Arrays.asList("GET /customers", "PUT /customers");
 
         try {
             if(authenticationImpl.isSessionPresent(session.getId())) {
@@ -53,71 +62,40 @@ public class AccessFilter implements Filter {
                 }
 
                 if (Role.ROLE_BUYER.equals(role)) {
-                    LOGGER.debug("Buyer role");
-                    if (path.startsWith("/role")) {
-                        if (method.equals("POST") || method.equals("PUT")) {
-                            LOGGER.debug("role restriction");
+                    if (blockedEndpoints.contains(method+" "+path)) {
+                        if (checkId.contains(method+" "+path)){
+                            if (method.equals("GET")){
+                                LOGGER.debug("check valid id in GET method");
+                                String id = req.getParameter("id");
+                                if (!dataValidator.isIdValid(id) || !id.equals(Integer.toString(customer.getId()))) {
+                                    LOGGER.debug("id no valid or not provided");
+                                    dataToJson.processResponse(resp, 403, ErrorResponseBinding.ERROR_RESPONSE_403);
+                                }
+                                else{
+                                    LOGGER.debug("id valid");
+                                    filterChain.doFilter(req, resp);
+                                }
+                            }
+                            else {
+                                LOGGER.debug("check valid id in "+method+" method");
+                                CustomerUpdateRequestBinding putBody = jsonToData.jsonToCustomerUpdateData(req);
+                                Integer id = putBody.getId();
+                                if(!id.equals(customer.getId())){
+                                    LOGGER.debug("id is not equal to self");
+                                    dataToJson.processResponse(resp, 403, ErrorResponseBinding.ERROR_RESPONSE_403);
+                                }
+                                else{
+                                    LOGGER.debug("id is equal to self");
+                                    filterChain.doFilter(req, resp);
+                                }
+                            }
+                        }
+                        else {
+                            LOGGER.debug("Buyer role can not have access to " + method + " " + path);
                             dataToJson.processResponse(resp, 403, ErrorResponseBinding.ERROR_RESPONSE_403);
                         }
-                        else {
-                            LOGGER.debug("role not restrict method get");
-                            filterChain.doFilter(req, resp);
-                        }
-                    }
-                    else if (path.startsWith("/transactions")) {
-                        if (method.equals("PUT")) {
-                            LOGGER.debug("transactions put restriction");
-                            dataToJson.processResponse(resp, 403, ErrorResponseBinding.ERROR_RESPONSE_403);
-                        }
-                        else {
-                            LOGGER.debug("role not restrict post, get method");
-                            filterChain.doFilter(req, resp);
-                        }
-                    }
-                    else if (path.startsWith("/products")) {
-                        if (method.equals("POST") || method.equals("PUT")) {
-                            LOGGER.debug("products put post restriction");
-                            dataToJson.processResponse(resp, 403, ErrorResponseBinding.ERROR_RESPONSE_403);
-                        }
-                        else {
-                            LOGGER.debug("product get not restrict");
-                            filterChain.doFilter(req, resp);
-                        }
-
-                    }
-                    else if (path.startsWith("/customers")) {
-                        if (method.equals("GET")) {
-                            LOGGER.debug("customers get restriction");
-                            String id = req.getParameter("id");
-                            if (!id.equals(Integer.toString(customer.getId())) || id.equals("")) {
-                                LOGGER.debug("customers get id restriction");
-                                dataToJson.processResponse(resp, 403, ErrorResponseBinding.ERROR_RESPONSE_403);
-                            }
-                            else{
-                                LOGGER.debug("customers id not restrict");
-                                filterChain.doFilter(req, resp);
-                            }
-                        }
-                        else if(method.equals("PUT")){
-                            CustomerUpdateRequestBinding putBody = jsonToData.jsonToCustomerUpdateData(req);
-                            Integer id = putBody.getId();
-
-                            if(!id.equals(customer.getId())){
-                                LOGGER.debug("customers put id restriction");
-                                dataToJson.processResponse(resp, 403, ErrorResponseBinding.ERROR_RESPONSE_403);
-                            }
-                            else{
-                                LOGGER.debug("customers put id not restricted");
-                                filterChain.doFilter(req, resp);
-                            }
-                        }
-                        else {
-                            LOGGER.debug("customers post not restrict");
-                            filterChain.doFilter(req, resp);
-                        }
-                    }
-                    else {
-                        LOGGER.debug("urls except role, transactions, products, customers not restrict");
+                    } else {
+                        LOGGER.debug("Method and path are not in endpoints list");
                         filterChain.doFilter(req, resp);
                     }
                 }
@@ -127,11 +105,10 @@ public class AccessFilter implements Filter {
                 LOGGER.debug("session not present -> skip");
                 filterChain.doFilter(req, resp);
             }
-
-        }catch (ServletException | IOException e) {
+        } catch (ServletException | IOException e) {
             LOGGER.error(e.getMessage(), e);
         }
-
+        
     }
 
 }

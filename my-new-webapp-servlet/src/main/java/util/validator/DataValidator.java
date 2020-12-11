@@ -38,7 +38,6 @@ public class DataValidator {
 
     public boolean isIdValid(Integer id){
         return id != null && id >= 0;
-
     }
 
     public boolean isIdValid(String id){

@@ -7,10 +7,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import java.io.*;
 
-public class CachedBodyHttpServletRequest extends HttpServletRequestWrapper {
+public class CachedHttpServletRequestWrapper extends HttpServletRequestWrapper {
     private final byte[] cachedBody;
 
-    public CachedBodyHttpServletRequest(HttpServletRequest request) throws IOException {
+    public CachedHttpServletRequestWrapper(HttpServletRequest request) throws IOException {
         super(request);
         InputStream requestInputStream = request.getInputStream();
         this.cachedBody = StreamUtils.copyToByteArray(requestInputStream);
