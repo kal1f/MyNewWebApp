@@ -107,49 +107,6 @@ public class CustomerDAOImpl implements CustomerDAO {
     }
 
     @Override
-    public Customer getCustomer(String login){
-        Customer c = null;
-        Role r;
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-
-        try{
-            con = connectionProvider.getCon();
-            ps = con.prepareStatement("SELECT c.id, c.login, c.password, c.name, r.id, r.name " +
-                    "FROM role as `r` " +
-                    "INNER JOIN (SELECT * FROM customer where login=? ) as `c` " +
-                    "ON r.id = c.role_id;");
-            ps.setString(1,login);
-
-            rs=ps.executeQuery();
-
-
-            while(rs.next()){
-                c = new Customer();
-                r = new Role();
-                c.setId(rs.getInt(1));
-                c.setLogin(rs.getString(2));
-                c.setPassword(rs.getString(3));
-                c.setName(rs.getString(4));
-                r.setId(rs.getInt(5));
-                r.setName(rs.getString(6));
-                c.setRole(r);
-            }
-        }
-        catch (Exception e){
-            LOGGER.debug(e.getMessage(), e);
-        }
-        finally {
-            connectionProvider.closeRS(rs);
-            connectionProvider.closeStatement(ps);
-            connectionProvider.closeCon(con);
-
-        }
-        return c;
-    }
-
-    @Override
     public int updateCustomer(Customer customer, Integer id)  {
         int updated = 0;
         Connection con = null;
