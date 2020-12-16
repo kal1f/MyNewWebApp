@@ -36,7 +36,8 @@ public class CustomerDAOImpl implements CustomerDAO {
         try {
 
             con = connectionProvider.getCon();
-            ps = con.prepareStatement("insert into customer (login, password, name)" + " values(?,?,?)", Statement.RETURN_GENERATED_KEYS);
+            ps = con.prepareStatement("INSERT INTO customer (login, password, name) VALUES(?,?,?)",
+                    Statement.RETURN_GENERATED_KEYS);
 
 
             ps.setString(1, c.getLogin());

@@ -1,7 +1,7 @@
 package database.connection;
 
 public interface ProviderConstants {
-    String username="root";
-    String pwd="Mramor15not.";
-    String connection="jdbc:mysql://localhost:3306/web_app";
+    String username="web_app";
+    String pwd="111";
+    String connection="jdbc:oracle:thin:@//localhost:1521/orcl";
 }

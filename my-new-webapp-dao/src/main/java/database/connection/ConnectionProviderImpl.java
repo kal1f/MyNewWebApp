@@ -11,7 +11,7 @@ public class ConnectionProviderImpl implements ConnectionProvider {
     public Connection getCon(){
         Connection conn = null;
         try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
+            Class.forName("oracle.jdbc.driver.OracleDriver");
             conn = DriverManager.getConnection(ProviderConstants.connection,
                     ProviderConstants.username, ProviderConstants.pwd);
         } catch (Exception e) {
