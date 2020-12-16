@@ -150,7 +150,7 @@ public class CustomerDAOImpl implements CustomerDAO {
     }
 
     @Override
-    public int updateCustomer(Customer customer, Integer id) {
+    public int updateCustomer(Customer customer, Integer id)  {
         int updated = 0;
         Connection con = null;
         PreparedStatement ps = null;
@@ -158,14 +158,13 @@ public class CustomerDAOImpl implements CustomerDAO {
         try {
 
             con = connectionProvider.getCon();
-            ps = con.prepareStatement("UPDATE customer SET login=?," +
+            ps = con.prepareStatement("UPDATE customer SET " +
                     "password=?," +
                     "name=? WHERE id = ? ", Statement.RETURN_GENERATED_KEYS);
 
-            ps.setString(1, customer.getLogin());
-            ps.setString(2, customer.getPassword());
-            ps.setString(3, customer.getName());
-            ps.setInt(4,id);
+            ps.setString(1, customer.getPassword());
+            ps.setString(2, customer.getName());
+            ps.setInt(3,id);
 
             updated = ps.executeUpdate();
 
