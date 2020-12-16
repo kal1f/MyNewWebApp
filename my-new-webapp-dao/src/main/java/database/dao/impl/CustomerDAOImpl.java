@@ -75,11 +75,51 @@ public class CustomerDAOImpl implements CustomerDAO {
                     "FROM role as `r` " +
                     "INNER JOIN (SELECT * FROM customer where login=? and password=? ) as `c` " +
                     "ON r.id = c.role_id;");
-//            ps = con.prepareStatement("SELECT `t2`.id, `t2`.login, `t2`.password, `t2`.name, `role`.name from \n" +
-//                            "(SELECT * FROM customer where `login`=? and `password`=?) as t2, role\n" +
-//                            "where `role`.id = `t2`.role_id\n");
             ps.setString(1,login);
             ps.setString(2,pass);
+
+            rs=ps.executeQuery();
+
+
+            while(rs.next()){
+                c = new Customer();
+                r = new Role();
+                c.setId(rs.getInt(1));
+                c.setLogin(rs.getString(2));
+                c.setPassword(rs.getString(3));
+                c.setName(rs.getString(4));
+                r.setId(rs.getInt(5));
+                r.setName(rs.getString(6));
+                c.setRole(r);
+            }
+        }
+        catch (Exception e){
+            LOGGER.debug(e.getMessage(), e);
+        }
+        finally {
+            connectionProvider.closeRS(rs);
+            connectionProvider.closeStatement(ps);
+            connectionProvider.closeCon(con);
+
+        }
+        return c;
+    }
+
+    @Override
+    public Customer getCustomer(String login){
+        Customer c = null;
+        Role r;
+        Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try{
+            con = connectionProvider.getCon();
+            ps = con.prepareStatement("SELECT c.id, c.login, c.password, c.name, r.id, r.name " +
+                    "FROM role as `r` " +
+                    "INNER JOIN (SELECT * FROM customer where login=? ) as `c` " +
+                    "ON r.id = c.role_id;");
+            ps.setString(1,login);
 
             rs=ps.executeQuery();
 
@@ -168,12 +208,6 @@ public class CustomerDAOImpl implements CustomerDAO {
                 r.setId(rs.getInt(5));
                 r.setName(rs.getString(6));
                 customer.setRole(r);
-//                Customer customer = new Customer(
-//                        rs.getInt("id"),
-//                        rs.getString("login"),
-//                        rs.getString("password"),
-//                        rs.getString("name"),
-//                        rs.getString("role_id"));
                 c.add(customer);
             }
 
@@ -215,11 +249,6 @@ public class CustomerDAOImpl implements CustomerDAO {
                 r.setId(rs.getInt(5));
                 r.setName(rs.getString(6));
                 customer.setRole(r);
-//                Customer customer = new Customer(rs.getInt("id"),
-//                        rs.getString("login"),
-//                        rs.getString("password"),
-//                        rs.getString("name"),
-//                        rs.getString("role_id"));
                 c.add(customer);
             }
         }

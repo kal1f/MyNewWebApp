@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 
-@WebServlet(name = "/customers")
 public class CustomerServlet extends HttpServlet {
 
     private CustomerService customerService;
@@ -104,7 +103,7 @@ public class CustomerServlet extends HttpServlet {
                 requestBinding.getCustomer().getName(), requestBinding.getCustomer().getPassword1(),
                 requestBinding.getCustomer().getPassword2())){
             try {
-                Customer c = customerService.updateCustomer(requestBinding.toEntityObject(), requestBinding.getId());
+                Customer c = customerService.processLogin(requestBinding.toEntityObject(), requestBinding.getId());
                 dataToJson.processResponse(response, 200, new CustomerResponseBinding(c));
             }catch (EntityNotFoundException e){
                 LOGGER.debug("Customer with params"+

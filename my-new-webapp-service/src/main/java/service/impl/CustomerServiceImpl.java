@@ -42,7 +42,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public Customer updateCustomer(Customer customer, Integer id) throws EntityNotFoundException {
+    public Customer processLogin(Customer customer, Integer id) throws EntityNotFoundException {
 
         int rowsUpdated = cd.updateCustomer(customer, id);
 
@@ -51,6 +51,6 @@ public class CustomerServiceImpl implements CustomerService {
             throw new EntityNotFoundException("Was not been updated any rows");
         }
 
-        return cd.getCustomer(customer.getLogin(), customer.getPassword());
+        return cd.getCustomer(customer.getLogin());
     }
 }

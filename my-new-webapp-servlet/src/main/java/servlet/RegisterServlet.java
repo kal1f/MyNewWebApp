@@ -11,14 +11,12 @@ import service.impl.RegisterServiceImpl;
 import util.DataToJson;
 import util.JsonToData;
 import util.validator.DataValidator;
-
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@WebServlet(name = "/register")
+
 public class RegisterServlet extends HttpServlet {
 
     private RegisterService registerService;

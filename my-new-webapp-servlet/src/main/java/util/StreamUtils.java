@@ -1,6 +1,6 @@
 package util;
 
-import com.sun.istack.internal.Nullable;
+import org.jetbrains.annotations.Nullable;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,7 +20,7 @@ public abstract class StreamUtils {
         return out.toByteArray();
     }
 
-    private static int  copy(InputStream in, ByteArrayOutputStream out) throws IOException {
+    private static int copy(InputStream in, ByteArrayOutputStream out) throws IOException {
         int byteCount = 0;
         byte[] buffer = new byte[BUFFER_SIZE];
         int bytesRead;

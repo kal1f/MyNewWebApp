@@ -11,15 +11,13 @@ import service.impl.RoleServiceImpl;
 import util.DataToJson;
 import util.JsonToData;
 import util.validator.DataValidator;
-
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
-@WebServlet(name = "/roles")
+
 public class RoleServlet extends HttpServlet {
     private DataToJson dataToJson;
     private JsonToData jsonToData;

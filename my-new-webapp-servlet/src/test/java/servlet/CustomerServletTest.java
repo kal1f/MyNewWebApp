@@ -96,7 +96,7 @@ public class CustomerServletTest {
                 requestBinding.getCustomer().getName(), requestBinding.getCustomer().getPassword1(),
                 requestBinding.getCustomer().getPassword2())).thenReturn(true);
 
-        doThrow(new EntityNotFoundException()).when(customerService).updateCustomer(Matchers.any(Customer.class), anyInt());
+        doThrow(new EntityNotFoundException()).when(customerService).processLogin(Matchers.any(Customer.class), anyInt());
 
         servlet.doPut(request, response);
 
@@ -119,7 +119,7 @@ public class CustomerServletTest {
 
         Customer c  = new Customer(101,"login", "natse12x", "name", Role.ROLE_BUYER);
 
-        when(customerService.updateCustomer(Matchers.any(Customer.class), anyInt())).thenReturn(c);
+        when(customerService.processLogin(Matchers.any(Customer.class), anyInt())).thenReturn(c);
 
         servlet.doPut(request, response);
 

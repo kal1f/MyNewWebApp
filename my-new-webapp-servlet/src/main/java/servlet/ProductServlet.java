@@ -13,8 +13,6 @@ import service.impl.ProductServiceImpl;
 import util.DataToJson;
 import util.JsonToData;
 import util.validator.DataValidator;
-
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -23,7 +21,6 @@ import java.math.BigInteger;
 import java.util.List;
 
 
-@WebServlet(name = "/products")
 public class ProductServlet extends HttpServlet {
 
     private DataToJson dataToJson;

@@ -97,7 +97,7 @@ public class LoginServletTest {
         servlet.doPost(request, response);
 
         verify(dataToJson).processResponse(response, 200,
-                new CustomerResponseBinding(customer.getId(), customer.getLogin(), customer.getName(), customer.getRole().getName()));
+                new CustomerResponseBinding(customer.getId(), customer.getLogin(), customer.getName(), customer.getRole()));
     }
 
     @Test

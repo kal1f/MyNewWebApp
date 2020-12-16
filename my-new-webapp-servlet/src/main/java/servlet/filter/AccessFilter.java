@@ -44,11 +44,12 @@ public class AccessFilter implements Filter {
         final HttpSession session = req.getSession(false);
         String method = req.getMethod();
         String path = req.getRequestURI().substring(req.getContextPath().length());
+        String requestUrl = method+" "+path;
 
-        final List<String> blockedEndpoints = Arrays.asList("POST /role","PUT /role","PUT /transactions",
+        final List<String> userRestrictedEndpoints = Arrays.asList("POST /role","PUT /role","PUT /transactions",
                 "PUT /products","POST /products", "GET /customers", "PUT /customers");
 
-        final List<String> checkId = Arrays.asList("GET /customers", "PUT /customers");
+        final List<String> neededCheckIdEndpoints = Arrays.asList("GET /customers", "PUT /customers");
 
         try {
             if(authenticationImpl.isSessionPresent(session.getId())) {
@@ -57,22 +58,22 @@ public class AccessFilter implements Filter {
                 Role role = customer.getRole();
 
                 if (Role.ROLE_ADMIN.equals(role)) {
-                    LOGGER.debug("Admin access to all pages");
+                    LOGGER.debug("Admin can access to all pages");
                     filterChain.doFilter(req, resp);
                 }
 
                 if (Role.ROLE_BUYER.equals(role)) {
-                    if (blockedEndpoints.contains(method+" "+path)) {
-                        if (checkId.contains(method+" "+path)){
+                    if (userRestrictedEndpoints.contains(requestUrl)) {
+                        if (neededCheckIdEndpoints.contains(requestUrl)){
                             if (method.equals("GET")){
                                 LOGGER.debug("check valid id in GET method");
                                 String id = req.getParameter("id");
                                 if (!dataValidator.isIdValid(id) || !id.equals(Integer.toString(customer.getId()))) {
-                                    LOGGER.debug("id no valid or not provided");
+                                    LOGGER.debug("id: "+id+" is not valid or not provided");
                                     dataToJson.processResponse(resp, 403, ErrorResponseBinding.ERROR_RESPONSE_403);
                                 }
                                 else{
-                                    LOGGER.debug("id valid");
+                                    LOGGER.debug("id: "+id+" in GET method is valid");
                                     filterChain.doFilter(req, resp);
                                 }
                             }
@@ -81,17 +82,17 @@ public class AccessFilter implements Filter {
                                 CustomerUpdateRequestBinding putBody = jsonToData.jsonToCustomerUpdateData(req);
                                 Integer id = putBody.getId();
                                 if(!id.equals(customer.getId())){
-                                    LOGGER.debug("id is not equal to self");
+                                    LOGGER.debug("id: "+id+" is not equal to self");
                                     dataToJson.processResponse(resp, 403, ErrorResponseBinding.ERROR_RESPONSE_403);
                                 }
                                 else{
-                                    LOGGER.debug("id is equal to self");
+                                    LOGGER.debug("id: "+id+" is equal to self");
                                     filterChain.doFilter(req, resp);
                                 }
                             }
                         }
                         else {
-                            LOGGER.debug("Buyer role can not have access to " + method + " " + path);
+                            LOGGER.debug("Buyer role can not have access to " + requestUrl);
                             dataToJson.processResponse(resp, 403, ErrorResponseBinding.ERROR_RESPONSE_403);
                         }
                     } else {
@@ -108,7 +109,7 @@ public class AccessFilter implements Filter {
         } catch (ServletException | IOException e) {
             LOGGER.error(e.getMessage(), e);
         }
-        
+
     }
 
 }

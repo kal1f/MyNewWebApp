@@ -36,15 +36,15 @@ public class LoginServiceImpl implements LoginService {
         String login = customer.getLogin();
         String password = customer.getPassword();
 
-        Customer existedCustomer = cd.getCustomer(login, password);
+        Customer existingCustomer = cd.getCustomer(login, password);
 
-        if(existedCustomer != null){
+        if(existingCustomer != null){
 
-            authentication.setCustomer(sessionId, existedCustomer);
+            authentication.setCustomer(sessionId, existingCustomer);
 
-            existedCustomer.setPassword(null);
+            existingCustomer.setPassword(null);
 
-            return existedCustomer;
+            return existingCustomer;
         }
         else {
             LOGGER.debug("getCustomer(String login, String password) returned null");
