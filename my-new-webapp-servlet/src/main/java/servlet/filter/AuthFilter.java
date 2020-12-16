@@ -7,29 +7,26 @@ import org.apache.log4j.Logger;
 import service.authentication.Authentication;
 import service.authentication.AuthenticationImpl;
 import util.DataToJson;
-
-
 import javax.servlet.*;
-import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.Properties;
 
 
-@WebFilter(urlPatterns = "/*")
-public class LoginFilter implements Filter {
+public class AuthFilter implements Filter {
 
     private Authentication authenticationImpl;
     private DataToJson dataToJson;
     CustomerDAO cd;
 
-    static final Logger LOGGER = Logger.getLogger(LoginFilter.class);
+    static final Logger LOGGER = Logger.getLogger(AuthFilter.class);
 
     @Override
     public void init(FilterConfig filterConfig) {
         authenticationImpl = (AuthenticationImpl) filterConfig.getServletContext().getAttribute("authenticationImpl");
-        cd = new CustomerDAOImpl();
+        cd = new CustomerDAOImpl((Properties) filterConfig.getServletContext().getAttribute("properties"));
         dataToJson = new DataToJson();
     }
 

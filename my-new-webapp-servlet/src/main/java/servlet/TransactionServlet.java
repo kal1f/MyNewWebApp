@@ -9,20 +9,17 @@ import service.TransactionService;
 import service.impl.TransactionServiceImpl;
 import util.DataToJson;
 import util.JsonToData;
-
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.apache.log4j.Logger;
 import util.validator.DataValidator;
-
 import java.io.IOException;
 import java.math.BigInteger;
 import java.util.List;
+import java.util.Properties;
 
-@WebServlet(name = "/transactions")
+
 public class TransactionServlet extends HttpServlet {
     private DataToJson dataToJson;
     private JsonToData jsonToData;
@@ -48,7 +45,7 @@ public class TransactionServlet extends HttpServlet {
         this.dataToJson = new DataToJson();
         this.jsonToData = new JsonToData();
         this.dataValidator = new DataValidator();
-        this.transactionService = new TransactionServiceImpl();
+        this.transactionService = new TransactionServiceImpl((Properties) getServletContext().getAttribute("properties"));
     }
 
     @Override

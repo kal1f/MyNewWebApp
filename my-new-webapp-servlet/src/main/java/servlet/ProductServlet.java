@@ -13,17 +13,15 @@ import service.impl.ProductServiceImpl;
 import util.DataToJson;
 import util.JsonToData;
 import util.validator.DataValidator;
-
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.util.List;
+import java.util.Properties;
 
 
-@WebServlet(name = "/products")
 public class ProductServlet extends HttpServlet {
 
     private DataToJson dataToJson;
@@ -50,7 +48,7 @@ public class ProductServlet extends HttpServlet {
     public void init(){
         this.dataToJson = new DataToJson();
         this.jsonToData = new JsonToData();
-        this.productService = new ProductServiceImpl();
+        this.productService = new ProductServiceImpl((Properties) getServletContext().getAttribute("properties"));
         this.dataValidator = new DataValidator();
     }
 

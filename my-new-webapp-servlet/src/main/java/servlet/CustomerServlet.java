@@ -12,16 +12,14 @@ import service.impl.CustomerServiceImpl;
 import util.DataToJson;
 import util.JsonToData;
 import util.validator.DataValidator;
-
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Properties;
 
 
-@WebServlet(name = "/customers")
 public class CustomerServlet extends HttpServlet {
 
     private CustomerService customerService;
@@ -46,7 +44,7 @@ public class CustomerServlet extends HttpServlet {
 
     @Override
     public void init(){
-        this.customerService = new CustomerServiceImpl();
+        this.customerService = new CustomerServiceImpl((Properties) getServletContext().getAttribute("properties"));
         this.dataToJson = new DataToJson();
         this.dataValidator = new DataValidator();
         this.jsonToData = new JsonToData();
@@ -104,7 +102,7 @@ public class CustomerServlet extends HttpServlet {
                 requestBinding.getCustomer().getName(), requestBinding.getCustomer().getPassword1(),
                 requestBinding.getCustomer().getPassword2())){
             try {
-                Customer c = customerService.updateCustomer(requestBinding.toEntityObject(), requestBinding.getId());
+                Customer c = customerService.processLogin(requestBinding.toEntityObject(), requestBinding.getId());
                 dataToJson.processResponse(response, 200, new CustomerResponseBinding(c));
             }catch (EntityNotFoundException e){
                 LOGGER.debug("Customer with params"+

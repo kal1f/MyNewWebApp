@@ -7,6 +7,7 @@ import binding.response.CustomersResponseBinding;
 import binding.response.ErrorResponseBinding;
 import binding.response.ResponseBinding;
 import database.entity.Customer;
+import database.entity.Role;
 import exception.EntityNotFoundException;
 import org.junit.After;
 import org.junit.Before;
@@ -66,7 +67,7 @@ public class CustomerServletTest {
 
     @After
     public void clean(){
-       reset(dataToJson, request, response, customerService, dataValidator);
+        reset(dataToJson, request, response, customerService, dataValidator);
     }
 
     @Test
@@ -95,7 +96,7 @@ public class CustomerServletTest {
                 requestBinding.getCustomer().getName(), requestBinding.getCustomer().getPassword1(),
                 requestBinding.getCustomer().getPassword2())).thenReturn(true);
 
-        doThrow(new EntityNotFoundException()).when(customerService).updateCustomer(Matchers.any(Customer.class), anyInt());
+        doThrow(new EntityNotFoundException()).when(customerService).processLogin(Matchers.any(Customer.class), anyInt());
 
         servlet.doPut(request, response);
 
@@ -116,9 +117,9 @@ public class CustomerServletTest {
                 requestBinding.getCustomer().getName(), requestBinding.getCustomer().getPassword1(),
                 requestBinding.getCustomer().getPassword2())).thenReturn(true);
 
-        Customer c  = new Customer(101,"login", "natse12x", "name", "1");
+        Customer c  = new Customer(101,"login", "natse12x", "name", Role.ROLE_BUYER);
 
-        when(customerService.updateCustomer(Matchers.any(Customer.class), anyInt())).thenReturn(c);
+        when(customerService.processLogin(Matchers.any(Customer.class), anyInt())).thenReturn(c);
 
         servlet.doPut(request, response);
 
@@ -184,7 +185,7 @@ public class CustomerServletTest {
 
         ArrayList<Customer> c = new ArrayList<>();
 
-        c.add(new Customer(101,"login", "natse12x", "name", "1"));
+        c.add(new Customer(101,"login", "natse12x", "name", Role.ROLE_ADMIN));
 
         when(customerService.searchCustomers(new Customer(0,
                 "natse12x"))).thenReturn(c);
@@ -215,7 +216,7 @@ public class CustomerServletTest {
 
         ArrayList<Customer> c = new ArrayList<Customer>();
 
-        c.add(new Customer(101,"login", "pass", "name", "1"));
+        c.add(new Customer(101,"login", "pass", "name", Role.ROLE_ADMIN));
 
         when(customerService.searchCustomers(new Customer(101,""))).thenReturn(c);
 
@@ -242,4 +243,3 @@ public class CustomerServletTest {
 
 
 }
-

@@ -732,7 +732,7 @@ components:
         name:
           type: "string"
         role:
-          type: "string"
+          $ref: '#/components/schemas/RoleResponse'
       xml:
         name: "CustomerResponse"       
       

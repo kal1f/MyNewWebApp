@@ -5,11 +5,8 @@ import service.LogoutService;
 import service.authentication.AuthenticationImpl;
 import service.impl.LogoutServiceImpl;
 import util.DataToJson;
-
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
 
-@WebServlet(name = "/logout")
 public class LogoutServlet extends HttpServlet {
 
     private LogoutService logoutService;

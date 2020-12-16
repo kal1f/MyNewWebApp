@@ -1,7 +1,7 @@
 package database.dao.impl;
 
 import database.connection.ConnectionProvider;
-import database.connection.ConnectionProviderImpl;
+import database.connection.ConnectionProviderProperties;
 import database.dao.ProductDAO;
 import database.entity.Product;
 import org.apache.log4j.Logger;
@@ -14,6 +14,7 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 public class ProductDAOImpl implements ProductDAO {
 
@@ -21,9 +22,9 @@ public class ProductDAOImpl implements ProductDAO {
 
     static final Logger LOGGER = Logger.getLogger(ProductDAOImpl.class);
 
-    public ProductDAOImpl(){
+    public ProductDAOImpl(Properties properties){
 
-        this.connectionProvider = new ConnectionProviderImpl();
+        this.connectionProvider = new ConnectionProviderProperties(properties);
     }
 
     public ProductDAOImpl(ConnectionProvider connectionProvider) {

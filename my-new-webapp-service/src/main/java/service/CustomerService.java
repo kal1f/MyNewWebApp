@@ -9,5 +9,5 @@ import java.util.ArrayList;
 public interface CustomerService {
     ArrayList<Customer> searchCustomers(Customer customer) throws EntityNotFoundException;
     ArrayList<Customer> getAllCustomers();
-    Customer updateCustomer(Customer customer, Integer id) throws EntityNotFoundException;
+    Customer processLogin(Customer customer, Integer id) throws EntityNotFoundException;
 }

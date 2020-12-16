@@ -12,6 +12,7 @@ import service.TransactionService;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 public class TransactionServiceImpl implements TransactionService {
 
@@ -19,8 +20,8 @@ public class TransactionServiceImpl implements TransactionService {
 
     static final Logger LOGGER = Logger.getLogger(TransactionServiceImpl.class);
 
-    public TransactionServiceImpl() {
-        td = new TransactionDAOImpl();
+    public TransactionServiceImpl(Properties properties) {
+        td = new TransactionDAOImpl(properties);
     }
 
     public TransactionServiceImpl(TransactionDAO transactionDAO){

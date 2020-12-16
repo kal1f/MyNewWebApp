@@ -1,6 +1,7 @@
 package binding.response;
 
 import database.entity.Customer;
+import database.entity.Role;
 
 import java.util.Objects;
 
@@ -8,9 +9,9 @@ public class CustomerResponseBinding implements ResponseBinding {
     private int id;
     private String login;
     private String name;
-    private String role;
+    private Role role;
 
-    public CustomerResponseBinding(int id, String login, String name, String role) {
+    public CustomerResponseBinding(int id, String login, String name, Role role) {
         this.id = id;
         this.login = login;
         this.name = name;
@@ -48,11 +49,11 @@ public class CustomerResponseBinding implements ResponseBinding {
         this.name = name;
     }
 
-    public String getRole() {
+    public Role getRole() {
         return role;
     }
 
-    public void setRole(String role) {
+    public void setRole(Role role) {
         this.role = role;
     }
 

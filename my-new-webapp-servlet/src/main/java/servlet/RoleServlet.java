@@ -11,15 +11,13 @@ import service.impl.RoleServiceImpl;
 import util.DataToJson;
 import util.JsonToData;
 import util.validator.DataValidator;
-
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
+import java.util.Properties;
 
-@WebServlet(name = "/roles")
 public class RoleServlet extends HttpServlet {
     private DataToJson dataToJson;
     private JsonToData jsonToData;
@@ -45,7 +43,7 @@ public class RoleServlet extends HttpServlet {
         this.dataToJson = new DataToJson();
         this.jsonToData = new JsonToData();
         this.dataValidator = new DataValidator();
-        this.roleService = new RoleServiceImpl();
+        this.roleService = new RoleServiceImpl((Properties) getServletContext().getAttribute("properties"));
 
     }
 

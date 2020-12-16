@@ -7,7 +7,7 @@ import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.util.Objects;
 
-public final class Transaction {
+public class Transaction {
     private Integer id;
     private Integer customerId;
     private Integer productId;
@@ -94,10 +94,6 @@ public final class Transaction {
     public void setProductId(Integer productId) {
         this.productId = productId;
     }
-
-//    public Timestamp getPurchTmst() {
-//        return purchTmst;
-//    }
 
     public String getPurchTmst(){
         return purchTmst.toString();

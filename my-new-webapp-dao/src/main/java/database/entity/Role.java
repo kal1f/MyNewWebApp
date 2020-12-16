@@ -3,8 +3,13 @@ package database.entity;
 import java.util.Objects;
 
 public class Role {
+
     private Integer id;
     private String name;
+
+    public static final Role ROLE_ADMIN = new Role(2, "admin");
+    public static final Role ROLE_BUYER = new Role(1, "buyer");
+
     public Role() {
 
     }

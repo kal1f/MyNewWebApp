@@ -16,6 +16,9 @@ public class ErrorResponseBinding implements ResponseBinding {
     public static final ErrorResponseBinding ERROR_RESPONSE_422 =
             new ErrorResponseBinding(422, "Unprocessable Entity");
 
+    public static final ErrorResponseBinding ERROR_RESPONSE_403 =
+            new ErrorResponseBinding(403, "Insufficient privileges");
+
     public ErrorResponseBinding(int code, String message) {
         this.code = code;
         this.message = message;

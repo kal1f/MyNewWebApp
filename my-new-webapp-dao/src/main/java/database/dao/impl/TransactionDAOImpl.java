@@ -1,11 +1,10 @@
 package database.dao.impl;
 
 import database.connection.ConnectionProvider;
-import database.connection.ConnectionProviderImpl;
+import database.connection.ConnectionProviderProperties;
 import database.dao.TransactionDAO;
 import database.entity.Transaction;
 import org.apache.log4j.Logger;
-
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.Connection;
@@ -14,6 +13,7 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 public class TransactionDAOImpl implements TransactionDAO {
 
@@ -21,8 +21,8 @@ public class TransactionDAOImpl implements TransactionDAO {
 
     static final Logger LOGGER = Logger.getLogger(TransactionDAOImpl.class);
 
-    public TransactionDAOImpl() {
-        connectionProvider = new ConnectionProviderImpl();
+    public TransactionDAOImpl(Properties properties) {
+        connectionProvider = new ConnectionProviderProperties(properties);
     }
 
     public TransactionDAOImpl(ConnectionProvider connectionProvider) {
@@ -76,7 +76,7 @@ public class TransactionDAOImpl implements TransactionDAO {
 
         try{
             con = connectionProvider.getCon();
-            ps = con.prepareStatement("select * from transaction ");
+            ps = con.prepareStatement("SELECT * FROM TRANSACTION ");
 
             rs = ps.executeQuery();
 
@@ -118,7 +118,6 @@ public class TransactionDAOImpl implements TransactionDAO {
             ps.setInt(1, transaction.getCustomerId());
             ps.setInt(2, transaction.getProductId());
             ps.setString(3, transaction.getPaymentType());
-            //ps.setString(4, transaction.getStatus());
             ps.setString(4, transaction.getCrdCardNumber());
 
             ps.executeUpdate();

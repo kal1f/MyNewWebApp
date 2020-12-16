@@ -9,6 +9,7 @@ import service.RoleService;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 public class RoleServiceImpl implements RoleService {
 
@@ -16,8 +17,8 @@ public class RoleServiceImpl implements RoleService {
 
     static final Logger LOGGER = Logger.getLogger(RoleServiceImpl.class);
 
-    public RoleServiceImpl() {
-        this.rd = new RoleDAOImpl();
+    public RoleServiceImpl(Properties properties) {
+        this.rd = new RoleDAOImpl(properties);
     }
 
     public RoleServiceImpl(RoleDAO roleDAO){

@@ -9,6 +9,8 @@ import service.LoginService;
 import service.authentication.Authentication;
 import service.authentication.AuthenticationImpl;
 
+import java.util.Properties;
+
 
 public class LoginServiceImpl implements LoginService {
 
@@ -17,13 +19,13 @@ public class LoginServiceImpl implements LoginService {
 
     static final Logger LOGGER = Logger.getLogger(LoginServiceImpl.class);
 
-    public LoginServiceImpl() {
-        this.cd = new CustomerDAOImpl();
+    public LoginServiceImpl(Properties properties) {
+        this.cd = new CustomerDAOImpl(properties);
         this.authentication = new AuthenticationImpl();
     }
 
-    public LoginServiceImpl(Authentication authentication){
-        this.cd = new CustomerDAOImpl();
+    public LoginServiceImpl(Authentication authentication, Properties properties){
+        this.cd = new CustomerDAOImpl(properties);
         this.authentication = authentication;
     }
     public LoginServiceImpl(Authentication authentication, CustomerDAO customerDAO){
@@ -36,15 +38,15 @@ public class LoginServiceImpl implements LoginService {
         String login = customer.getLogin();
         String password = customer.getPassword();
 
-        Customer existedCustomer = cd.getCustomer(login, password);
+        Customer existingCustomer = cd.getCustomer(login, password);
 
-        if(existedCustomer != null){
+        if(existingCustomer != null){
 
-            authentication.setCustomer(sessionId, customer);
+            authentication.setCustomer(sessionId, existingCustomer);
 
-            existedCustomer.setPassword(null);
+            existingCustomer.setPassword(null);
 
-            return existedCustomer;
+            return existingCustomer;
         }
         else {
             LOGGER.debug("getCustomer(String login, String password) returned null");

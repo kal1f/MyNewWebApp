@@ -1,8 +1,8 @@
 package servlet;
 
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
 import java.io.IOException;
+import java.util.Properties;
 import binding.request.LoginRequestBinding;
 import binding.response.CustomerResponseBinding;
 import binding.response.ErrorResponseBinding;
@@ -17,7 +17,6 @@ import util.JsonToData;
 import util.validator.DataValidator;
 
 
-@WebServlet(name = "/login")
 public class LoginServlet extends HttpServlet {
 
     private DataToJson dataToJson;
@@ -47,7 +46,8 @@ public class LoginServlet extends HttpServlet {
 
     @Override
     public void init() {
-        this.loginService = new LoginServiceImpl((AuthenticationImpl) getServletContext().getAttribute("authenticationImpl"));
+        this.loginService = new LoginServiceImpl((AuthenticationImpl) getServletContext().getAttribute("authenticationImpl"),
+                (Properties) getServletContext().getAttribute("properties"));
         this.dataToJson = new DataToJson();
         this.dataValidator = new DataValidator();
         this.jsonToData = new JsonToData();
@@ -75,7 +75,7 @@ public class LoginServlet extends HttpServlet {
                 LOGGER.debug("Customer is not null");
 
                 dataToJson.processResponse(response, 200,
-                        new CustomerResponseBinding(customer.getId(), customer.getLogin(), customer.getName(), customer.getRole()));
+                        new CustomerResponseBinding(customer));
             } catch (EntityNotFoundException e) {
 
                 LOGGER.debug("Customer was not found", e);
