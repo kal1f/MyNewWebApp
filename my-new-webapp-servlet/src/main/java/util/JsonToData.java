@@ -2,16 +2,12 @@ package util;
 
 import binding.request.*;
 import com.google.gson.Gson;
-import database.entity.Transaction;
-
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public class JsonToData {
 
-    private Gson gson;
-
+    private final Gson gson;
 
     public JsonToData() {
         this.gson = new Gson();
@@ -34,6 +30,7 @@ public class JsonToData {
     }
 
     public CustomerUpdateRequestBinding jsonToCustomerUpdateData(HttpServletRequest request) throws IOException{
+
         return gson.fromJson(request.getReader(), CustomerUpdateRequestBinding.class);
     }
 

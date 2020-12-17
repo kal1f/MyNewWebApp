@@ -38,7 +38,7 @@ public class LoginServiceImpl implements LoginService {
         String login = customer.getLogin();
         String password = customer.getPassword();
 
-        Customer existingCustomer = cd.getCustomer(login, password);
+        Customer existingCustomer = cd.processSignIn(login, password);
 
         if(existingCustomer != null){
 

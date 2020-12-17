@@ -5,14 +5,11 @@ import database.connection.ConnectionProvider;
 import database.connection.ConnectionProviderTestImpl;
 
 import database.dao.CustomerDAO;
-import database.dao.impl.CustomerDAOImpl;
 import database.entity.Customer;
-import database.entity.Product;
 import database.entity.Role;
 import org.apache.log4j.Logger;
 import org.junit.*;
 
-import java.math.BigInteger;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -62,7 +59,7 @@ public class CustomerDAOImplTest {
         customer.setLogin("alex");
         customer.setPassword("123");
         customer.setName("alex");
-        customer.setRole(new Role(1,"buyer"));
+        customer.setRole(Role.ROLE_BUYER);
         assertEquals(6, customerDAO.insertCustomer(customer));
 
     }
@@ -73,14 +70,14 @@ public class CustomerDAOImplTest {
         customer.setLogin("jarty12");
         customer.setPassword("123");
         customer.setName("alex");
-        customer.setRole(new Role(1, "buyer" ));
+        customer.setRole(Role.ROLE_BUYER);
         assertEquals(0, customerDAO.insertCustomer(customer));
 
     }
 
     @Test
     public void getCustomerWithExistedLoginAndPassReturnCustomer() {
-        Customer c = customerDAO.getCustomer("jarty12", "esh141s.");
+        Customer c = customerDAO.processSignIn("jarty12", "esh141s.");
         assertEquals("jarty12", c.getLogin());
         assertEquals("esh141s.", c.getPassword());
         assertEquals("Ramesh", c.getName());
@@ -90,14 +87,14 @@ public class CustomerDAOImplTest {
 
     @Test
     public void getCustomerWithNoExistedPassReturnNull(){
-        Customer c = customerDAO.getCustomer("alex", "23423");
+        Customer c = customerDAO.processSignIn("alex", "23423");
 
         assertNull(c);
     }
 
     @Test
     public void getCustomerWithNoExistedLoginReturnNull(){
-        Customer c = customerDAO.getCustomer("ahmed", "esh141s.");
+        Customer c = customerDAO.processSignIn("ahmed", "esh141s.");
         assertNull(c);
     }
 

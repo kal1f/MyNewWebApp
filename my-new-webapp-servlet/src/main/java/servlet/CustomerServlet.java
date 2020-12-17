@@ -90,9 +90,9 @@ public class CustomerServlet extends HttpServlet {
     protected void doPut(HttpServletRequest request, HttpServletResponse response) {
         CustomerUpdateRequestBinding requestBinding = null;
 
-        try{
-            requestBinding=jsonToData.jsonToCustomerUpdateData(request);
-        }catch (IOException e){
+        try {
+            requestBinding = jsonToData.jsonToCustomerUpdateData(request);
+        } catch (IOException e){
             LOGGER.debug(e.getMessage(), e);
             dataToJson.processResponse(response, 422, ErrorResponseBinding.ERROR_RESPONSE_422);
             return;

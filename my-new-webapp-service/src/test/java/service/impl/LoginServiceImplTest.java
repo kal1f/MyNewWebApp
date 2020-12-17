@@ -34,7 +34,7 @@ public class LoginServiceImplTest {
 
         loginService = new LoginServiceImpl(authentication, cd);
 
-        when(cd.getCustomer("alex2", "132saw2!")).thenReturn(new Customer("alex2",
+        when(cd.processSignIn("alex2", "132saw2!")).thenReturn(new Customer("alex2",
                 "132saw2!", "Marko", 101));
 
         doNothing().when(authentication).setCustomer("SHDGSF22XCD21", customer);
@@ -47,7 +47,7 @@ public class LoginServiceImplTest {
 
         Customer authenticated = loginService.authenticate("SHDGSF22XCD21",new Customer("alex2", "132saw2!"));
 
-        verify(cd).getCustomer("alex2", "132saw2!");
+        verify(cd).processSignIn("alex2", "132saw2!");
 
         assertEquals(customer.getLogin(), authenticated.getLogin());
         assertNull(authenticated.getPassword());
@@ -67,7 +67,7 @@ public class LoginServiceImplTest {
             message = e.getMessage();
         }
 
-        verify(cd).getCustomer(null, null);
+        verify(cd).processSignIn(null, null);
 
         assertEquals("Customer with login: null, pass: null is not exists", message);
     }
@@ -83,7 +83,7 @@ public class LoginServiceImplTest {
             message = e.getMessage();
         }
 
-        verify(cd).getCustomer(anyString(), (String)isNull());
+        verify(cd).processSignIn(anyString(), (String)isNull());
 
         assertEquals("Customer with login: login, pass: null is not exists", message);
     }
@@ -100,7 +100,7 @@ public class LoginServiceImplTest {
             message = e.getMessage();
         }
 
-        verify(cd).getCustomer((String) isNull(), anyString());
+        verify(cd).processSignIn((String) isNull(), anyString());
 
         assertEquals("Customer with login: null, pass: 132saw2! is not exists", message);
     }

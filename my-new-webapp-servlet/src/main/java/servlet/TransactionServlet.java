@@ -19,7 +19,6 @@ import java.math.BigInteger;
 import java.util.List;
 import java.util.Properties;
 
-
 public class TransactionServlet extends HttpServlet {
     private DataToJson dataToJson;
     private JsonToData jsonToData;

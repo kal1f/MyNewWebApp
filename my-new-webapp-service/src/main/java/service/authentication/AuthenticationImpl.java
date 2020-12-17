@@ -1,8 +1,6 @@
 package service.authentication;
 
 import database.entity.Customer;
-
-
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
