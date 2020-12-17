@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-
+import java.util.Properties;
 
 public class RegisterServlet extends HttpServlet {
 
@@ -50,7 +50,7 @@ public class RegisterServlet extends HttpServlet {
     @Override
     public void init(){
 
-        registerService = new RegisterServiceImpl();
+        registerService = new RegisterServiceImpl((Properties) getServletContext().getAttribute("properties"));
         dataValidator = new DataValidator();
         dataToJson = new DataToJson();
         jsonToData = new JsonToData();

@@ -7,7 +7,6 @@ import service.impl.LogoutServiceImpl;
 import util.DataToJson;
 import javax.servlet.http.*;
 
-
 public class LogoutServlet extends HttpServlet {
 
     private LogoutService logoutService;

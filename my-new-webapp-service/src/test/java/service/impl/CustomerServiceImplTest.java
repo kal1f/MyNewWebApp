@@ -50,7 +50,9 @@ public class CustomerServiceImplTest {
         when(cd.updateCustomer(new Customer("lasf12","ahmed", "dsa12da!da2"), 103)).thenReturn(1);
 
         when(cd.getCustomer(anyString())).thenReturn(new Customer("lasf12","dsa12da!da2", "ahmed", 103));
+
     }
+
     @Test
     public void getAllCustomers(){
         ArrayList<Customer> customers = customerService.getAllCustomers();
@@ -65,7 +67,7 @@ public class CustomerServiceImplTest {
     }
 
     @Test
-    public void searchCustomersExpectEmptyArrayWhenIdIsNullAndLoginIsNull() throws EntityNotFoundException {
+    public void searchCustomersExpectEmptyArrayWhenIdIsNullAndLoginIsNull() {
         ArrayList<Customer> customers;
         String message = null;
 
@@ -136,6 +138,7 @@ public class CustomerServiceImplTest {
     }
 
     @Test
+
     public void searchCustomersExpectEmptyArrayWhenLoginIsNotExistingAndIdNull(){
 
         ArrayList<Customer> customers = null;
@@ -153,7 +156,7 @@ public class CustomerServiceImplTest {
     }
 
     @Test
-    public void searchCustomersExpectEmptyArrayWhenIdNotExistsAndLoginNotExisting()throws EntityNotFoundException {
+    public void searchCustomersExpectEmptyArrayWhenIdNotExistsAndLoginNotExisting(){
         ArrayList<Customer> customers;
         String message = null;
 

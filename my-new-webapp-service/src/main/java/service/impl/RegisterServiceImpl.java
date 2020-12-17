@@ -7,14 +7,16 @@ import exception.EntityNotFoundException;
 import org.apache.log4j.Logger;
 import service.RegisterService;
 
+import java.util.Properties;
+
 public class RegisterServiceImpl implements RegisterService {
 
     private CustomerDAO cd;
 
     static final Logger LOGGER = Logger.getLogger(RegisterServiceImpl.class);
 
-    public RegisterServiceImpl() {
-        this.cd = new CustomerDAOImpl();
+    public RegisterServiceImpl(Properties properties) {
+        this.cd = new CustomerDAOImpl(properties);
     }
 
     public RegisterServiceImpl(CustomerDAO customerDAO){

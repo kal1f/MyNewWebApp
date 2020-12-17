@@ -10,6 +10,7 @@ import service.ProductService;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 public class ProductServiceImpl implements ProductService {
 
@@ -17,8 +18,8 @@ public class ProductServiceImpl implements ProductService {
 
     static final Logger LOGGER = Logger.getLogger(ProductServiceImpl.class);
 
-    public ProductServiceImpl() {
-        pd = new ProductDAOImpl();
+    public ProductServiceImpl(Properties properties) {
+        pd = new ProductDAOImpl(properties);
     }
 
     public ProductServiceImpl(ProductDAO productDAO){

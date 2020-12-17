@@ -8,6 +8,7 @@ import org.apache.log4j.Logger;
 import service.CustomerService;
 
 import java.util.ArrayList;
+import java.util.Properties;
 
 public class CustomerServiceImpl implements CustomerService {
 
@@ -15,8 +16,8 @@ public class CustomerServiceImpl implements CustomerService {
 
     static final Logger LOGGER = Logger.getLogger(CustomerServiceImpl.class);
 
-    public CustomerServiceImpl() {
-        cd = new CustomerDAOImpl();
+    public CustomerServiceImpl(Properties properties) {
+        cd = new CustomerDAOImpl(properties);
     }
 
     public CustomerServiceImpl(CustomerDAO customerDAO){
@@ -53,4 +54,5 @@ public class CustomerServiceImpl implements CustomerService {
 
         return cd.getCustomer(customer.getLogin());
     }
+
 }

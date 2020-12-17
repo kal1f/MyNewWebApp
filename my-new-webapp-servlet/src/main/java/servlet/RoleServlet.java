@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
-
+import java.util.Properties;
 
 public class RoleServlet extends HttpServlet {
     private DataToJson dataToJson;
@@ -43,7 +43,7 @@ public class RoleServlet extends HttpServlet {
         this.dataToJson = new DataToJson();
         this.jsonToData = new JsonToData();
         this.dataValidator = new DataValidator();
-        this.roleService = new RoleServiceImpl();
+        this.roleService = new RoleServiceImpl((Properties) getServletContext().getAttribute("properties"));
 
     }
 

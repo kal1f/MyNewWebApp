@@ -3,14 +3,12 @@ package servlet.listener;
 import org.apache.log4j.PropertyConfigurator;
 import service.authentication.Authentication;
 import service.authentication.AuthenticationImpl;
-
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
-import javax.servlet.annotation.WebListener;
 import java.io.File;
 
-@WebListener
+
 public class AuthenticationContextListener implements ServletContextListener {
 
     public Authentication authenticationImpl;
@@ -18,7 +16,6 @@ public class AuthenticationContextListener implements ServletContextListener {
     @Override
     public void contextInitialized(ServletContextEvent sce) {
         final ServletContext servletContext = sce.getServletContext();
-
 
         authenticationImpl = new AuthenticationImpl();
 

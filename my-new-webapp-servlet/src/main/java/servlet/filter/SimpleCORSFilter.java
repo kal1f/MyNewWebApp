@@ -1,9 +1,6 @@
 package servlet.filter;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -16,7 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 
 public class SimpleCORSFilter implements Filter {
 
-private final List<String> allowedOrigins = Arrays.asList("http://localhost:55921");
+//private final List<String> allowedOrigins = Arrays.asList("http://localhost:55921");
 
     public void destroy() {
 
@@ -37,16 +34,12 @@ private final List<String> allowedOrigins = Arrays.asList("http://localhost:5592
                 response.setHeader("Access-Control-Allow-Origin", request.getHeader("Origin"));
                 response.setHeader("Vary", "Origin");
             }
-            // Access-Control-Max-Age
             //response.setHeader("Access-Control-Max-Age", "3600");
 
-            // Access-Control-Allow-Credentials
             //response.setHeader("Access-Control-Allow-Credentials", "true");
 
-            // Access-Control-Allow-Methods
             response.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE");
 
-            // Access-Control-Allow-Headers
             response.setHeader("Access-Control-Allow-Headers",
                     "Origin, X-Requested-With, Content-Type, Accept");
         }

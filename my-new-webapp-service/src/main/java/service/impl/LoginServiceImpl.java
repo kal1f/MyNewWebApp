@@ -9,6 +9,8 @@ import service.LoginService;
 import service.authentication.Authentication;
 import service.authentication.AuthenticationImpl;
 
+import java.util.Properties;
+
 
 public class LoginServiceImpl implements LoginService {
 
@@ -17,13 +19,13 @@ public class LoginServiceImpl implements LoginService {
 
     static final Logger LOGGER = Logger.getLogger(LoginServiceImpl.class);
 
-    public LoginServiceImpl() {
-        this.cd = new CustomerDAOImpl();
+    public LoginServiceImpl(Properties properties) {
+        this.cd = new CustomerDAOImpl(properties);
         this.authentication = new AuthenticationImpl();
     }
 
-    public LoginServiceImpl(Authentication authentication){
-        this.cd = new CustomerDAOImpl();
+    public LoginServiceImpl(Authentication authentication, Properties properties){
+        this.cd = new CustomerDAOImpl(properties);
         this.authentication = authentication;
     }
     public LoginServiceImpl(Authentication authentication, CustomerDAO customerDAO){

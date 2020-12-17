@@ -1,8 +1,8 @@
 package servlet;
 
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
 import java.io.IOException;
+import java.util.Properties;
 import binding.request.LoginRequestBinding;
 import binding.response.CustomerResponseBinding;
 import binding.response.ErrorResponseBinding;
@@ -46,7 +46,8 @@ public class LoginServlet extends HttpServlet {
 
     @Override
     public void init() {
-        this.loginService = new LoginServiceImpl((AuthenticationImpl) getServletContext().getAttribute("authenticationImpl"));
+        this.loginService = new LoginServiceImpl((AuthenticationImpl) getServletContext().getAttribute("authenticationImpl"),
+                (Properties) getServletContext().getAttribute("properties"));
         this.dataToJson = new DataToJson();
         this.dataValidator = new DataValidator();
         this.jsonToData = new JsonToData();

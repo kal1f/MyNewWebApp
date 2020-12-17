@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.util.List;
+import java.util.Properties;
 
 
 public class ProductServlet extends HttpServlet {
@@ -47,7 +48,7 @@ public class ProductServlet extends HttpServlet {
     public void init(){
         this.dataToJson = new DataToJson();
         this.jsonToData = new JsonToData();
-        this.productService = new ProductServiceImpl();
+        this.productService = new ProductServiceImpl((Properties) getServletContext().getAttribute("properties"));
         this.dataValidator = new DataValidator();
     }
 

@@ -17,7 +17,6 @@ import service.LoginService;
 import util.DataToJson;
 import util.JsonToData;
 import util.validator.DataValidator;
-
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -85,7 +84,6 @@ public class LoginServletTest {
 
     @Test
     public void whenParamsAreValidAndCustomerExistsExpectStatus200() throws EntityNotFoundException {
-        //error when delete in setup condition in loginForm
 
         when(requestBinding.getLogin()).thenReturn("markR12w");
         when(requestBinding.getPassword()).thenReturn("!12*Alex&");

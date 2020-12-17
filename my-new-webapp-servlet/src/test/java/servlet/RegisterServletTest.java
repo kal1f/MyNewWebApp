@@ -4,6 +4,7 @@ import binding.request.CustomerRequestBinding;
 import binding.response.CustomerResponseBinding;
 import binding.response.ErrorResponseBinding;
 import database.entity.Customer;
+import database.entity.Role;
 import exception.EntityNotFoundException;
 import org.junit.Before;
 import org.junit.Test;
@@ -33,8 +34,6 @@ public class RegisterServletTest {
     HttpServletRequest request;
     @Mock
     HttpServletResponse response;
-    @Mock
-    RequestDispatcher dispatcher;
     @Mock
     RegisterService registerService;
     @Mock
@@ -80,7 +79,9 @@ public class RegisterServletTest {
         customer.setId(101);
         customer.setName("Alex");
         customer.setLogin("aslex2");
+        customer.setRole(Role.ROLE_ADMIN);
 
+        when(requestBinding.toEntityObject()).thenReturn(customer);
         when(requestBinding.getPassword1()).thenReturn("!12*Alex&");
         when(requestBinding.getPassword2()).thenReturn("!12*Alex&");
         when(requestBinding.getName()).thenReturn("Alexander");
@@ -132,4 +133,3 @@ public class RegisterServletTest {
     }
 
 }
-

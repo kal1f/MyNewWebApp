@@ -1,7 +1,7 @@
 package database.dao.impl;
 
 import database.connection.ConnectionProvider;
-import database.connection.ConnectionProviderImpl;
+import database.connection.ConnectionProviderProperties;
 import database.dao.CustomerDAO;
 import database.entity.Customer;
 import database.entity.Role;
@@ -9,6 +9,7 @@ import org.apache.log4j.Logger;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Properties;
 
 public class CustomerDAOImpl implements CustomerDAO {
 
@@ -17,9 +18,9 @@ public class CustomerDAOImpl implements CustomerDAO {
 
     static final Logger LOGGER = Logger.getLogger(CustomerDAOImpl.class);
 
-    public CustomerDAOImpl(){
+    public CustomerDAOImpl(Properties properties){
 
-        this.connectionProvider = new ConnectionProviderImpl();
+        this.connectionProvider = new ConnectionProviderProperties(properties);
     }
 
     public CustomerDAOImpl(ConnectionProvider connectionProvider) {
@@ -91,6 +92,7 @@ public class CustomerDAOImpl implements CustomerDAO {
                 r.setId(rs.getInt(5));
                 r.setName(rs.getString(6));
                 c.setRole(r);
+
             }
         }
         catch (Exception e){
@@ -134,6 +136,7 @@ public class CustomerDAOImpl implements CustomerDAO {
                 r.setId(rs.getInt(5));
                 r.setName(rs.getString(6));
                 c.setRole(r);
+
             }
         }
         catch (Exception e){
@@ -149,7 +152,7 @@ public class CustomerDAOImpl implements CustomerDAO {
     }
 
     @Override
-    public int updateCustomer(Customer customer, Integer id) {
+    public int updateCustomer(Customer customer, Integer id)  {
         int updated = 0;
         Connection con = null;
         PreparedStatement ps = null;
@@ -157,14 +160,13 @@ public class CustomerDAOImpl implements CustomerDAO {
         try {
 
             con = connectionProvider.getCon();
-            ps = con.prepareStatement("UPDATE customer SET login=?," +
+            ps = con.prepareStatement("UPDATE customer SET " +
                     "password=?," +
                     "name=? WHERE id = ? ", Statement.RETURN_GENERATED_KEYS);
 
-            ps.setString(1, customer.getLogin());
-            ps.setString(2, customer.getPassword());
-            ps.setString(3, customer.getName());
-            ps.setInt(4,id);
+            ps.setString(1, customer.getPassword());
+            ps.setString(2, customer.getName());
+            ps.setInt(3,id);
 
             updated = ps.executeUpdate();
 

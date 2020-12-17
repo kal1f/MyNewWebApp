@@ -13,6 +13,9 @@
     <listener>
         <listener-class>servlet.listener.AuthenticationContextListener</listener-class>
     </listener>
+    <listener>
+        <listener-class>servlet.listener.PropertiesContextListener</listener-class>
+    </listener>
 
     <filter>
         <filter-name>SimpleCORSFilter</filter-name>

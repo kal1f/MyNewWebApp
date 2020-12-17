@@ -1,7 +1,7 @@
 package database.dao.impl;
 
 import database.connection.ConnectionProvider;
-import database.connection.ConnectionProviderImpl;
+import database.connection.ConnectionProviderProperties;
 import database.dao.RoleDAO;
 import database.entity.Role;
 import org.apache.log4j.Logger;
@@ -12,6 +12,7 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 public class RoleDAOImpl implements RoleDAO {
 
@@ -19,8 +20,8 @@ public class RoleDAOImpl implements RoleDAO {
 
     static final Logger LOGGER = Logger.getLogger(ProductDAOImpl.class);
 
-    public RoleDAOImpl() {
-        connectionProvider = new ConnectionProviderImpl();
+    public RoleDAOImpl(Properties properties) {
+        connectionProvider = new ConnectionProviderProperties(properties);
     }
 
     public RoleDAOImpl(ConnectionProvider connectionProvider) {

@@ -3,6 +3,7 @@ package servlet.filter;
 import binding.response.FilterResponseBinding;
 import org.apache.log4j.Logger;
 import service.authentication.Authentication;
+import service.authentication.AuthenticationImpl;
 import util.DataToJson;
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -20,7 +21,9 @@ public class AuthFilter implements Filter {
 
     @Override
     public void init(FilterConfig filterConfig) {
-        authenticationImpl = (Authentication) filterConfig.getServletContext().getAttribute("authenticationImpl");
+
+        authenticationImpl = (AuthenticationImpl) filterConfig.getServletContext().getAttribute("authenticationImpl");
+
         dataToJson = new DataToJson();
     }
 

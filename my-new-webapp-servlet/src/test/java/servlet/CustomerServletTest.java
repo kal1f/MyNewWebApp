@@ -67,7 +67,7 @@ public class CustomerServletTest {
 
     @After
     public void clean(){
-       reset(dataToJson, request, response, customerService, dataValidator);
+        reset(dataToJson, request, response, customerService, dataValidator);
     }
 
     @Test
@@ -243,4 +243,3 @@ public class CustomerServletTest {
 
 
 }
-
