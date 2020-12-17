@@ -5,13 +5,11 @@ import database.connection.ConnectionProviderImpl;
 import database.dao.TransactionDAO;
 import database.entity.Transaction;
 import org.apache.log4j.Logger;
-
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -113,12 +111,11 @@ public class TransactionDAOImpl implements TransactionDAO {
 
             con = connectionProvider.getCon();
             ps = con.prepareStatement("INSERT INTO transaction (customer_id, product_id, purch_tmst, payment_type, status, crd_card_number)" +
-                    " VALUES(?,?,CURRENT_TIMESTAMP ,?,'CREATED',?)", Statement.RETURN_GENERATED_KEYS);
+                    " VALUES(?,?,CURRENT_TIMESTAMP ,?,'CREATED',?)", new String[] {"ID"});
 
             ps.setInt(1, transaction.getCustomerId());
             ps.setInt(2, transaction.getProductId());
             ps.setString(3, transaction.getPaymentType());
-            //ps.setString(4, transaction.getStatus());
             ps.setString(4, transaction.getCrdCardNumber());
 
             ps.executeUpdate();
@@ -150,7 +147,7 @@ public class TransactionDAOImpl implements TransactionDAO {
 
             con = connectionProvider.getCon();
             ps = con.prepareStatement("UPDATE transaction SET status=? WHERE id = ? ",
-                    Statement.RETURN_GENERATED_KEYS);
+                    new String[] {"ID"});
 
             ps.setString(1, status);
             ps.setBigDecimal(2, new BigDecimal(id));

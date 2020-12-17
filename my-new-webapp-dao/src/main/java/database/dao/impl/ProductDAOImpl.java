@@ -40,7 +40,8 @@ public class ProductDAOImpl implements ProductDAO {
         try {
 
             con = connectionProvider.getCon();
-            ps = con.prepareStatement("INSERT INTO product (name, category, date_added, price, price_discount) VALUES(?,?,current_date,?,?)", Statement.RETURN_GENERATED_KEYS);
+            ps = con.prepareStatement("INSERT INTO product (name, category, date_added, price, price_discount) VALUES(?,?,current_date,?,?)",
+                    new String[] {"ID"});
 
             ps.setString(1, product.getName());
             ps.setString(2, product.getCategory());
@@ -149,7 +150,7 @@ public class ProductDAOImpl implements ProductDAO {
                     "date_added=CURRENT_DATE," +
                     "price=?," +
                     "price_discount=? " +
-                    "WHERE id = ? ", Statement.RETURN_GENERATED_KEYS);
+                    "WHERE id=? ", new String[] {"ID"});
 
             ps.setString(1, product.getName());
             ps.setString(2, product.getCategory());

@@ -100,7 +100,7 @@ public class RoleDAOImpl implements RoleDAO {
 
             con = connectionProvider.getCon();
             ps = con.prepareStatement("UPDATE role SET name=? WHERE id=? ",
-                    Statement.RETURN_GENERATED_KEYS);
+                    new String[] {"ID"});
 
             ps.setString(1, role.getName());
             ps.setInt(2, role.getId());
@@ -129,7 +129,7 @@ public class RoleDAOImpl implements RoleDAO {
 
             con = connectionProvider.getCon();
             ps = con.prepareStatement("INSERT INTO role (name)" +
-                    " VALUES(?)", Statement.RETURN_GENERATED_KEYS);
+                    " VALUES(?)", new String[] {"ID"});
 
             ps.setString(1, role);
 

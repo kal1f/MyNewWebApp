@@ -95,10 +95,6 @@ public final class Transaction {
         this.productId = productId;
     }
 
-//    public Timestamp getPurchTmst() {
-//        return purchTmst;
-//    }
-
     public String getPurchTmst(){
         return purchTmst.toString();
     }
@@ -113,10 +109,6 @@ public final class Transaction {
 
     public void setPaymentType(String paymentType) {
         this.paymentType = PaymentType.valueOf(paymentType);
-    }
-
-    public void setPaymentType(PaymentType paymentType) {
-        this.paymentType = paymentType;
     }
 
     public void setStatus(Status status) {
