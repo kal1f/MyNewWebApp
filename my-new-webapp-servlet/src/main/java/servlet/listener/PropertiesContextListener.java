@@ -31,7 +31,7 @@ public class PropertiesContextListener implements ServletContextListener {
             if(!file.exists()){
                 LOGGER.info("Production properties by path: "+productionProperties+" is not existing.");
                 file = new File(developmentProperties);
-                LOGGER.info("Trying inner properties of MyNewWebApp by path: "+classLoader.getResourceAsStream(file.getPath()));
+                LOGGER.info("Trying inner properties of MyNewWebApp by class path: /"+developmentProperties);
             }
 
             InputStream input = classLoader.getResourceAsStream(file.getPath());
