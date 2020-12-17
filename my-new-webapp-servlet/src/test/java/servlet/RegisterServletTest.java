@@ -79,7 +79,7 @@ public class RegisterServletTest {
         customer.setId(101);
         customer.setName("Alex");
         customer.setLogin("aslex2");
-        customer.setRole(new Role("admin"));
+        customer.setRole(Role.ROLE_ADMIN);
 
         when(requestBinding.toEntityObject()).thenReturn(customer);
         when(requestBinding.getPassword1()).thenReturn("!12*Alex&");

@@ -22,6 +22,7 @@ public class PropertiesContextListener implements ServletContextListener {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 
         String productionProperties = "/usr/local/my-web-app/production.properties";
+        String developmentProperties = "config.properties";
 
         try {
 
@@ -29,7 +30,7 @@ public class PropertiesContextListener implements ServletContextListener {
             File file = new File(productionProperties);
             if(!file.exists()){
                 LOGGER.info("Production properties by path: "+productionProperties+" is not existing.");
-                file = new File("config.properties");
+                file = new File(developmentProperties);
                 LOGGER.info("Trying inner properties of MyNewWebApp by path: "+classLoader.getResourceAsStream(file.getPath()));
             }
 
