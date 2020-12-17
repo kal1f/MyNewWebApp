@@ -119,7 +119,7 @@ public class CustomerServiceImplTest {
     }
 
     @Test
-    public void searchCustomersExpectEmptyArrayWhenIdIsNotExistingAndLoginNull() throws EntityNotFoundException {
+    public void searchCustomersExpectEmptyArrayWhenIdIsNotExistingAndLoginNull(){
 
         ArrayList<Customer> customers = null;
         String message = null;
@@ -136,7 +136,7 @@ public class CustomerServiceImplTest {
     }
 
     @Test
-    public void searchCustomersExpectEmptyArrayWhenLoginIsNotExistingAndIdNull()throws EntityNotFoundException {
+    public void searchCustomersExpectEmptyArrayWhenLoginIsNotExistingAndIdNull(){
 
         ArrayList<Customer> customers = null;
         String message = null;
@@ -169,13 +169,13 @@ public class CustomerServiceImplTest {
     }
 
     @Test
-    public void processLoginWithNullIdExpectEntityNotFoundException() {
+    public void updateCustomerWithNullIdExpectEntityNotFoundException() {
         Customer customer;
 
         String message=null;
 
         try {
-            customer = customerService.processLogin(
+            customer = customerService.updateCustomer(
                     new Customer("lasf12","ahmed", "dsa12da!da2"), null);
         } catch (EntityNotFoundException e){
             message = e.getMessage();
@@ -185,13 +185,13 @@ public class CustomerServiceImplTest {
     }
 
     @Test
-    public void processLoginWithNullLoginExpectEntityNotFoundException() {
+    public void updateCustomerWithNullLoginExpectEntityNotFoundException() {
         Customer customer;
 
         String message=null;
 
         try {
-            customer = customerService.processLogin(
+            customer = customerService.updateCustomer(
                     new Customer(null,"ahmed", "dsa12da!da2"), 450);
         } catch (EntityNotFoundException e){
             message = e.getMessage();
@@ -201,13 +201,13 @@ public class CustomerServiceImplTest {
     }
 
     @Test
-    public void processLoginWithNullPasswordExpectEntityNotFoundException() {
+    public void updateCustomerWithNullPasswordExpectEntityNotFoundException() {
         Customer customer;
 
         String message=null;
 
         try {
-            customer = customerService.processLogin(
+            customer = customerService.updateCustomer(
                     new Customer("lasf12",null, "dsa12da!da2"), 450);
         } catch (EntityNotFoundException e){
             message = e.getMessage();
@@ -217,13 +217,13 @@ public class CustomerServiceImplTest {
     }
 
     @Test
-    public void processLoginWithNameExpectEntityNotFoundException() {
+    public void updateCustomerWithNameExpectEntityNotFoundException() {
         Customer customer;
 
         String message=null;
 
         try {
-            customer = customerService.processLogin(
+            customer = customerService.updateCustomer(
                     new Customer("lasf12","ahmed", null), 450);
         } catch (EntityNotFoundException e){
             message = e.getMessage();
@@ -233,9 +233,9 @@ public class CustomerServiceImplTest {
     }
 
     @Test
-    public void processLoginExpectCustomer() throws EntityNotFoundException {
+    public void updateCustomerExpectCustomer() throws EntityNotFoundException {
 
-        Customer customer = customerService.processLogin(new Customer("lasf12","ahmed", "dsa12da!da2"), 103);
+        Customer customer = customerService.updateCustomer(new Customer("lasf12","ahmed", "dsa12da!da2"), 103);
 
         verify(cd).updateCustomer(Matchers.any(Customer.class), Matchers.any(Integer.class));
 

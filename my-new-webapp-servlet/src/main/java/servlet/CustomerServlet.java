@@ -13,7 +13,6 @@ import util.DataToJson;
 import util.JsonToData;
 import util.validator.DataValidator;
 
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -103,7 +102,7 @@ public class CustomerServlet extends HttpServlet {
                 requestBinding.getCustomer().getName(), requestBinding.getCustomer().getPassword1(),
                 requestBinding.getCustomer().getPassword2())){
             try {
-                Customer c = customerService.processLogin(requestBinding.toEntityObject(), requestBinding.getId());
+                Customer c = customerService.updateCustomer(requestBinding.toEntityObject(), requestBinding.getId());
                 dataToJson.processResponse(response, 200, new CustomerResponseBinding(c));
             }catch (EntityNotFoundException e){
                 LOGGER.debug("Customer with params"+

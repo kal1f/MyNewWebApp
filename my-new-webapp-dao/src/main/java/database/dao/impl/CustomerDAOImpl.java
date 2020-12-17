@@ -62,7 +62,7 @@ public class CustomerDAOImpl implements CustomerDAO {
     }
 
     @Override
-    public Customer getCustomer(String login, String pass) {
+    public Customer processSignIn(String login, String pass) {
         Customer c = null;
         Role r;
         Connection con = null;
