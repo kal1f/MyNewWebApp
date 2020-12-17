@@ -5,6 +5,7 @@ import binding.response.CustomerResponseBinding;
 import binding.response.ErrorResponseBinding;
 import binding.response.ResponseBinding;
 import database.entity.Customer;
+import database.entity.Role;
 import exception.EntityNotFoundException;
 import org.junit.Before;
 import org.junit.Test;
@@ -89,7 +90,7 @@ public class LoginServletTest {
         when(requestBinding.getLogin()).thenReturn("markR12w");
         when(requestBinding.getPassword()).thenReturn("!12*Alex&");
 
-        Customer customer = new Customer(120,"login12", "Alexander","password12!", "1");
+        Customer customer = new Customer(120,"login12", "Alexander","password12!", Role.ROLE_ADMIN);
 
         when(loginService.authenticate(anyString(), Matchers.any(Customer.class))).thenReturn(customer);
 

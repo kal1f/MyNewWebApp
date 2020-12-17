@@ -51,7 +51,7 @@ public class TransactionServiceImpl implements TransactionService {
 
         if(id != 0){
             transaction.setId(id);
-            return transaction;
+            return td.getTransactionById(BigInteger.valueOf(id));
         }
         else {
             LOGGER.debug("Transaction was not created in database");

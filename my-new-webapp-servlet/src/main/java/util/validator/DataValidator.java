@@ -1,8 +1,5 @@
 package util.validator;
 
-
-import binding.request.*;
-
 public class DataValidator {
 
     public boolean isNotNull(String parameter){
@@ -40,12 +37,7 @@ public class DataValidator {
     }
 
     public boolean isIdValid(Integer id){
-        if(id == null || id < 0){
-            return false;
-        }
-
-        return true;
-
+        return id != null && id >= 0;
     }
 
     public boolean isIdValid(String id){
@@ -128,18 +120,6 @@ public class DataValidator {
         return isIdValid(id) && isProductDataValid(name, category, price, priceDiscount);
     }
 
-//    public boolean isWelcomeFormValid(Integer id, String login){
-//        if(login == null || id == null){
-//            return false;
-//        }
-//
-//        if((id == 0 || id == -1) && login.equals("")){
-//            return false;
-//        }
-//
-//        return (isIdValid(id) &&
-//                (isLoginValid(login) && isLengthValid(login,6)) || login.equals("") );
-//    }
     public boolean isWelcomeDataValid(String id, String login){
         if(login == null || id == null){
             return false;

@@ -51,7 +51,6 @@ public class CustomerServiceImpl implements CustomerService {
             throw new EntityNotFoundException("Was not been updated any rows");
         }
 
-        customer.setId(id);
-        return customer;
+        return cd.getCustomer(customer.getLogin());
     }
 }

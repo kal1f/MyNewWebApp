@@ -1,39 +1,39 @@
 openapi: "3.0.0"
 
 info:
-  description: "This is a MyNewWebApp server. This file describe my restfull server app that is writed on java8."
+  description: "This is a MyNewWebApp server. This file describe my restfull server app that is wrote on java8."
   version: "1.0.0"
   title: "Backend NewWebAPP"
-  
+
 servers:
-- url: http://localhost:8080/
+  - url: http://localhost:8080/
 
 tags:
-- name: "login"
-  description: "Access to login page"
-- name: "logout"
-  description: "Access to logout operation"
-- name: "register"
-  description: "Access to create new user"
-- name: "customers"
-  description: "Operations on customers"
-- name: "transactions"
-  description: "Operations on transactions"
-- name: "roles"
-  description: "Operations on roles"
-- name: "products"
-  description: "Operations on products"
+  - name: "login"
+    description: "Access to login page"
+  - name: "logout"
+    description: "Access to logout operation"
+  - name: "register"
+    description: "Access to create new user"
+  - name: "customers"
+    description: "Operations on customers"
+  - name: "transactions"
+    description: "Operations on transactions"
+  - name: "roles"
+    description: "Operations on roles"
+  - name: "products"
+    description: "Operations on products"
 
 
 paths:
   /products:
     post:
       tags:
-      - "products"
+        - "products"
       summary: "Add a new product to the store"
       description: ""
       operationId: "addProduct"
-      
+
       requestBody:
         description: "Product object that needs to be added"
         required: true
@@ -68,24 +68,24 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
-    
+
     put:
       tags:
-      - "products"
+        - "products"
       summary: "Update an existing product"
       description: ""
       operationId: "updateProduct"
-      
+
       requestBody:
         description: "Product object that needs to be added to the store"
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/ProductRequest"
+              $ref: "#/components/schemas/ProductUpdateRequest"
       security:
         - cookieAuth: []
-        
+
       responses:
         "200":
           description: "Successful operation"
@@ -111,20 +111,20 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
-    
+
     get:
       tags:
-      - "products"
+        - "products"
       summary: "Get products"
       description: "Id values can be only digital"
       operationId: "getProducts"
-      
+
       parameters:
-      - in: query
-        name: id
-        required: false
-        schema:
-          type: integer
+        - in: query
+          name: id
+          required: false
+          schema:
+            type: integer
       responses:
         "200":
           description: "Successful operation"
@@ -144,16 +144,16 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
-                
+
   /roles:
-  
+
     post:
       tags:
-      - "roles"
+        - "roles"
       summary: "Add a new role"
       description: ""
       operationId: "addRole"
-      
+
       requestBody:
         description: "Product object that needs to be added to the store"
         required: true
@@ -188,25 +188,25 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
-          
+
     put:
       tags:
-      - "roles"
+        - "roles"
       summary: "Update an existing role"
       description: ""
       operationId: "updateRoleStatusById"
-      
+
       security:
         - cookieAuth: []
-        
+
       requestBody:
         description: "Role object that needs to be added"
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/RoleRequest"
-      
+              $ref: "#/components/schemas/RoleUpdateRequest"
+
       responses:
         "200":
           description: "Ok"
@@ -232,28 +232,28 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
-          
+
     get:
       tags:
-      - "roles"
+        - "roles"
       summary: "Find role by ID"
       description: "For valid response try integer IDs with value >= 1 and <= 2.         Other values will generated exceptions"
       operationId: "getRoles"
-      
+
       security:
         - cookieAuth: []
-      
+
       parameters:
-      - name: "id"
-        in: "query"
-        description: "ID of role that needs to be fetched"
-        required: false
-        schema:
-          type: "integer"
-          maximum: 2
-          minimum: 1
-          format: "int32"
-    
+        - name: "id"
+          in: "query"
+          description: "ID of role that needs to be fetched"
+          required: false
+          schema:
+            type: "integer"
+            maximum: 2
+            minimum: 1
+            format: "int32"
+
       responses:
         "200":
           description: "successful operation"
@@ -273,15 +273,15 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
-         
+
   /transactions:
     post:
       tags:
-      - "transactions"
+        - "transactions"
       summary: "Create transaction"
       description: ""
       operationId: "createTransaction"
-      
+
       requestBody:
         description: "Created transaction object"
         required: true
@@ -314,14 +314,14 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
-        
+
     put:
       tags:
-      - "transactions"
+        - "transactions"
       summary: "Update an existing transaction status"
       description: ""
       operationId: "updateTransactionStatusById"
-      
+
       security:
         - cookieAuth: []
       requestBody:
@@ -331,7 +331,7 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/TransactionUpdateRequest"
-      
+
       responses:
         "200":
           description: "Ok"
@@ -357,22 +357,22 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
-          
+
     get:
       tags:
-      - "transactions"
+        - "transactions"
       summary: "Find transactions"
       description: "Id must be digits."
       operationId: "getTransactions"
-      
+
       parameters:
-      - name: "id"
-        in: "query"
-        description: "id of transaction"
-        required: false
-        schema:
-          type: "integer"
-          format: "int64"
+        - name: "id"
+          in: "query"
+          description: "id of transaction"
+          required: false
+          schema:
+            type: "integer"
+            format: "int64"
       security:
         - cookieAuth: []
       responses:
@@ -394,11 +394,11 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
-          
+
   /logout:
     post:
       tags:
-      - "logout"
+        - "logout"
       summary: "Logs out current logged in user session"
       description: ""
       operationId: "unauthenticate"
@@ -407,15 +407,15 @@ paths:
       responses:
         "200":
           description: "Ok"
-  
+
   /login:
     post:
       tags:
-      - "login"
+        - "login"
       summary: "Login current user session"
       description: ""
       operationId: "authenticate"
-      
+
       requestBody:
         description: "Authenticate user"
         required: true
@@ -423,66 +423,66 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/LoginRequest'
-          
+
       responses:
         "200":
           description: "Successful operation"
-          headers: 
+          headers:
             Set-Cookie:
-              schema: 
+              schema:
                 type: string
                 example: JSESSIONID=abcde12345; Path=/; HttpOnly
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/CustomerResponse'
-            
+
         "400":
           description: "Login or ID is not valid"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
-          
+
         "404":
           description: "Not found"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
-          
+
         "422":
           description: "Unprocessable Entity"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
-      
+
   /customers:
-    
+
     get:
       tags:
-      - "customers"
+        - "customers"
       summary: "Find customers"
       description: "Id must be digits. Login must be validated."
       operationId: "getCustomers"
       security:
         - cookieAuth: []
-      
+
       parameters:
-      - name: id
-        in: query
-        description: "ID of customer"
-        required: false
-        schema:
-          type: "integer"
-          format: "int64"
-      - name: login
-        in: query
-        description: "Login of customer"
-        required: false
-        schema:
-          type: "string"
+        - name: id
+          in: query
+          description: "ID of customer"
+          required: false
+          schema:
+            type: "integer"
+            format: "int64"
+        - name: login
+          in: query
+          description: "Login of customer"
+          required: false
+          schema:
+            type: "string"
       responses:
         "200":
           description: "successful operation"
@@ -508,16 +508,16 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
-        
+
     put:
       tags:
-      - "customers"
+        - "customers"
       summary: "Updated customer object"
       description: "This can only be done by the logged in customer."
       operationId: "updateCustomer"
       security:
         - cookieAuth: []
-        
+
       requestBody:
         required: true
         description: "Update customer object by id"
@@ -525,7 +525,7 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/UpdateCustomerRequest'
-      
+
       responses:
         "200":
           description: "successful operation"
@@ -533,14 +533,14 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/CustomerResponse"
-            
+
         "400":
           description: "Invalid customer supplied"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
-          
+
         "404":
           description: "User not found"
           content:
@@ -553,21 +553,21 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
-          
+
   /register:
     post:
       tags:
-      - "register"
+        - "register"
       summary: "Create customer"
       operationId: "createCustomer"
-      
+
       requestBody:
         required: true
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/CustomerRequest'
-     
+
       responses:
         "201":
           description: "Ok"
@@ -575,68 +575,68 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/CustomerResponse"
-          
+
         "404":
           description: "Not found"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
-          
+
         "400":
           description: "Customer with params can not be registered"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
-          
+
         "422":
           description: "Unprocessable entity"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
- 
+
 components:
   securitySchemes:
     cookieAuth:
       type: apiKey
       in: cookie
-      name: JSESSIONID 
-  
-  schemas:  
+      name: JSESSIONID
+
+  schemas:
     LoginRequest:
       type: "object"
       required:
-      - "login"
-      - "password"
+        - "login"
+        - "password"
       properties:
         login:
           type: "string"
-        password: 
+        password:
           type: "string"
       xml:
         name: "LoginRequest"
-        
+
     CustomerRequest:
       type: "object"
       required:
-      - "login"
-      - "name"
-      - "password1"
-      - "password2"
+        - "login"
+        - "name"
+        - "password1"
+        - "password2"
       properties:
         login:
           type: "string"
         name:
           type: "string"
-        password1: 
+        password1:
           type: "string"
         password2:
           type: "string"
       xml:
         name: "CustomerRequest"
-    
+
     UpdateCustomerRequest:
       type: "object"
       properties:
@@ -647,13 +647,13 @@ components:
           $ref: '#/components/schemas/CustomerRequest'
       xml:
         name: "UpdateCustomerRequest"
-      
+
     ProductRequest:
       type: "object"
       required:
-      - "name"
-      - "category"
-      - "price"
+        - "name"
+        - "category"
+        - "price"
       properties:
         name:
           type: "string"
@@ -669,7 +669,18 @@ components:
           example: 0.1
       xml:
         name: "ProductRequest"
-    
+
+    ProductUpdateRequest:
+      type: "object"
+      properties:
+        id:
+          type: "integer"
+          format: "int64"
+        product:
+          $ref: '#/components/schemas/ProductRequest'
+      xml:
+        name: "ProductUpdateRequest"
+
     TransactionRequest:
       type: "object"
       properties:
@@ -683,7 +694,7 @@ components:
           type: "string"
           description: "User payed by"
           enum:
-            - "CREADITCARD"
+            - "CREDITCARD"
             - "CASH"
             - "LOYALTY"
         crdCardNumber:
@@ -691,17 +702,17 @@ components:
           description: "User card number"
       xml:
         name: "TransactionRequest"
-        
+
     TransactionUpdateRequest:
       type: "object"
       properties:
         id:
           type: "integer"
-        status: 
+        status:
           type: "string"
       xml:
         name: "TransactionUpdateRequest"
-        
+
     RoleRequest:
       type: "object"
       properties:
@@ -709,7 +720,18 @@ components:
           type: "string"
       xml:
         name: "RoleRequest"
-        
+
+    RoleUpdateRequest:
+      type: "object"
+      properties:
+        id:
+          type: "integer"
+        name:
+          type: "string"
+      xml:
+        name: "RoleUpdateRequest"
+
+
     ErrorResponse:
       type: "object"
       properties:
@@ -719,8 +741,8 @@ components:
         message:
           type: "string"
       xml:
-        name: "ErrorResponse"    
-          
+        name: "ErrorResponse"
+
     CustomerResponse:
       type: "object"
       properties:
@@ -732,38 +754,38 @@ components:
         name:
           type: "string"
         role:
-          type: "string"
+          $ref: '#/components/schemas/RoleResponse'
       xml:
-        name: "CustomerResponse"       
-      
+        name: "CustomerResponse"
+
     CustomersResponse:
       type: "object"
-      properties: 
+      properties:
         customers:
           type: "array"
           items:
             $ref: "#/components/schemas/CustomerResponse"
-            
+
       xml:
-        name: "CustomersResponse"  
-    
+        name: "CustomersResponse"
+
     FilterResponse:
       type: "object"
-      properties: 
-        code: 
+      properties:
+        code:
           type: "integer"
           format: "int64"
         message:
           type: "string"
-        location: 
+        location:
           type: "string"
       xml:
-        name: "FilterResponse" 
-          
+        name: "FilterResponse"
+
     ProductResponse:
       type: "object"
       properties:
-        id: 
+        id:
           type: "integer"
           format: 'int64'
         name:
@@ -777,18 +799,18 @@ components:
         priceDiscount:
           type: "number"
       xml:
-        name: "ProductResponse" 
-    
+        name: "ProductResponse"
+
     ProductsResponse:
       type: "object"
-      properties: 
+      properties:
         customers:
           type: "array"
           items:
             $ref: "#/components/schemas/ProductResponse"
       xml:
-        name: "ProductsResponse" 
-      
+        name: "ProductsResponse"
+
     TransactionResponse:
       type: "object"
       properties:
@@ -811,18 +833,18 @@ components:
           type: "string"
           description: "User card number"
       xml:
-        name: "TransactionResponse" 
-        
+        name: "TransactionResponse"
+
     TransactionsResponse:
       type: "object"
-      properties: 
+      properties:
         customers:
           type: "array"
           items:
             $ref: "#/components/schemas/TransactionResponse"
       xml:
-        name: "TransactionsResponse" 
-        
+        name: "TransactionsResponse"
+
     RoleResponse:
       type: "object"
       properties:
@@ -834,10 +856,10 @@ components:
           example: "buyer"
       xml:
         name: "RoleResponse"
-        
+
     RolesResponse:
       type: "object"
-      properties: 
+      properties:
         customers:
           type: "array"
           items:

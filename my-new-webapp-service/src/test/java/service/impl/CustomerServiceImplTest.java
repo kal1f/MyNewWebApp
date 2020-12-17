@@ -6,6 +6,7 @@ import exception.EntityNotFoundException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import service.CustomerService;
@@ -41,6 +42,14 @@ public class CustomerServiceImplTest {
         when(cd.getCustomerByIdOrLogin("lada12", 0)).thenReturn(customers);
         when(cd.getCustomerByIdOrLogin("lada12", 201)).thenReturn(customers);
         when(cd.getCustomerByIdOrLogin(null, 0)).thenReturn(new ArrayList<>());
+
+        when(cd.updateCustomer(new Customer("lasf12","ahmed", "dsa12da!da2"), null)).thenReturn(0);
+        when(cd.updateCustomer(new Customer(null,"ahmed", "dsa12da!da2"), 450)).thenReturn(0);
+        when(cd.updateCustomer(new Customer("lasf12",null, "dsa12da!da2"), 450)).thenReturn(0);
+        when(cd.updateCustomer(new Customer("lasf12","ahmed", null), 450)).thenReturn(0);
+        when(cd.updateCustomer(new Customer("lasf12","ahmed", "dsa12da!da2"), 103)).thenReturn(1);
+
+        when(cd.getCustomer(anyString())).thenReturn(new Customer("lasf12","dsa12da!da2", "ahmed", 103));
     }
     @Test
     public void getAllCustomers(){
@@ -110,7 +119,7 @@ public class CustomerServiceImplTest {
     }
 
     @Test
-    public void searchCustomersExpectEmptyArrayWhenIdIsNotExistingAndLoginNull() throws EntityNotFoundException {
+    public void searchCustomersExpectEmptyArrayWhenIdIsNotExistingAndLoginNull(){
 
         ArrayList<Customer> customers = null;
         String message = null;
@@ -127,7 +136,7 @@ public class CustomerServiceImplTest {
     }
 
     @Test
-    public void searchCustomersExpectEmptyArrayWhenLoginIsNotExistingAndIdNull()throws EntityNotFoundException {
+    public void searchCustomersExpectEmptyArrayWhenLoginIsNotExistingAndIdNull(){
 
         ArrayList<Customer> customers = null;
         String message = null;
@@ -157,6 +166,83 @@ public class CustomerServiceImplTest {
         verify(cd, times(1)).getCustomerByIdOrLogin("da41xd", 101);
 
         assertEquals("Search customers returned empty array", message);
+    }
+
+    @Test
+    public void updateCustomerWithNullIdExpectEntityNotFoundException() {
+        Customer customer;
+
+        String message=null;
+
+        try {
+            customer = customerService.updateCustomer(
+                    new Customer("lasf12","ahmed", "dsa12da!da2"), null);
+        } catch (EntityNotFoundException e){
+            message = e.getMessage();
+        }
+
+        assertEquals("Was not been updated any rows", message);
+    }
+
+    @Test
+    public void updateCustomerWithNullLoginExpectEntityNotFoundException() {
+        Customer customer;
+
+        String message=null;
+
+        try {
+            customer = customerService.updateCustomer(
+                    new Customer(null,"ahmed", "dsa12da!da2"), 450);
+        } catch (EntityNotFoundException e){
+            message = e.getMessage();
+        }
+
+        assertEquals("Was not been updated any rows", message);
+    }
+
+    @Test
+    public void updateCustomerWithNullPasswordExpectEntityNotFoundException() {
+        Customer customer;
+
+        String message=null;
+
+        try {
+            customer = customerService.updateCustomer(
+                    new Customer("lasf12",null, "dsa12da!da2"), 450);
+        } catch (EntityNotFoundException e){
+            message = e.getMessage();
+        }
+
+        assertEquals("Was not been updated any rows", message);
+    }
+
+    @Test
+    public void updateCustomerWithNameExpectEntityNotFoundException() {
+        Customer customer;
+
+        String message=null;
+
+        try {
+            customer = customerService.updateCustomer(
+                    new Customer("lasf12","ahmed", null), 450);
+        } catch (EntityNotFoundException e){
+            message = e.getMessage();
+        }
+
+        assertEquals("Was not been updated any rows", message);
+    }
+
+    @Test
+    public void updateCustomerExpectCustomer() throws EntityNotFoundException {
+
+        Customer customer = customerService.updateCustomer(new Customer("lasf12","ahmed", "dsa12da!da2"), 103);
+
+        verify(cd).updateCustomer(Matchers.any(Customer.class), Matchers.any(Integer.class));
+
+        assertEquals(103, customer.getId());
+        assertEquals("lasf12",customer.getLogin());
+        assertEquals("ahmed", customer.getName());
+        assertEquals("dsa12da!da2", customer.getPassword());
     }
 
 

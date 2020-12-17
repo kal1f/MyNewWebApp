@@ -19,7 +19,6 @@ public interface ConnectionProvider {
                }
           }
      }
-
      default void closeRS(ResultSet rs){
           if(rs != null)
           {
