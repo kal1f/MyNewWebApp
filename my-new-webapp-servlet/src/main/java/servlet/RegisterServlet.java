@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Properties;
 
+
 public class RegisterServlet extends HttpServlet {
 
     private RegisterService registerService;
