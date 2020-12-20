@@ -21,7 +21,7 @@ public class PropertiesContextListener implements ServletContextListener {
         final ServletContext servletContext = sce.getServletContext();
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 
-        String productionProperties = "/usr/local/my-web-app/production.properties";
+            String productionProperties = "/usr/local/my-web-app/production.properties";
         String developmentProperties = "config.properties";
 
         try {
