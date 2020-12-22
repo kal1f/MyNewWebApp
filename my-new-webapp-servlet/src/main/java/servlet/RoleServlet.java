@@ -96,7 +96,7 @@ public class RoleServlet extends HttpServlet {
             LOGGER.info("Role can not be registered, input data is not valid");
 
             dataToJson.processResponse(response, 400,
-                    new ErrorResponseBinding(400,"Role with id can not be registered," +
+                    new ErrorResponseBinding(400,"Role with name "+requestBinding.getName()+" can not be registered," +
                             " input data is not valid"));
         }
     }

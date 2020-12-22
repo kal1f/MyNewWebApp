@@ -4,12 +4,10 @@ import database.connection.ConnectionProvider;
 import database.connection.ConnectionProviderImpl;
 import database.dao.RoleDAO;
 import database.entity.Role;
+import oracle.jdbc.OracleTypes;
 import org.apache.log4j.Logger;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,28 +29,31 @@ public class RoleDAOImpl implements RoleDAO {
     public Role getRoleById(Integer id) {
         Role role = null;
         Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
+        CallableStatement ps = null;
 
         try{
             con = connectionProvider.getCon();
-            ps = con.prepareStatement("SELECT * FROM role WHERE id=?");
+            ps = con.prepareCall("{call getRoleById (?, ?)}");
             ps.setInt(1, id);
+            ps.registerOutParameter(1, Types.INTEGER);
+            ps.registerOutParameter(2, Types.VARCHAR);
 
-            rs=ps.executeQuery();
+            ps.execute();
 
 
-            while(rs.next()){
+            try {
                 role = new Role();
-                role.setName((rs.getString(2)));
-                role.setId(rs.getInt(1));
+                role.setName((ps.getString(2)));
+                role.setId(ps.getInt(1));
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
+
         }
         catch (Exception e){
             LOGGER.debug(e.getMessage(), e);
         }
         finally {
-            connectionProvider.closeRS(rs);
             connectionProvider.closeStatement(ps);
             connectionProvider.closeCon(con);
 
@@ -65,15 +66,16 @@ public class RoleDAOImpl implements RoleDAO {
     public List<Role> getRoles() {
         List<Role> roles = new ArrayList<>();
         Connection con = null;
-        PreparedStatement ps = null;
+        CallableStatement ps = null;
         ResultSet rs = null;
 
         try{
             con = connectionProvider.getCon();
-            ps = con.prepareStatement("SELECT * FROM role");
+            ps = con.prepareCall("{ call getRoles (?)}");
+            ps.registerOutParameter(1, OracleTypes.CURSOR);
+            ps.execute();
 
-            rs = ps.executeQuery();
-
+            rs = (ResultSet) ps.getObject(1);
             while(rs.next()){
                 Role role = new Role(rs.getInt("id"), rs.getString("name"));
                 roles.add(role);
@@ -94,19 +96,19 @@ public class RoleDAOImpl implements RoleDAO {
     public int updateRoleById(Role role){
         int rows = 0;
         Connection con = null;
-        PreparedStatement ps = null;
+        CallableStatement ps = null;
         ResultSet rs = null;
         try {
 
             con = connectionProvider.getCon();
-            ps = con.prepareStatement("UPDATE role SET name=? WHERE id=? ",
-                    new String[] {"ID"});
+            ps = con.prepareCall("{? = call updateRoleById (?,?)}");
+            ps.registerOutParameter(1, Types.INTEGER);
+            ps.setString(2, role.getName());
+            ps.setInt(3, role.getId());
 
-            ps.setString(1, role.getName());
-            ps.setInt(2, role.getId());
+            ps.execute();
 
-            rows = ps.executeUpdate();
-
+            rows = ps.getInt(1);
 
         } catch (Exception e) {
             LOGGER.debug(e.getMessage(), e);
@@ -123,24 +125,23 @@ public class RoleDAOImpl implements RoleDAO {
     public int insertRole(String role) {
         int id = 0;
         Connection con = null;
-        PreparedStatement ps = null;
+        CallableStatement ps = null;
         ResultSet rs = null;
         try {
 
             con = connectionProvider.getCon();
-            ps = con.prepareStatement("INSERT INTO role (name)" +
-                    " VALUES(?)", new String[] {"ID"});
+            ps = con.prepareCall("{? = call insertRole(?)}");
+            ps.registerOutParameter(1, Types.INTEGER);
+            ps.setString(2, role);
 
-            ps.setString(1, role);
+            ps.execute();
 
-            ps.executeUpdate();
-
-            rs = ps.getGeneratedKeys();
-
-            while (rs.next())
-            {
-                id = rs.getInt(1);
+            try {
+                id = ps.getInt(1);
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
+
 
         } catch (Exception e) {
             LOGGER.debug(e.getMessage(), e);

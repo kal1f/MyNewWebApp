@@ -31,24 +31,24 @@ public class CustomerDAOImpl implements CustomerDAO {
     public int insertCustomer(Customer c) {
         int id = 0;
         Connection con = null;
-        PreparedStatement ps = null;
+        CallableStatement ps = null;
         ResultSet rs = null;
         try {
 
             con = connectionProvider.getCon();
-            ps = con.prepareStatement("INSERT INTO customer (login, password, name) VALUES(?,?,?)",
-                    new String[] {"id"});
-
+            ps = con.prepareCall("{call insertCustomer (?,?,?,?)}");
 
             ps.setString(1, c.getLogin());
             ps.setString(2, c.getPassword());
             ps.setString(3, c.getName());
-            ps.executeUpdate();
+            ps.registerOutParameter(4, Types.INTEGER);
 
-            rs = ps.getGeneratedKeys();
-            while (rs.next())
-            {
-                id = rs.getInt(1);
+            ps.execute();
+
+            try {
+                id = ps.getInt(4);
+            } catch (SQLException e) {
+                return 0;
             }
 
         } catch (Exception e) {
@@ -67,32 +67,39 @@ public class CustomerDAOImpl implements CustomerDAO {
         Customer c = null;
         Role r;
         Connection con = null;
-        PreparedStatement ps = null;
+
+        CallableStatement ps = null;
         ResultSet rs = null;
 
         try{
             con = connectionProvider.getCon();
-            ps = con.prepareStatement("SELECT c.id, c.login, c.password, c.name, r.id, r.name " +
-                    "FROM role r " +
-                    "INNER JOIN (SELECT * FROM customer where login=? and password=? ) c " +
-                    "ON r.id = c.role_id");
-            ps.setString(1,login);
-            ps.setString(2,pass);
+            ps = con.prepareCall("{call getCustomer (?,?,?,?,?,?)}");
 
-            rs=ps.executeQuery();
+            ps.registerOutParameter(1, Types.INTEGER);
+            ps.registerOutParameter(2, Types.VARCHAR);
+            ps.registerOutParameter(3, Types.VARCHAR);
+            ps.setString(2,login);
+            ps.setString(3,pass);
+            ps.registerOutParameter(4, Types.VARCHAR);
+            ps.registerOutParameter(5, Types.INTEGER);
+            ps.registerOutParameter(6, Types.VARCHAR);
 
+            ps.execute();
 
-            while(rs.next()){
+            try {
                 c = new Customer();
                 r = new Role();
-                c.setId(rs.getInt(1));
-                c.setLogin(rs.getString(2));
-                c.setPassword(rs.getString(3));
-                c.setName(rs.getString(4));
-                r.setId(rs.getInt(5));
-                r.setName(rs.getString(6));
+                c.setId(ps.getInt(1));
+                c.setLogin(ps.getString(2));
+                c.setPassword(ps.getString(3));
+                c.setName(ps.getString(4));
+                r.setId(ps.getInt(5));
+                r.setName(ps.getString(6));
                 c.setRole(r);
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
+
         }
         catch (Exception e){
             LOGGER.debug(e.getMessage(), e);
@@ -153,21 +160,26 @@ public class CustomerDAOImpl implements CustomerDAO {
     public int updateCustomer(Customer customer, Integer id) {
         int updated = 0;
         Connection con = null;
-        PreparedStatement ps = null;
+        CallableStatement ps = null;
         ResultSet rs = null;
         try {
 
             con = connectionProvider.getCon();
-            ps = con.prepareStatement("UPDATE customer SET login=?," +
-                    "password=?," +
-                    "name=? WHERE id = ? ", new String[] {"id"});
+            ps = con.prepareCall("{call updateCustomer (?,?,?,?,?)}");
 
             ps.setString(1, customer.getLogin());
             ps.setString(2, customer.getPassword());
             ps.setString(3, customer.getName());
-            ps.setInt(4,id);
+            ps.setInt(4, id);
+            ps.registerOutParameter(5, Types.INTEGER);
 
-            updated = ps.executeUpdate();
+            ps.execute();
+
+            try {
+               updated = ps.getInt(5);
+            } catch (SQLException e) {
+                return 0;
+            }
 
 
         } catch (Exception e) {

@@ -4,14 +4,12 @@ import database.connection.ConnectionProvider;
 import database.connection.ConnectionProviderImpl;
 import database.dao.ProductDAO;
 import database.entity.Product;
+import oracle.jdbc.OracleTypes;
 import org.apache.log4j.Logger;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,26 +33,27 @@ public class ProductDAOImpl implements ProductDAO {
     public int insertProduct(Product product) {
         int id = 0;
         Connection con = null;
-        PreparedStatement ps = null;
+        CallableStatement ps = null;
         ResultSet rs = null;
         try {
 
             con = connectionProvider.getCon();
-            ps = con.prepareStatement("INSERT INTO product (name, category, date_added, price, price_discount) VALUES(?,?,current_date,?,?)",
-                    new String[] {"ID"});
+            ps = con.prepareCall("{call insertProduct (?,?,?,?,?)}");
 
             ps.setString(1, product.getName());
             ps.setString(2, product.getCategory());
             ps.setDouble(3, product.getPrice());
             ps.setDouble(4, product.getPriceDiscount());
+            ps.registerOutParameter(5, Types.INTEGER);
 
-            ps.executeUpdate();
+            ps.execute();
 
-            rs = ps.getGeneratedKeys();
-            while (rs.next())
-            {
-                id = rs.getInt(1);
+            try {
+                id = ps.getInt(5);
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
+
 
         } catch (Exception e) {
             LOGGER.debug(e.getMessage(), e);
@@ -109,16 +108,19 @@ public class ProductDAOImpl implements ProductDAO {
     public List<Product> getProducts() {
         List<Product> products = new ArrayList<>();
         Connection con = null;
-        PreparedStatement ps = null;
+        CallableStatement ps = null;
         ResultSet rs = null;
 
         try{
             con = connectionProvider.getCon();
-            ps = con.prepareStatement("SELECT * FROM product");
+            ps = con.prepareCall("{ call getProducts (?)}");
 
-            rs = ps.executeQuery();
+            ps.registerOutParameter(1, OracleTypes.CURSOR);
 
-            while(rs.next()){
+            ps.execute();
+
+            rs = (ResultSet) ps.getObject(1);
+            while(rs.next()) {
                 Product product = new Product(rs.getInt("id"), rs.getString("name"),
                         rs.getString("category"), rs.getDate("date_added"),
                         rs.getDouble("price"), rs.getDouble("price_discount"));
@@ -140,25 +142,28 @@ public class ProductDAOImpl implements ProductDAO {
     public int updateProduct(Product product, BigInteger id) {
         int updated = 0;
         Connection con = null;
-        PreparedStatement ps = null;
+        CallableStatement ps = null;
         ResultSet rs = null;
         try {
 
             con = connectionProvider.getCon();
-            ps = con.prepareStatement("UPDATE product SET name=?," +
-                    "category=?," +
-                    "date_added=CURRENT_DATE," +
-                    "price=?," +
-                    "price_discount=? " +
-                    "WHERE id=? ", new String[] {"ID"});
+
+            ps = con.prepareCall("{ call updateProduct (?,?,?,?,?,?)}");
 
             ps.setString(1, product.getName());
             ps.setString(2, product.getCategory());
             ps.setDouble(3, product.getPrice());
             ps.setDouble(4, product.getPriceDiscount());
             ps.setBigDecimal(5, new BigDecimal(id));
+            ps.registerOutParameter(6, Types.INTEGER);
 
-            updated = ps.executeUpdate();
+            ps.execute();
+
+            try {
+                updated = ps.getInt(6);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
 
 
         } catch (Exception e) {
